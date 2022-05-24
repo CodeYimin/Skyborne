@@ -26,7 +26,7 @@ public abstract class CompositeBinding<T> {
 
     public abstract T combineValues(T value1, T value2);
 
-    public T getCombinedValue() {
+    public T getValue() {
         ArrayList<T> values = getAllBindingValues();
         T value = defaultValue;
         for (T v : values) {

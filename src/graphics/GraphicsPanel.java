@@ -1,6 +1,7 @@
 package graphics;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -28,7 +29,7 @@ public class GraphicsPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         for (Drawable drawable : drawables) {
-            drawable.draw(g);
+            drawable.draw((Graphics2D) g);
         }
     }
 }

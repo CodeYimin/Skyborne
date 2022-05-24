@@ -1,32 +1,33 @@
 package core;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import entities.GameObject;
 import entities.Player;
+import graphics.Camera;
 import graphics.GraphicsPanel;
 import input.InputManager;
 import input.VectorCompositeBinding;
+import util.Const;
 import util.Vector;
 
 public class Game {
-    JFrame window;
-    GraphicsPanel canvas;
+    private JFrame window = new JFrame("Skyborne");
+    private GraphicsPanel graphicsPanel = new GraphicsPanel();
+    private InputManager inputManager = new InputManager();
+
+    private ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private Time time = new Time();
 
     public Game() {
-        window = new JFrame("Game");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(800, 600);
         window.setFocusable(true);
-
-        canvas = new GraphicsPanel();
-
-        window.add(canvas);
-
+        window.add(graphicsPanel);
         window.setVisible(true);
-
-        InputManager inputManager = new InputManager();
         window.addKeyListener(inputManager);
 
         VectorCompositeBinding movementControls = new VectorCompositeBinding(inputManager, new Vector(0, 0));
@@ -36,16 +37,36 @@ public class Game {
         movementControls.addBinding(KeyEvent.VK_D, new Vector(1, 0));
 
         Player player = new Player(movementControls);
-        canvas.addDrawable(player);
+        addGameObject(player);
 
+        Camera camera = new Camera(graphicsPanel, gameObjects, 100);
+
+        startGameLoop();
+    }
+
+    private void startGameLoop() {
         while (true) {
-            canvas.repaint();
-            player.update();
+            update();
             try {
-                Thread.sleep(1000 / 60);
+                Thread.sleep(1000 / Const.FPS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void update() {
+        UpdateInfo updateInfo = new UpdateInfo(time);
+
+        for (GameObject gameObject : gameObjects) {
+            gameObject.update(updateInfo);
+        }
+
+        graphicsPanel.repaint();
+        time.update();
+    }
+
+    public void addGameObject(GameObject gameObject) {
+        gameObjects.add(gameObject);
     }
 }

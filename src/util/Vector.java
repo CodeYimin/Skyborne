@@ -9,6 +9,11 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector(Size size) {
+        this.x = size.getWidth();
+        this.y = size.getHeight();
+    }
+
     public double getX() {
         return x;
     }
@@ -27,6 +32,10 @@ public class Vector {
 
     public Vector multiply(double scalar) {
         return new Vector(x * scalar, y * scalar);
+    }
+
+    public Vector multiply(Vector other) {
+        return new Vector(x * other.x, y * other.y);
     }
 
     public double getLength() {

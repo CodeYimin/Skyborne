@@ -1,5 +1,6 @@
 package entities;
 
+import core.UpdateInfo;
 import util.Vector;
 
 public class GameObject {
@@ -21,7 +22,7 @@ public class GameObject {
         this.position = position;
     }
 
-    public void update() {
+    public void update(UpdateInfo updateInfo) {
         // Do nothing
     }
 }
