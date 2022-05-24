@@ -18,6 +18,6 @@ public class InputManager extends KeyAdapter {
     }
 
     public HashSet<Integer> getKeysHeld() {
-        return (HashSet<Integer>) keysHeld.clone();
+        return keysHeld;
     }
 }

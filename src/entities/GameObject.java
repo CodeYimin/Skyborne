@@ -20,4 +20,8 @@ public class GameObject {
     public void setPosition(Vector position) {
         this.position = position;
     }
+
+    public void update() {
+        // Do nothing
+    }
 }
