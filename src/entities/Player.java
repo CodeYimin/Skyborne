@@ -18,7 +18,7 @@ public class Player extends GameObject implements Drawable {
 
     @Override
     public void update() {
-        Vector movementInput = movementControls.getValue();
+        Vector movementInput = movementControls.getCombinedValue();
         Vector direction = movementInput.normalize();
         velocity = direction.multiply(speed);
 

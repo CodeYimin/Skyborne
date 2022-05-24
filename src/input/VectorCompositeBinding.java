@@ -1,7 +1,5 @@
 package input;
 
-import java.util.ArrayList;
-
 import util.Vector;
 
 public class VectorCompositeBinding extends CompositeBinding<Vector> {
@@ -10,12 +8,7 @@ public class VectorCompositeBinding extends CompositeBinding<Vector> {
     }
 
     @Override
-    public Vector getValue() {
-        ArrayList<Vector> values = getAllBindingValues();
-        Vector value = new Vector(0, 0);
-        for (Vector v : values) {
-            value = value.add(v);
-        }
-        return value;
+    public Vector combineValues(Vector value1, Vector value2) {
+        return value1.add(value2);
     }
 }
