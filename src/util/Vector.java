@@ -35,6 +35,11 @@ public class Vector {
 
     public Vector normalize() {
         double length = getLength();
+
+        if (length == 0) {
+            return new Vector(0, 0);
+        }
+
         return new Vector(x / length, y / length);
     }
 
@@ -82,5 +87,10 @@ public class Vector {
 
     public Vector reflect(Vector normal, double angle) {
         return reflect(normal.rotate(angle));
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 }

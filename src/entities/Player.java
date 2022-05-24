@@ -19,14 +19,23 @@ public class Player extends GameObject implements Drawable, Updatable {
 
     @Override
     public void update() {
-        Vector movement = movementControls.getValue(null);
+        Vector movement = movementControls.getValue();
         Vector direction = movement.normalize();
         velocity = direction.multiply(speed);
+
+        move();
+    }
+
+    private void move() {
+        setPosition(getPosition().add(velocity));
     }
 
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 100, 100);
+        g.fillRect((int) getPosition().getX(),
+                (int) getPosition().getY(),
+                100,
+                100);
     }
 }

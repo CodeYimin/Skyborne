@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 
 import entities.Player;
 import graphics.GraphicsPanel;
+import input.InputManager;
 import input.VectorCompositeBinding;
 import util.Vector;
 
@@ -25,7 +26,10 @@ public class Game {
 
         window.setVisible(true);
 
-        VectorCompositeBinding movementControls = new VectorCompositeBinding(new Vector(0, 0));
+        InputManager inputManager = new InputManager();
+        window.addKeyListener(inputManager);
+
+        VectorCompositeBinding movementControls = new VectorCompositeBinding(inputManager, new Vector(0, 0));
         movementControls.addBinding(KeyEvent.VK_W, new Vector(0, 1));
         movementControls.addBinding(KeyEvent.VK_S, new Vector(0, -1));
         movementControls.addBinding(KeyEvent.VK_A, new Vector(-1, 0));
@@ -36,6 +40,7 @@ public class Game {
 
         while (true) {
             canvas.repaint();
+            player.update();
             try {
                 Thread.sleep(1000 / 60);
             } catch (InterruptedException e) {
