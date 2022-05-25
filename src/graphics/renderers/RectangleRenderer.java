@@ -16,13 +16,12 @@ public class RectangleRenderer implements Renderer {
 
     public void render(Graphics2D g, RenderInfo renderInfo) {
         Size rectScreenSize = size.multiply(renderInfo.zoom);
-        Vector objectScreenPos = renderInfo.objectCenterScreenPos
-                .subtract(new Vector(rectScreenSize).multiply(0.5));
+        Vector rectScreenPos = renderInfo.objectScreenPos.subtract(new Vector(rectScreenSize).divide(2));
 
         g.setColor(Color.BLACK);
         g.fillRect(
-                (int) objectScreenPos.getX(),
-                (int) objectScreenPos.getY(),
+                (int) rectScreenPos.getX(),
+                (int) rectScreenPos.getY(),
                 (int) rectScreenSize.getWidth(),
                 (int) rectScreenSize.getHeight());
     }

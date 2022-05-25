@@ -13,6 +13,7 @@ import input.InputManager;
 import input.VectorCompositeBinding;
 import util.Const;
 import util.Vector;
+import world.Map;
 
 public class Game {
     private JFrame window = new JFrame("Skyborne");
@@ -36,10 +37,15 @@ public class Game {
         movementControls.addBinding(KeyEvent.VK_A, new Vector(-1, 0));
         movementControls.addBinding(KeyEvent.VK_D, new Vector(1, 0));
 
+        Map map = new Map(new boolean[10][10]);
+        addGameObject(map);
+
         Player player = new Player(movementControls);
         addGameObject(player);
 
         Camera camera = new Camera(graphicsPanel, gameObjects, 100);
+        camera.setFollowing(player);
+        addGameObject(camera);
 
         startGameLoop();
     }

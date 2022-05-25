@@ -1,8 +1,8 @@
 package entities;
 
 import core.UpdateInfo;
-import graphics.renderers.RectangleRenderer;
 import graphics.renderers.Renderer;
+import graphics.renderers.SpriteRenderer;
 import input.VectorCompositeBinding;
 import util.Size;
 import util.Vector;
@@ -15,7 +15,8 @@ public class Player extends RenderableObject {
     public Player(VectorCompositeBinding movementControls) {
         this.movementControls = movementControls;
 
-        Renderer renderer = new RectangleRenderer(new Size(1, 1));
+        // Renderer renderer = new RectangleRenderer(new Size(1, 1));
+        Renderer renderer = new SpriteRenderer("../assets/player.jpg", new Size(1, 1));
         setRenderer(renderer);
     }
 

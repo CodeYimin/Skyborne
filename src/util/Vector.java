@@ -38,6 +38,10 @@ public class Vector {
         return new Vector(x * other.x, y * other.y);
     }
 
+    public Vector divide(double scalar) {
+        return new Vector(x / scalar, y / scalar);
+    }
+
     public double getLength() {
         return Math.sqrt(x * x + y * y);
     }

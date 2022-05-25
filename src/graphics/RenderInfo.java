@@ -9,7 +9,7 @@ public class RenderInfo {
     public final Size screenSize;
     public final Vector screenCenter;
     public final Vector objectCameraOffset;
-    public final Vector objectCenterScreenPos;
+    public final Vector objectScreenPos;
 
     public RenderInfo(GameObject objectToRender, Camera camera) {
         this.zoom = camera.getZoom();
@@ -18,7 +18,7 @@ public class RenderInfo {
                 camera.getGraphicsPanel().getHeight());
         this.screenCenter = new Vector(screenSize.divide(2));
         this.objectCameraOffset = objectToRender.getPosition().subtract(camera.getPosition());
-        this.objectCenterScreenPos = objectCameraOffset
+        this.objectScreenPos = objectCameraOffset
                 .multiply(new Vector(1, -1))
                 .multiply(zoom)
                 .add(screenCenter);

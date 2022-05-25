@@ -11,6 +11,7 @@ public class Camera extends GameObject implements Drawable {
     private GraphicsPanel graphicsPanel;
     private ArrayList<GameObject> gameObjects;
     private double zoom;
+    private GameObject following;
 
     public double getZoom() {
         return this.zoom;
@@ -18,6 +19,10 @@ public class Camera extends GameObject implements Drawable {
 
     public GraphicsPanel getGraphicsPanel() {
         return this.graphicsPanel;
+    }
+
+    public void setFollowing(GameObject gameObject) {
+        this.following = gameObject;
     }
 
     public Camera(GraphicsPanel graphicsPanel, ArrayList<GameObject> gameObjects, double zoom) {
@@ -30,7 +35,9 @@ public class Camera extends GameObject implements Drawable {
 
     @Override
     public void update(UpdateInfo updateInfo) {
-        // Do nothing
+        if (following != null) {
+            setPosition(following.getPosition());
+        }
     }
 
     @Override
