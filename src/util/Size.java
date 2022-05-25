@@ -29,6 +29,14 @@ public class Size {
         return new Size(width * scalar, height * scalar);
     }
 
+    public Size multiply(Size other) {
+        return new Size(width * other.width, height * other.height);
+    }
+
+    public Size divide(double scalar) {
+        return new Size(width / scalar, height / scalar);
+    }
+
     public double getArea() {
         return width * height;
     }
