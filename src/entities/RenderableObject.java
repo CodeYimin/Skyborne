@@ -3,6 +3,7 @@ package entities;
 import java.awt.Graphics2D;
 
 import graphics.Camera;
+import graphics.RenderInfo;
 import graphics.renderers.Renderer;
 
 public class RenderableObject extends GameObject {
@@ -21,6 +22,6 @@ public class RenderableObject extends GameObject {
     }
 
     public void render(Graphics2D g, Camera camera) {
-        renderer.draw(g, camera, this);
+        renderer.render(g, new RenderInfo(this, camera));
     }
 }

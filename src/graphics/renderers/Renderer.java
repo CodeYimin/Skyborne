@@ -2,9 +2,8 @@ package graphics.renderers;
 
 import java.awt.Graphics2D;
 
-import entities.GameObject;
-import graphics.Camera;
+import graphics.RenderInfo;
 
 public interface Renderer {
-    public void draw(Graphics2D g, Camera camera, GameObject objectToRender);
+    public void render(Graphics2D g, RenderInfo renderInfo);
 }

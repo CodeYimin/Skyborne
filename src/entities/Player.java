@@ -31,12 +31,4 @@ public class Player extends RenderableObject {
     private void move() {
         setPosition(getPosition().add(velocity));
     }
-
-    // public void draw(Graphics2D g) {
-    // g.setColor(Color.BLACK);
-    // g.fillRect((int) getPosition().getX(),
-    // (int) getPosition().getY(),
-    // 100,
-    // 100);
-    // }
 }

@@ -35,10 +35,9 @@ public class Camera extends GameObject implements Drawable {
 
     @Override
     public void draw(Graphics2D g) {
-        for (GameObject gameObjects : gameObjects) {
-            if (gameObjects instanceof RenderableObject) {
-                RenderableObject renderableObject = (RenderableObject) gameObjects;
-                renderableObject.render(g, this);
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject instanceof RenderableObject) {
+                ((RenderableObject) gameObject).render(g, this);
             }
         }
     }
