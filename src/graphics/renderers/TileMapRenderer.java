@@ -26,7 +26,6 @@ public class TileMapRenderer implements Renderer {
 
         for (int y = 0; y < tileMap.length; y++) {
             for (int x = 0; x < tileMap[0].length; x++) {
-                // if (tileMap[y][x]) {
                 Vector tileScreenPos = mapScreenPos
                         .add(new Vector(x, y).multiply(new Vector(tileSize)).multiply(renderInfo.zoom));
 
@@ -37,7 +36,6 @@ public class TileMapRenderer implements Renderer {
                         (int) tileScreenSize.getWidth(),
                         (int) tileScreenSize.getHeight(),
                         null);
-                // }
             }
         }
     }
