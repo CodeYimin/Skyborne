@@ -1,9 +1,7 @@
 package graphics.renderers;
 
-import java.awt.Graphics2D;
-
-import graphics.RenderInfo;
+import java.awt.Graphics;
 
 public interface Renderer {
-    public void render(Graphics2D g, RenderInfo renderInfo);
+    public void render(Graphics g, RenderInfo renderInfo);
 }

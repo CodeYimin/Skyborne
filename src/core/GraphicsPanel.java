@@ -1,4 +1,4 @@
-package graphics;
+package core;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,7 +10,7 @@ public class GraphicsPanel extends JPanel {
     private final ArrayList<Drawable> drawables = new ArrayList<>();
 
     public GraphicsPanel() {
-
+        // Do nothing
     }
 
     public void addDrawable(Drawable drawable) {

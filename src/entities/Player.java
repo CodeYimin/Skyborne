@@ -7,9 +7,10 @@ import input.VectorCompositeBinding;
 import util.Size;
 import util.Vector;
 
-public class Player extends RenderableObject {
+public class Player extends GameObject {
     private double speed = 5;
     private Vector velocity = new Vector(0, 0);
+    private Vector acceleration = new Vector(0, -1);
     private VectorCompositeBinding movementControls;
 
     public Player(VectorCompositeBinding movementControls) {
@@ -24,7 +25,7 @@ public class Player extends RenderableObject {
     public void update(UpdateInfo updateInfo) {
         Vector movementInput = movementControls.getValue();
         Vector direction = movementInput.normalize();
-        velocity = direction.multiply(speed).multiply((double) updateInfo.time.getDeltaTime() / 1000);
+        velocity = direction.multiply(speed).multiply(updateInfo.deltaTimeSeconds);
 
         move();
     }

@@ -1,8 +1,7 @@
 package graphics.renderers;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
-import graphics.RenderInfo;
 import graphics.Sprite;
 import util.Size;
 import util.Vector;
@@ -16,7 +15,7 @@ public class SpriteRenderer implements Renderer {
         this.size = size;
     }
 
-    public void render(Graphics2D g, RenderInfo renderInfo) {
+    public void render(Graphics g, RenderInfo renderInfo) {
         Size spriteScreenSize = size.multiply(renderInfo.zoom);
         Vector spriteScreenPos = renderInfo.objectScreenPos.subtract(new Vector(spriteScreenSize).divide(2));
 

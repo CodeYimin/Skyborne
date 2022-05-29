@@ -1,11 +1,12 @@
 package graphics;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
+import core.Drawable;
+import core.GraphicsPanel;
 import core.UpdateInfo;
 import entities.GameObject;
-import entities.RenderableObject;
 
 public class Camera extends GameObject implements Drawable {
     private GraphicsPanel graphicsPanel;
@@ -41,10 +42,10 @@ public class Camera extends GameObject implements Drawable {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics g) {
         for (GameObject gameObject : gameObjects) {
-            if (gameObject instanceof RenderableObject) {
-                ((RenderableObject) gameObject).render(g, this);
+            if (gameObject.getRenderer() != null) {
+                gameObject.render(g, this);
             }
         }
     }

@@ -1,23 +1,23 @@
 package graphics.renderers;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
-import graphics.RenderInfo;
 import graphics.Sprite;
 import util.Size;
 import util.Vector;
+import world.Tile;
 
 public class TileMapRenderer implements Renderer {
-    private boolean[][] tileMap;
+    private int[][] tileMap;
     private Sprite sprite = new Sprite("../assets/grass.png");
 
-    public TileMapRenderer(boolean[][] tileMap) {
+    public TileMapRenderer(int[][] tileMap) {
         this.tileMap = tileMap;
     }
 
     @Override
-    public void render(Graphics2D g, RenderInfo renderInfo) {
+    public void render(Graphics g, RenderInfo renderInfo) {
         Size tileSize = new Size(1, 1);
         Size tileScreenSize = tileSize.multiply(renderInfo.zoom);
         Size mapSize = new Size(tileMap[0].length, tileMap.length);
@@ -30,7 +30,7 @@ public class TileMapRenderer implements Renderer {
                         .add(new Vector(x, y).multiply(new Vector(tileSize)).multiply(renderInfo.zoom));
 
                 g.setColor(Color.BLACK);
-                g.drawImage(sprite.getImage(),
+                g.drawImage(Tile.getSprite(tileMap[y][x]).getImage(),
                         (int) tileScreenPos.getX(),
                         (int) tileScreenPos.getY(),
                         (int) tileScreenSize.getWidth(),

@@ -1,9 +1,8 @@
 package graphics.renderers;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
-import graphics.RenderInfo;
 import util.Size;
 import util.Vector;
 
@@ -14,7 +13,7 @@ public class RectangleRenderer implements Renderer {
         this.size = size;
     }
 
-    public void render(Graphics2D g, RenderInfo renderInfo) {
+    public void render(Graphics g, RenderInfo renderInfo) {
         Size rectScreenSize = size.multiply(renderInfo.zoom);
         Vector rectScreenPos = renderInfo.objectScreenPos.subtract(new Vector(rectScreenSize).divide(2));
 

@@ -1,6 +1,7 @@
-package graphics;
+package graphics.renderers;
 
 import entities.GameObject;
+import graphics.Camera;
 import util.Size;
 import util.Vector;
 
