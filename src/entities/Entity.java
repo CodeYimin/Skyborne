@@ -2,6 +2,8 @@ package entities;
 
 import java.awt.Graphics;
 
+import collision.Collidable;
+import collision.EntityColliderInfo;
 import core.UpdateInfo;
 import graphics.Camera;
 import graphics.Renderable;
@@ -9,7 +11,7 @@ import graphics.Sprite;
 import util.Vector;
 import world.TileMap;
 
-public abstract class Entity extends GameObject implements Renderable {
+public abstract class Entity extends GameObject implements Renderable, Collidable<EntityColliderInfo> {
     private double speed = 5;
     private Vector velocity = new Vector(0, 0);
     private Vector acceleration = new Vector(0, 0);
