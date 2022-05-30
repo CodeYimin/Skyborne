@@ -44,4 +44,8 @@ public class Game {
     public InputManager getInputManager() {
         return inputManager;
     }
+
+    public Time getTime() {
+        return time;
+    }
 }

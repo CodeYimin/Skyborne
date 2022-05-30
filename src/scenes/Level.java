@@ -28,22 +28,26 @@ public class Level implements Updatable {
 
         TileMap map = new TileMap(new int[][] {
                 { 0, 1 },
-                { 1, 0 }
+                { 1, 1 }
         });
         addGameObject(map);
 
         Player player = new Player(movementControls);
+        player.setTileMap(map);
         addGameObject(player);
 
-        Camera camera = new Camera(game.getWindow().getGraphicsPanel(), gameObjects, 100);
+        Camera camera = new Camera(game.getWindow().getGraphicsPanel());
         camera.setFollowing(player);
+        camera.setZoom(100);
+        camera.addRenderable(map);
+        camera.addRenderable(player);
         addGameObject(camera);
     }
 
     @Override
     public void update(UpdateInfo updateInfo) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(updateInfo);
+        for (GameObject updatable : gameObjects) {
+            updatable.update(updateInfo);
         }
     }
 
