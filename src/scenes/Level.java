@@ -34,6 +34,7 @@ public class Level implements Updatable {
 
         Player player = new Player(movementControls);
         player.setTileMap(map);
+        player.setPosition(new Vector(0, 2));
         addGameObject(player);
 
         Camera camera = new Camera(game.getWindow().getGraphicsPanel());

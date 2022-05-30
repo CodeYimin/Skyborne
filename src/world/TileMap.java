@@ -61,7 +61,7 @@ public class TileMap extends GameObject implements Renderable {
                     continue;
                 }
 
-                if (tiles[y][x] != 0) {
+                if (tiles[x][tiles[0].length - 1 - y] != 0) {
                     collidingTiles.add(tiles[x][tiles[0].length - 1 - y]);
                 }
             }
