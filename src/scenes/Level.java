@@ -33,6 +33,8 @@ public class Level implements Updatable {
         addGameObject(map);
 
         Player player = new Player(movementControls);
+        // player.setControls(new PlayerControls(KeyEvent.VK_W, KeyEvent.VK_S,
+        // KeyEvent.VK_A, KeyEvent.VK_D));
         player.setTileMap(map);
         player.setPosition(new Vector(0, 2));
         addGameObject(player);

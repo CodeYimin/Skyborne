@@ -17,6 +17,9 @@ public class Time {
     }
 
     public long getDeltaTime() {
+        if (lastUpdateTime == 0) {
+            return 0;
+        }
         return System.currentTimeMillis() - lastUpdateTime;
     }
 }

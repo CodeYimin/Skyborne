@@ -31,6 +31,8 @@ public abstract class Entity extends GameObject implements Renderable {
 
     @Override
     public void update(UpdateInfo updateInfo) {
+        velocity = velocity.add(acceleration.multiply(updateInfo.deltaTimeSeconds));
+
         move(updateInfo.deltaTimeSeconds);
     }
 

@@ -13,6 +13,7 @@ public class Player extends Entity {
         this.movementControls = movementControls;
 
         setSprite(new Sprite("../assets/player.jpg"));
+        setAcceleration(new Vector(0, -5));
     }
 
     @Override
@@ -21,6 +22,12 @@ public class Player extends Entity {
 
         Vector movementInput = movementControls.getValue();
         Vector direction = movementInput.normalize();
-        setVelocity(direction.multiply(speed));
+        Vector newVelocity = direction.multiply(speed);
+
+        if (getVelocity().getY() != 0) {
+            newVelocity = new Vector(newVelocity.getX(), getVelocity().getY());
+        }
+
+        setVelocity(newVelocity);
     }
 }
