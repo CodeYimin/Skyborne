@@ -36,9 +36,12 @@ public abstract class Entity extends GameObject implements Renderable {
             setPosition(getPosition().add(deltaVelocityX));
         } else {
             if (velocity.getX() > 0) {
-                setPosition(getPosition().withX(Math.ceil(getPosition().getX()) - size.getWidth() / 2));
+                setPosition(
+                        getPosition()
+                                .withX(Math.ceil(getPosition().getX() + size.getWidth() / 2) - size.getWidth() / 2));
             } else {
-                setPosition(getPosition().withX(Math.floor(getPosition().getX()) + size.getWidth() / 2));
+                setPosition(getPosition()
+                        .withX(Math.floor(getPosition().getX() - size.getWidth() / 2) + size.getWidth() / 2));
             }
         }
 
@@ -90,7 +93,7 @@ public abstract class Entity extends GameObject implements Renderable {
         Vector adjustedScreenPosition = screenPosition
                 .subtract(new Vector(size.getWidth() / 2, size.getHeight()).multiply(camera.getZoom()));
 
-        sprite.render(g, adjustedScreenPosition, camera.getZoom());
+        sprite.render(g, adjustedScreenPosition, size.multiply(camera.getZoom()));
     }
 
     public boolean collidesWith(Entity other) {

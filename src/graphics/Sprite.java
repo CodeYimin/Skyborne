@@ -6,6 +6,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import util.Size;
 import util.Vector;
 
 public class Sprite {
@@ -23,12 +24,12 @@ public class Sprite {
         return image;
     }
 
-    public void render(Graphics g, Vector screenPosition, double scale) {
+    public void render(Graphics g, Vector screenPosition, Size size) {
         g.drawImage(image,
                 (int) screenPosition.getX(),
                 (int) screenPosition.getY(),
-                (int) scale,
-                (int) scale,
+                (int) size.getWidth(),
+                (int) size.getHeight(),
                 null);
     }
 }

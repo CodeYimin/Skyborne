@@ -5,6 +5,7 @@ import graphics.Sprite;
 import input.InputManager;
 import input.PlayerControls;
 import scenes.Level;
+import util.Size;
 import util.Vector;
 
 public class Player extends Entity {
@@ -18,6 +19,7 @@ public class Player extends Entity {
 
         setSprite(new Sprite("../assets/player.jpg"));
         setAcceleration(new Vector(0, -15));
+        setSize(new Size(5, 2));
     }
 
     @Override
@@ -26,7 +28,7 @@ public class Player extends Entity {
 
         Vector newVelocity = getVelocity();
 
-        // X movement
+        // X movement input
         if (inputManager.isKeyDown(playerControls.left)) {
             newVelocity = newVelocity.withX(-speed);
         }
@@ -37,7 +39,7 @@ public class Player extends Entity {
             newVelocity = newVelocity.withX(0);
         }
 
-        // Y Movement
+        // Y movement input
         if (isGrounded() && inputManager.isKeyDown(playerControls.up)) {
             newVelocity = newVelocity.withY(speed * 1.2);
         }
