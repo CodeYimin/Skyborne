@@ -13,7 +13,17 @@ public class Tile {
             new Sprite("../assets/blocks/stone.png")
     };
 
+    private static final boolean[] solid = new boolean[] {
+            false,
+            true,
+            true
+    };
+
     public static Sprite getSprite(int id) {
         return sprites[id];
+    }
+
+    public static boolean isSolid(int id) {
+        return solid[id];
     }
 }

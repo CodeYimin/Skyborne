@@ -6,19 +6,23 @@ import core.UpdateInfo;
 import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
+import scenes.Level;
 import util.Vector;
-import world.TileMap;
 
 public abstract class Entity extends GameObject implements Renderable {
+    private Level level;
+
+    private boolean grounded;
     private double speed = 5;
+    private double maxDownwardSpeed = 8;
     private Vector velocity = new Vector(0, 0);
     private Vector acceleration = new Vector(0, 0);
+
     private Vector size = new Vector(1, 1);
     private Sprite sprite;
-    private TileMap tileMap;
 
-    public Entity() {
-        // Do nothing
+    public Entity(Level level) {
+        this.level = level;
     }
 
     private void move(double deltaTimeSeconds) {
@@ -26,22 +30,32 @@ public abstract class Entity extends GameObject implements Renderable {
         Vector deltaVelocityX = new Vector(deltaVelocity.getX(), 0);
         Vector deltaVelocityY = new Vector(0, deltaVelocity.getY());
 
-        // X Axis
+        // Move X Axis
         setPosition(getPosition().add(deltaVelocityX));
-        if (tileMap != null && tileMap.getCollidingTiles(this).size() > 0) {
+        if (level.getCollidingTiles(this).size() > 0) {
             setPosition(getPosition().subtract(deltaVelocityX));
         }
 
-        // Y Axis
+        // Move Y Axis
         setPosition(getPosition().add(deltaVelocityY));
-        if (tileMap != null && tileMap.getCollidingTiles(this).size() > 0) {
+        if (level.getCollidingTiles(this).size() > 0) {
+            if (velocity.getY() < 0) {
+                grounded = true;
+            }
+
             setPosition(getPosition().subtract(deltaVelocityY));
+        } else {
+            grounded = false;
         }
     }
 
     @Override
     public void update(UpdateInfo updateInfo) {
         velocity = velocity.add(acceleration.multiply(updateInfo.deltaTimeSeconds));
+
+        if (velocity.getY() < -maxDownwardSpeed) {
+            velocity = new Vector(velocity.getX(), -maxDownwardSpeed);
+        }
 
         move(updateInfo.deltaTimeSeconds);
     }
@@ -57,6 +71,21 @@ public abstract class Entity extends GameObject implements Renderable {
                 .subtract(new Vector(size.getX() / 2, size.getY()).multiply(camera.getZoom()));
 
         sprite.render(g, adjustedScreenPosition, camera.getZoom());
+    }
+
+    public boolean collidesWith(Entity other) {
+        Vector topLeft = getPosition()
+                .add(new Vector(-getSize().getX() / 2, getSize().getY()));
+        Vector botRight = getPosition().add(new Vector(getSize().getX() / 2, 0));
+
+        Vector otherTopLeft = other.getPosition()
+                .add(new Vector(-other.getSize().getX() / 2, other.getSize().getY()));
+        Vector otherBotRight = other.getPosition().add(new Vector(other.getSize().getX() / 2, 0));
+
+        return topLeft.getX() < otherBotRight.getX() &&
+                botRight.getX() > otherTopLeft.getX() &&
+                topLeft.getY() < otherBotRight.getY() &&
+                botRight.getY() > otherTopLeft.getY();
     }
 
     public double getSpeed() {
@@ -99,11 +128,15 @@ public abstract class Entity extends GameObject implements Renderable {
         this.sprite = sprite;
     }
 
-    public TileMap getTileMap() {
-        return tileMap;
+    public Level getLevel() {
+        return level;
     }
 
-    public void setTileMap(TileMap tileMap) {
-        this.tileMap = tileMap;
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public boolean isGrounded() {
+        return grounded;
     }
 }

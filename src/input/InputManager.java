@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class InputManager implements KeyListener {
-    private HashSet<Integer> keysHeld = new HashSet<>();
+    private HashSet<Integer> keysDown = new HashSet<>();
     private ArrayList<KeyListener> keyListeners = new ArrayList<>();
 
     @Override
     public void keyPressed(KeyEvent event) {
-        keysHeld.add(event.getKeyCode());
+        keysDown.add(event.getKeyCode());
 
         for (KeyListener listener : keyListeners) {
             listener.keyPressed(event);
@@ -20,7 +20,7 @@ public class InputManager implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent event) {
-        keysHeld.remove(event.getKeyCode());
+        keysDown.remove(event.getKeyCode());
 
         for (KeyListener listener : keyListeners) {
             listener.keyReleased(event);
@@ -34,8 +34,12 @@ public class InputManager implements KeyListener {
         }
     }
 
+    public boolean isKeyDown(int keyCode) {
+        return keysDown.contains(keyCode);
+    }
+
     public HashSet<Integer> getKeysHeld() {
-        return keysHeld;
+        return keysDown;
     }
 
     public void addKeyListener(KeyListener listener) {

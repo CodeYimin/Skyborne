@@ -32,14 +32,14 @@ public class TileMap extends GameObject implements Renderable {
         Size mapScreenSize = mapSize.multiply(camera.getZoom());
         Vector mapScreenPos = camera.getScreenPosition(this);
 
-        for (int x = 0; x < tiles.length; x++) {
-            for (int y = 0; y < tiles[0].length; y++) {
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles[0].length; col++) {
                 Vector tileScreenPos = mapScreenPos
-                        .add(new Vector(x, y).multiply(tileSize).multiply(camera.getZoom()))
+                        .add(new Vector(row, col).multiply(tileSize).multiply(camera.getZoom()))
                         .subtract(new Vector(0, mapScreenSize.getHeight()));
 
                 g.setColor(Color.BLACK);
-                g.drawImage(Tile.getSprite(tiles[y][x]).getImage(),
+                g.drawImage(Tile.getSprite(tiles[col][row]).getImage(),
                         (int) tileScreenPos.getX(),
                         (int) tileScreenPos.getY(),
                         (int) tileScreenSize,
@@ -61,7 +61,7 @@ public class TileMap extends GameObject implements Renderable {
                     continue;
                 }
 
-                if (tiles[x][tiles[0].length - 1 - y] != 0) {
+                if (Tile.isSolid(tiles[x][tiles[0].length - 1 - y])) {
                     collidingTiles.add(tiles[x][tiles[0].length - 1 - y]);
                 }
             }
