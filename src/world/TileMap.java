@@ -49,14 +49,15 @@ public class TileMap extends GameObject implements Renderable {
         }
     }
 
-    public ArrayList<Integer> getCollidingTiles(Entity entity) {
-        Vector entityTopLeft = entity.getPosition()
-                .add(new Vector(-entity.getSize().getX() / 2, entity.getSize().getY()));
-        Vector entityBottomRight = entity.getPosition().add(new Vector(entity.getSize().getX() / 2, 0));
+    public ArrayList<Integer> getCollidingTiles(Vector position, Size size) {
+        double top = position.getY() + size.getHeight();
+        double bottom = position.getY();
+        double left = position.getX() - size.getWidth() / 2;
+        double right = position.getX() + size.getWidth() / 2;
 
         ArrayList<Integer> collidingTiles = new ArrayList<>();
-        for (int x = (int) entityTopLeft.getX(); x <= entityBottomRight.getX(); x++) {
-            for (int y = (int) entityBottomRight.getY(); y <= entityTopLeft.getY(); y++) {
+        for (int x = (int) left; x < right; x++) {
+            for (int y = (int) bottom; y < top; y++) {
                 if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
                     continue;
                 }
@@ -68,5 +69,9 @@ public class TileMap extends GameObject implements Renderable {
         }
 
         return collidingTiles;
+    }
+
+    public ArrayList<Integer> getCollidingTiles(Entity entity) {
+        return getCollidingTiles(entity.getPosition(), entity.getSize());
     }
 }

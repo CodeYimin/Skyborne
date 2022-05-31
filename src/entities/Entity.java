@@ -7,6 +7,7 @@ import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
 import scenes.Level;
+import util.Size;
 import util.Vector;
 
 public abstract class Entity extends GameObject implements Renderable {
@@ -18,7 +19,7 @@ public abstract class Entity extends GameObject implements Renderable {
     private Vector velocity = new Vector(0, 0);
     private Vector acceleration = new Vector(0, 0);
 
-    private Vector size = new Vector(1, 1);
+    private Size size = new Size(1, 1);
     private Sprite sprite;
 
     public Entity(Level level) {
@@ -30,22 +31,24 @@ public abstract class Entity extends GameObject implements Renderable {
         Vector deltaVelocityX = new Vector(deltaVelocity.getX(), 0);
         Vector deltaVelocityY = new Vector(0, deltaVelocity.getY());
 
-        // Move X Axis
-        setPosition(getPosition().add(deltaVelocityX));
-        if (level.getCollidingTiles(this).size() > 0) {
-            setPosition(getPosition().subtract(deltaVelocityX));
+        if (level.getCollidingTiles(getPosition().add(deltaVelocityX), size).size() == 0) {
+            setPosition(getPosition().add(deltaVelocityX));
+        } else {
+            if (velocity.getX() > 0) {
+                setPosition(getPosition().withX(Math.ceil(getPosition().getX()) - size.getWidth() / 2));
+            } else {
+                setPosition(getPosition().withX(Math.floor(getPosition().getX()) + size.getWidth() / 2));
+            }
         }
 
-        // Move Y Axis
-        setPosition(getPosition().add(deltaVelocityY));
-        if (level.getCollidingTiles(this).size() > 0) {
-            if (velocity.getY() < 0) {
-                grounded = true;
-            }
-
-            setPosition(getPosition().subtract(deltaVelocityY));
+        if (level.getCollidingTiles(getPosition().add(deltaVelocityY), size).size() == 0) {
+            setPosition(getPosition().add(deltaVelocityY));
         } else {
-            grounded = false;
+            if (velocity.getY() < 0) {
+                setPosition(getPosition().withY(Math.floor(getPosition().getY())));
+            } else {
+                setPosition(getPosition().withY(Math.ceil(getPosition().getY() + size.getHeight()) - size.getHeight()));
+            }
         }
     }
 
@@ -68,19 +71,19 @@ public abstract class Entity extends GameObject implements Renderable {
 
         Vector screenPosition = camera.getScreenPosition(this);
         Vector adjustedScreenPosition = screenPosition
-                .subtract(new Vector(size.getX() / 2, size.getY()).multiply(camera.getZoom()));
+                .subtract(new Vector(size.getWidth() / 2, size.getHeight()).multiply(camera.getZoom()));
 
         sprite.render(g, adjustedScreenPosition, camera.getZoom());
     }
 
     public boolean collidesWith(Entity other) {
         Vector topLeft = getPosition()
-                .add(new Vector(-getSize().getX() / 2, getSize().getY()));
-        Vector botRight = getPosition().add(new Vector(getSize().getX() / 2, 0));
+                .add(new Vector(-getSize().getWidth() / 2, getSize().getHeight()));
+        Vector botRight = getPosition().add(new Vector(getSize().getWidth() / 2, 0));
 
         Vector otherTopLeft = other.getPosition()
-                .add(new Vector(-other.getSize().getX() / 2, other.getSize().getY()));
-        Vector otherBotRight = other.getPosition().add(new Vector(other.getSize().getX() / 2, 0));
+                .add(new Vector(-other.getSize().getWidth() / 2, other.getSize().getHeight()));
+        Vector otherBotRight = other.getPosition().add(new Vector(other.getSize().getWidth() / 2, 0));
 
         return topLeft.getX() < otherBotRight.getX() &&
                 botRight.getX() > otherTopLeft.getX() &&
@@ -112,11 +115,11 @@ public abstract class Entity extends GameObject implements Renderable {
         this.acceleration = acceleration;
     }
 
-    public Vector getSize() {
+    public Size getSize() {
         return size;
     }
 
-    public void setSize(Vector size) {
+    public void setSize(Size size) {
         this.size = size;
     }
 

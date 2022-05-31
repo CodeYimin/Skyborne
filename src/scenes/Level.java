@@ -11,6 +11,7 @@ import entities.GameObject;
 import entities.Player;
 import graphics.Camera;
 import input.PlayerControls;
+import util.Size;
 import util.Vector;
 import world.TileMap;
 
@@ -51,6 +52,10 @@ public class Level implements Updatable {
 
     public ArrayList<Integer> getCollidingTiles(Entity entity) {
         return tileMap.getCollidingTiles(entity);
+    }
+
+    public ArrayList<Integer> getCollidingTiles(Vector position, Size size) {
+        return tileMap.getCollidingTiles(position, size);
     }
 
     public ArrayList<Entity> getCollidingEntities(Entity entity) {
