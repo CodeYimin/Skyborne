@@ -1,11 +1,11 @@
 package collision;
 
-public class Collision<T extends ColliderInfo> {
-    public final T colliderInfo;
-    public final ColliderInfo otherColliderInfo;
+public class Collision<T extends CollisionInfo> {
+    public final T collisionInfo;
+    public final CollisionInfo otherCollisionInfo;
 
-    public Collision(T colliderInfo, ColliderInfo otherColliderInfo) {
-        this.colliderInfo = colliderInfo;
-        this.otherColliderInfo = otherColliderInfo;
+    public Collision(T colliderInfo, CollisionInfo otherColliderInfo) {
+        this.collisionInfo = colliderInfo;
+        this.otherCollisionInfo = otherColliderInfo;
     }
 }

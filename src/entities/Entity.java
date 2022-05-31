@@ -2,8 +2,6 @@ package entities;
 
 import java.awt.Graphics;
 
-import collision.Collidable;
-import collision.EntityColliderInfo;
 import core.UpdateInfo;
 import graphics.Camera;
 import graphics.Renderable;
@@ -11,7 +9,7 @@ import graphics.Sprite;
 import util.Vector;
 import world.TileMap;
 
-public abstract class Entity extends GameObject implements Renderable, Collidable<EntityColliderInfo> {
+public abstract class Entity extends GameObject implements Renderable {
     private double speed = 5;
     private Vector velocity = new Vector(0, 0);
     private Vector acceleration = new Vector(0, 0);
@@ -25,9 +23,19 @@ public abstract class Entity extends GameObject implements Renderable, Collidabl
 
     private void move(double deltaTimeSeconds) {
         Vector deltaVelocity = velocity.multiply(deltaTimeSeconds);
-        setPosition(getPosition().add(deltaVelocity));
+        Vector deltaVelocityX = new Vector(deltaVelocity.getX(), 0);
+        Vector deltaVelocityY = new Vector(0, deltaVelocity.getY());
+
+        // X Axis
+        setPosition(getPosition().add(deltaVelocityX));
         if (tileMap != null && tileMap.getCollidingTiles(this).size() > 0) {
-            setPosition(getPosition().subtract(deltaVelocity));
+            setPosition(getPosition().subtract(deltaVelocityX));
+        }
+
+        // Y Axis
+        setPosition(getPosition().add(deltaVelocityY));
+        if (tileMap != null && tileMap.getCollidingTiles(this).size() > 0) {
+            setPosition(getPosition().subtract(deltaVelocityY));
         }
     }
 

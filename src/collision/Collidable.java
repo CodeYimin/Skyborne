@@ -1,7 +1,7 @@
 package collision;
 
-public interface Collidable<T extends ColliderInfo> {
-    public Collision<T> getCollision(Collidable<?> other);
+public interface Collidable<T extends CollisionInfo> {
+    public Collider<T> getCollider();
 
     public void onCollision(Collision<T> collision);
 }

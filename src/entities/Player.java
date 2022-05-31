@@ -24,9 +24,9 @@ public class Player extends Entity {
         Vector direction = movementInput.normalize();
         Vector newVelocity = direction.multiply(speed);
 
-        if (getVelocity().getY() != 0) {
-            newVelocity = new Vector(newVelocity.getX(), getVelocity().getY());
-        }
+        // if (getVelocity().getY() != 0) {
+        // newVelocity = new Vector(newVelocity.getX(), getVelocity().getY());
+        // }
 
         setVelocity(newVelocity);
     }

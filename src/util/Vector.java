@@ -1,6 +1,13 @@
 package util;
 
 public class Vector {
+    public static final Vector ZERO = new Vector(0, 0);
+    public static final Vector ONE = new Vector(1, 1);
+    public static final Vector LEFT = new Vector(-1, 0);
+    public static final Vector RIGHT = new Vector(1, 0);
+    public static final Vector UP = new Vector(0, -1);
+    public static final Vector DOWN = new Vector(0, 1);
+
     private final double x;
     private final double y;
 
@@ -20,6 +27,14 @@ public class Vector {
 
     public double getY() {
         return y;
+    }
+
+    public Vector withX(double newX) {
+        return new Vector(newX, y);
+    }
+
+    public Vector withY(double newY) {
+        return new Vector(x, newY);
     }
 
     public Vector add(Vector other) {
