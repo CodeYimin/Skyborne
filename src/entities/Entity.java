@@ -15,7 +15,7 @@ public abstract class Entity extends GameObject implements Renderable {
 
     private boolean grounded;
     private double speed = 5;
-    private double maxDownwardSpeed = 8;
+    private double maxDownwardSpeed = 15;
     private Vector velocity = new Vector(0, 0);
     private Vector acceleration = new Vector(0, 0);
 
@@ -31,6 +31,7 @@ public abstract class Entity extends GameObject implements Renderable {
         Vector deltaVelocityX = new Vector(deltaVelocity.getX(), 0);
         Vector deltaVelocityY = new Vector(0, deltaVelocity.getY());
 
+        // Move X
         if (level.getCollidingTiles(getPosition().add(deltaVelocityX), size).size() == 0) {
             setPosition(getPosition().add(deltaVelocityX));
         } else {
@@ -41,6 +42,7 @@ public abstract class Entity extends GameObject implements Renderable {
             }
         }
 
+        // Move Y
         if (level.getCollidingTiles(getPosition().add(deltaVelocityY), size).size() == 0) {
             setPosition(getPosition().add(deltaVelocityY));
         } else {
@@ -54,12 +56,27 @@ public abstract class Entity extends GameObject implements Renderable {
 
     @Override
     public void update(UpdateInfo updateInfo) {
-        velocity = velocity.add(acceleration.multiply(updateInfo.deltaTimeSeconds));
-
-        if (velocity.getY() < -maxDownwardSpeed) {
-            velocity = new Vector(velocity.getX(), -maxDownwardSpeed);
+        // Test if entity is grounded
+        boolean isIntY = Math.floor(getPosition().getY()) == getPosition().getY();
+        if (isIntY && level.getCollidingTiles(getPosition().add(Vector.DOWN), size).size() > 0) {
+            grounded = true;
+        } else {
+            grounded = false;
         }
 
+        // Apply acceleration to velocity
+        velocity = velocity.add(acceleration.multiply(updateInfo.deltaTimeSeconds));
+
+        // Correct downward velocity
+        if (grounded && velocity.getY() < 0) {
+            velocity = velocity.withY(0);
+        } else {
+            if (velocity.getY() < -maxDownwardSpeed) {
+                velocity = velocity.withY(-maxDownwardSpeed);
+            }
+        }
+
+        // Move entity
         move(updateInfo.deltaTimeSeconds);
     }
 

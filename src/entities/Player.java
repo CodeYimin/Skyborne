@@ -17,27 +17,32 @@ public class Player extends Entity {
         this.inputManager = inputManager;
 
         setSprite(new Sprite("../assets/player.jpg"));
-        // setAcceleration(new Vector(0, -50));
+        setAcceleration(new Vector(0, -15));
     }
 
     @Override
     public void update(UpdateInfo updateInfo) {
         super.update(updateInfo);
 
-        Vector newVelocity = Vector.ZERO;
+        Vector newVelocity = getVelocity();
 
+        // X movement
         if (inputManager.isKeyDown(playerControls.left)) {
-            newVelocity = newVelocity.add(Vector.LEFT.multiply(speed));
+            newVelocity = newVelocity.withX(-speed);
         }
         if (inputManager.isKeyDown(playerControls.right)) {
-            newVelocity = newVelocity.add(Vector.RIGHT.multiply(speed));
+            newVelocity = newVelocity.withX(speed);
+        }
+        if (!inputManager.isKeyDown(playerControls.right) && !inputManager.isKeyDown(playerControls.left)) {
+            newVelocity = newVelocity.withX(0);
         }
 
-        if (inputManager.isKeyDown(playerControls.up)) {
-            newVelocity = newVelocity.add(Vector.UP.multiply(speed));
+        // Y Movement
+        if (isGrounded() && inputManager.isKeyDown(playerControls.up)) {
+            newVelocity = newVelocity.withY(speed * 1.2);
         }
         if (inputManager.isKeyDown(playerControls.down)) {
-            newVelocity = newVelocity.add(Vector.DOWN.multiply(speed));
+            newVelocity = newVelocity.withY(-speed);
         }
 
         setVelocity(newVelocity);
