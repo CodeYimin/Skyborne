@@ -16,6 +16,7 @@ public abstract class Entity extends GameObject implements Renderable {
     private double speed = 5;
     private Vector velocity = new Vector(0, 0);
     private double gravity = 0;
+    private boolean antiTileCollision = false;
 
     private Size size = new Size(1, 1);
     private Sprite sprite;
@@ -24,8 +25,22 @@ public abstract class Entity extends GameObject implements Renderable {
         this.level = level;
     }
 
+    public void onCollision(Entity other) {
+        // Do nothing
+    }
+
+    public void onCollision(int tile) {
+        // Do nothing
+    }
+
     private void move() {
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
+
+        if (!antiTileCollision) {
+            setPosition(getPosition().add(moveAmount));
+            return;
+        }
+
         double xMoveAmount = moveAmount.x();
         double yMoveAmount = moveAmount.y();
 
@@ -37,16 +52,23 @@ public abstract class Entity extends GameObject implements Renderable {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
                 // Right collision
-                setPosition(getPosition().withX(Math.ceil(getHitbox().right()) - size.width() / 2));
+                setPosition(getPosition().withX(Math.ceil(getHitbox().right()) - size.width()
+                        / 2));
             } else {
                 // Left collision
-                setPosition(getPosition().withX(Math.floor(getHitbox().left()) + size.width() / 2));
+                setPosition(getPosition().withX(Math.floor(getHitbox().left()) + size.width()
+                        / 2));
             }
         } else {
             setPosition(xMovePosition);
         }
 
         // Move Y
+        if (grounded && yMoveAmount < 0) {
+            // If grounded and moving downwards, don't let it
+            return;
+        }
+
         Vector yMovePosition = getPosition().addY(yMoveAmount);
         Hitbox yMoveHitbox = new Hitbox(yMovePosition, size);
         boolean yMoveCollision = level.getCollidingTiles(yMoveHitbox).size() > 0;
@@ -54,7 +76,8 @@ public abstract class Entity extends GameObject implements Renderable {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
                 // Top collision
-                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) - size.height()));
+                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) -
+                        size.height()));
             } else {
                 // Bottom collision
                 setPosition(getPosition().withY(Math.floor(getHitbox().bottom())));
@@ -81,11 +104,6 @@ public abstract class Entity extends GameObject implements Renderable {
         // Apply gravity
         velocity = velocity.addY(-gravity * getDeltaTimeSecs());
 
-        // Reset downward velocity if grounded
-        if (grounded && velocity.y() < 0) {
-            velocity = velocity.withY(0);
-        }
-
         // Move entity
         move();
     }
@@ -96,13 +114,11 @@ public abstract class Entity extends GameObject implements Renderable {
             return;
         }
 
-        Vector screenPosition = camera.worldToScreenPosition(getPosition());
-        Vector adjustedScreenPosition = screenPosition
-                .divide(camera.getZoom())
-                .subtract(size.width() / 2, size.height())
-                .multiply(camera.getZoom());
+        // Bottom midpoint --> Top left corner
+        Vector adjustedPosition = getPosition().subtractX(size.width() / 2).addY(size.height());
+        Vector screenPosition = camera.worldToScreenPosition(adjustedPosition);
 
-        sprite.render(g, adjustedScreenPosition, size.multiply(camera.getZoom()));
+        sprite.render(g, screenPosition, size.multiply(camera.getZoom()));
     }
 
     public boolean collidesWith(Entity other) {
@@ -151,6 +167,14 @@ public abstract class Entity extends GameObject implements Renderable {
 
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;
+    }
+
+    public boolean isAntiTileCollision() {
+        return antiTileCollision;
+    }
+
+    public void setAntiTileCollision(boolean antiTileCollision) {
+        this.antiTileCollision = antiTileCollision;
     }
 
     public Level getLevel() {

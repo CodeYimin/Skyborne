@@ -19,6 +19,7 @@ public class Player extends Entity {
         setSprite(new Sprite("../assets/player.jpg"));
         setGravity(15);
         setSize(new Size(1, 1));
+        setAntiTileCollision(true);
     }
 
     @Override
@@ -45,16 +46,6 @@ public class Player extends Entity {
         if (inputManager.isKeyDown(playerControls.down)) {
             newVelocity = newVelocity.withY(-speed);
         }
-        // if (inputManager.isKeyDown(playerControls.up)) {
-        // newVelocity = newVelocity.withY(speed * 1.2);
-        // }
-        // if (inputManager.isKeyDown(playerControls.down)) {
-        // newVelocity = newVelocity.withY(-speed);
-        // }
-        // if (!inputManager.isKeyDown(playerControls.up) &&
-        // !inputManager.isKeyDown(playerControls.down)) {
-        // newVelocity = newVelocity.withY(0);
-        // }
 
         setVelocity(newVelocity);
     }

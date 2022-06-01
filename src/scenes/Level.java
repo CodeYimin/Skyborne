@@ -49,6 +49,26 @@ public class Level implements Updatable {
         for (GameObject updatable : gameObjects) {
             updatable.update();
         }
+
+        checkEntityCollision();
+    }
+
+    public void checkEntityCollision() {
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject instanceof Entity) {
+                Entity entity = (Entity) gameObject;
+
+                ArrayList<Entity> collidingEntities = getCollidingEntities(entity);
+                for (Entity collidingEntity : collidingEntities) {
+                    entity.onCollision(collidingEntity);
+                }
+
+                ArrayList<Integer> collidingTiles = getCollidingTiles(entity);
+                for (int collidingTile : collidingTiles) {
+                    entity.onCollision(collidingTile);
+                }
+            }
+        }
     }
 
     public ArrayList<Integer> getCollidingTiles(Entity entity) {
