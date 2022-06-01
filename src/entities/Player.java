@@ -1,6 +1,5 @@
 package entities;
 
-import core.UpdateInfo;
 import graphics.Sprite;
 import input.InputManager;
 import input.PlayerControls;
@@ -18,17 +17,17 @@ public class Player extends Entity {
         this.inputManager = inputManager;
 
         setSprite(new Sprite("../assets/player.jpg"));
-        setAcceleration(new Vector(0, -15));
-        setSize(new Size(5, 2));
+        setGravity(15);
+        setSize(new Size(1, 1));
     }
 
     @Override
-    public void update(UpdateInfo updateInfo) {
-        super.update(updateInfo);
+    public void update() {
+        super.update();
 
         Vector newVelocity = getVelocity();
 
-        // X movement input
+        // X movement
         if (inputManager.isKeyDown(playerControls.left)) {
             newVelocity = newVelocity.withX(-speed);
         }
@@ -39,13 +38,23 @@ public class Player extends Entity {
             newVelocity = newVelocity.withX(0);
         }
 
-        // Y movement input
+        // Y movement
         if (isGrounded() && inputManager.isKeyDown(playerControls.up)) {
             newVelocity = newVelocity.withY(speed * 1.2);
         }
         if (inputManager.isKeyDown(playerControls.down)) {
             newVelocity = newVelocity.withY(-speed);
         }
+        // if (inputManager.isKeyDown(playerControls.up)) {
+        // newVelocity = newVelocity.withY(speed * 1.2);
+        // }
+        // if (inputManager.isKeyDown(playerControls.down)) {
+        // newVelocity = newVelocity.withY(-speed);
+        // }
+        // if (!inputManager.isKeyDown(playerControls.up) &&
+        // !inputManager.isKeyDown(playerControls.down)) {
+        // newVelocity = newVelocity.withY(0);
+        // }
 
         setVelocity(newVelocity);
     }

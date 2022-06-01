@@ -2,7 +2,6 @@ package entities;
 
 import java.awt.Graphics;
 
-import core.UpdateInfo;
 import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
@@ -15,9 +14,8 @@ public abstract class Entity extends GameObject implements Renderable {
 
     private boolean grounded;
     private double speed = 5;
-    private double maxDownwardSpeed = 15;
     private Vector velocity = new Vector(0, 0);
-    private Vector acceleration = new Vector(0, 0);
+    private double gravity = 0;
 
     private Size size = new Size(1, 1);
     private Sprite sprite;
@@ -26,61 +24,70 @@ public abstract class Entity extends GameObject implements Renderable {
         this.level = level;
     }
 
-    private void move(double deltaTimeSeconds) {
-        Vector deltaVelocity = velocity.multiply(deltaTimeSeconds);
-        Vector deltaVelocityX = new Vector(deltaVelocity.getX(), 0);
-        Vector deltaVelocityY = new Vector(0, deltaVelocity.getY());
+    private void move() {
+        Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
+        double xMoveAmount = moveAmount.x();
+        double yMoveAmount = moveAmount.y();
 
         // Move X
-        if (level.getCollidingTiles(getPosition().add(deltaVelocityX), size).size() == 0) {
-            setPosition(getPosition().add(deltaVelocityX));
-        } else {
-            if (velocity.getX() > 0) {
-                setPosition(
-                        getPosition()
-                                .withX(Math.ceil(getPosition().getX() + size.getWidth() / 2) - size.getWidth() / 2));
+        Vector xMovePosition = getPosition().addX(xMoveAmount);
+        Hitbox xMoveHitbox = new Hitbox(xMovePosition, size);
+        boolean xMoveCollision = level.getCollidingTiles(xMoveHitbox).size() > 0;
+        if (xMoveCollision) {
+            // Adjust position on collision to perfectly align with tile
+            if (velocity.x() > 0) {
+                // Right collision
+                setPosition(getPosition().withX(Math.ceil(getHitbox().right()) - size.width() / 2));
             } else {
-                setPosition(getPosition()
-                        .withX(Math.floor(getPosition().getX() - size.getWidth() / 2) + size.getWidth() / 2));
+                // Left collision
+                setPosition(getPosition().withX(Math.floor(getHitbox().left()) + size.width() / 2));
             }
+        } else {
+            setPosition(xMovePosition);
         }
 
         // Move Y
-        if (level.getCollidingTiles(getPosition().add(deltaVelocityY), size).size() == 0) {
-            setPosition(getPosition().add(deltaVelocityY));
-        } else {
-            if (velocity.getY() < 0) {
-                setPosition(getPosition().withY(Math.floor(getPosition().getY())));
+        Vector yMovePosition = getPosition().addY(yMoveAmount);
+        Hitbox yMoveHitbox = new Hitbox(yMovePosition, size);
+        boolean yMoveCollision = level.getCollidingTiles(yMoveHitbox).size() > 0;
+        if (yMoveCollision) {
+            // Adjust position on collision to perfectly align with tile
+            if (velocity.y() > 0) {
+                // Top collision
+                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) - size.height()));
             } else {
-                setPosition(getPosition().withY(Math.ceil(getPosition().getY() + size.getHeight()) - size.getHeight()));
+                // Bottom collision
+                setPosition(getPosition().withY(Math.floor(getHitbox().bottom())));
             }
+        } else {
+            setPosition(yMovePosition);
         }
     }
 
     @Override
-    public void update(UpdateInfo updateInfo) {
+    public void update() {
+        super.update();
+
         // Test if entity is grounded
-        boolean isIntY = Math.floor(getPosition().getY()) == getPosition().getY();
-        if (isIntY && level.getCollidingTiles(getPosition().add(Vector.DOWN), size).size() > 0) {
+        Vector positionBelow = getPosition().ceilY().subtractY(1);
+        Hitbox hitboxBelow = new Hitbox(positionBelow, size);
+        boolean collisionBelow = level.getCollidingTiles(hitboxBelow).size() > 0;
+        if (collisionBelow) {
             grounded = true;
         } else {
             grounded = false;
         }
 
-        // Apply acceleration to velocity
-        velocity = velocity.add(acceleration.multiply(updateInfo.deltaTimeSeconds));
+        // Apply gravity
+        velocity = velocity.addY(-gravity * getDeltaTimeSecs());
 
-        // Correct downward velocity
-        if (grounded && velocity.getY() < 0) {
+        // Reset downward velocity if grounded
+        if (grounded && velocity.y() < 0) {
             velocity = velocity.withY(0);
-        } else {
-            if (velocity.getY() < -maxDownwardSpeed) {
-                velocity = velocity.withY(-maxDownwardSpeed);
-            }
         }
 
         // Move entity
-        move(updateInfo.deltaTimeSeconds);
+        move();
     }
 
     @Override
@@ -89,26 +96,17 @@ public abstract class Entity extends GameObject implements Renderable {
             return;
         }
 
-        Vector screenPosition = camera.getScreenPosition(this);
+        Vector screenPosition = camera.worldToScreenPosition(getPosition());
         Vector adjustedScreenPosition = screenPosition
-                .subtract(new Vector(size.getWidth() / 2, size.getHeight()).multiply(camera.getZoom()));
+                .divide(camera.getZoom())
+                .subtract(size.width() / 2, size.height())
+                .multiply(camera.getZoom());
 
         sprite.render(g, adjustedScreenPosition, size.multiply(camera.getZoom()));
     }
 
     public boolean collidesWith(Entity other) {
-        Vector topLeft = getPosition()
-                .add(new Vector(-getSize().getWidth() / 2, getSize().getHeight()));
-        Vector botRight = getPosition().add(new Vector(getSize().getWidth() / 2, 0));
-
-        Vector otherTopLeft = other.getPosition()
-                .add(new Vector(-other.getSize().getWidth() / 2, other.getSize().getHeight()));
-        Vector otherBotRight = other.getPosition().add(new Vector(other.getSize().getWidth() / 2, 0));
-
-        return topLeft.getX() < otherBotRight.getX() &&
-                botRight.getX() > otherTopLeft.getX() &&
-                topLeft.getY() < otherBotRight.getY() &&
-                botRight.getY() > otherTopLeft.getY();
+        return getHitbox().intersects(other.getHitbox());
     }
 
     public double getSpeed() {
@@ -127,12 +125,12 @@ public abstract class Entity extends GameObject implements Renderable {
         this.velocity = velocity;
     }
 
-    public Vector getAcceleration() {
-        return acceleration;
+    public double getGravity() {
+        return gravity;
     }
 
-    public void setAcceleration(Vector acceleration) {
-        this.acceleration = acceleration;
+    public void setGravity(double gravityAcceleration) {
+        this.gravity = gravityAcceleration;
     }
 
     public Size getSize() {
@@ -141,6 +139,10 @@ public abstract class Entity extends GameObject implements Renderable {
 
     public void setSize(Size size) {
         this.size = size;
+    }
+
+    public Hitbox getHitbox() {
+        return new Hitbox(getPosition(), size);
     }
 
     public Sprite getSprite() {

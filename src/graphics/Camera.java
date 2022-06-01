@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import core.Drawable;
 import core.GraphicsPanel;
-import core.UpdateInfo;
 import entities.Entity;
 import entities.GameObject;
 import util.Size;
@@ -25,7 +24,9 @@ public class Camera extends GameObject implements Drawable {
     }
 
     @Override
-    public void update(UpdateInfo updateInfo) {
+    public void update() {
+        super.update();
+
         if (following != null) {
             position = following.getPosition();
         }
@@ -38,18 +39,19 @@ public class Camera extends GameObject implements Drawable {
         }
     }
 
-    public Vector getScreenPosition(GameObject gameObject) {
+    public Vector worldToScreenPosition(Vector position) {
         Size screenSize = new Size(
                 getGraphicsPanel().getWidth(),
                 getGraphicsPanel().getHeight());
         Vector screenCenter = new Vector(screenSize.divide(2));
-        Vector objectCameraOffset = gameObject.getPosition().subtract(getPosition());
-        Vector objectScreenPos = objectCameraOffset
-                .multiply(new Vector(1, -1))
+
+        Vector cameraDistToPosition = position.subtract(getPosition());
+        Vector screenPosition = cameraDistToPosition
+                .multiplyY(-1)
                 .multiply(zoom)
                 .add(screenCenter);
 
-        return objectScreenPos;
+        return screenPosition;
     }
 
     public Vector getPosition() {

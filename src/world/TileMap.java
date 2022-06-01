@@ -1,47 +1,40 @@
 package world;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import core.UpdateInfo;
 import entities.Entity;
 import entities.GameObject;
+import entities.Hitbox;
 import graphics.Camera;
 import graphics.Renderable;
-import util.Size;
 import util.Vector;
 
-public class TileMap extends GameObject implements Renderable {
-    private double tileSize = 1;
+public class Tilemap extends GameObject implements Renderable {
     private int[][] tiles;
 
-    public TileMap(int[][] tiles) {
+    public Tilemap(int[][] tiles) {
         this.tiles = tiles;
     }
 
     @Override
-    public void update(UpdateInfo updateInfo) {
-        // Do nothing
+    public Vector getPosition() {
+        return Vector.ZERO;
     }
 
     @Override
     public void render(Graphics g, Camera camera) {
-        double tileScreenSize = tileSize * camera.getZoom();
-        Size mapSize = new Size(tiles.length, tiles[0].length);
-        Size mapScreenSize = mapSize.multiply(camera.getZoom());
-        Vector mapScreenPos = camera.getScreenPosition(this);
+        double tileScreenSize = camera.getZoom();
 
-        for (int row = 0; row < tiles.length; row++) {
-            for (int col = 0; col < tiles[0].length; col++) {
-                Vector tileScreenPos = mapScreenPos
-                        .add(new Vector(row, col).multiply(tileSize).multiply(camera.getZoom()))
-                        .subtract(new Vector(0, mapScreenSize.getHeight()));
+        for (int x = 0; x < tiles.length; x++) {
+            for (int y = 0; y < tiles[0].length; y++) {
+                // Top left corner
+                Vector tilePosition = new Vector(x, y + 1);
+                Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
-                g.setColor(Color.BLACK);
-                g.drawImage(Tile.getSprite(tiles[col][row]).getImage(),
-                        (int) tileScreenPos.getX(),
-                        (int) tileScreenPos.getY(),
+                g.drawImage(Tile.getSprite(tiles[x][y]).getImage(),
+                        (int) tileScreenPosition.x(),
+                        (int) tileScreenPosition.y(),
                         (int) tileScreenSize,
                         (int) tileScreenSize,
                         null);
@@ -49,21 +42,14 @@ public class TileMap extends GameObject implements Renderable {
         }
     }
 
-    public ArrayList<Integer> getCollidingTiles(Vector position, Size size) {
-        double top = position.getY() + size.getHeight();
-        double bottom = position.getY();
-        double left = position.getX() - size.getWidth() / 2;
-        double right = position.getX() + size.getWidth() / 2;
-
+    public ArrayList<Integer> getCollidingTiles(Hitbox hitbox) {
         ArrayList<Integer> collidingTiles = new ArrayList<>();
-        for (int x = (int) left; x < right; x++) {
-            for (int y = (int) bottom; y < top; y++) {
-                if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
-                    continue;
-                }
 
-                if (Tile.isSolid(tiles[x][tiles[0].length - 1 - y])) {
-                    collidingTiles.add(tiles[x][tiles[0].length - 1 - y]);
+        for (int x = (int) hitbox.left(); x < hitbox.right(); x++) {
+            for (int y = (int) hitbox.bottom(); y < hitbox.top(); y++) {
+                int tile = getTileAt(x, y);
+                if (tile != -1 && Tile.isSolid(tile)) {
+                    collidingTiles.add(tile);
                 }
             }
         }
@@ -72,6 +58,22 @@ public class TileMap extends GameObject implements Renderable {
     }
 
     public ArrayList<Integer> getCollidingTiles(Entity entity) {
-        return getCollidingTiles(entity.getPosition(), entity.getSize());
+        return getCollidingTiles(entity.getHitbox());
+    }
+
+    public int getTileAt(int x, int y) {
+        if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
+            return -1;
+        }
+
+        return tiles[x][y];
+    }
+
+    public int getTileAt(Vector position) {
+        return getTileAt((int) position.x(), (int) position.y());
+    }
+
+    public void setTile(int x, int y, int tile) {
+        tiles[x][y] = tile;
     }
 }

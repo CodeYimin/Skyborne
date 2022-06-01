@@ -7,7 +7,6 @@ import util.Const;
 public class Game {
     private GameWindow window = new GameWindow("Epic Game");
     private InputManager inputManager = new InputManager();
-    private Time time = new Time();
 
     private Level level = new Level(this);
 
@@ -29,12 +28,9 @@ public class Game {
     }
 
     private void update() {
-        UpdateInfo updateInfo = new UpdateInfo(time);
-
-        level.update(updateInfo);
+        level.update();
 
         window.getGraphicsPanel().repaint();
-        time.update();
     }
 
     public GameWindow getWindow() {
@@ -43,9 +39,5 @@ public class Game {
 
     public InputManager getInputManager() {
         return inputManager;
-    }
-
-    public Time getTime() {
-        return time;
     }
 }

@@ -9,11 +9,11 @@ public class Size {
         this.height = height;
     }
 
-    public double getWidth() {
+    public double width() {
         return width;
     }
 
-    public double getHeight() {
+    public double height() {
         return height;
     }
 

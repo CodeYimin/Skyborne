@@ -26,10 +26,10 @@ public class Sprite {
 
     public void render(Graphics g, Vector screenPosition, Size size) {
         g.drawImage(image,
-                (int) screenPosition.getX(),
-                (int) screenPosition.getY(),
-                (int) size.getWidth(),
-                (int) size.getHeight(),
+                (int) screenPosition.x(),
+                (int) screenPosition.y(),
+                (int) size.width(),
+                (int) size.height(),
                 null);
     }
 }
