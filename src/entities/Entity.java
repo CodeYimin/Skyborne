@@ -34,6 +34,11 @@ public abstract class Entity extends GameObject implements Renderable {
     }
 
     private void move() {
+        if (antiTileCollision && grounded && velocity.y() < 0) {
+            // Prevent accelerating through tile below when antiTileCollision enabled
+            velocity = velocity.withY(0);
+        }
+
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
 
         if (!antiTileCollision) {
@@ -41,6 +46,8 @@ public abstract class Entity extends GameObject implements Renderable {
             return;
         }
 
+        // Split movement into x and y component for detecting collision on individual
+        // axises
         double xMoveAmount = moveAmount.x();
         double yMoveAmount = moveAmount.y();
 
@@ -61,12 +68,6 @@ public abstract class Entity extends GameObject implements Renderable {
             }
         } else {
             setPosition(xMovePosition);
-        }
-
-        // Move Y
-        if (grounded && yMoveAmount < 0) {
-            // If grounded and moving downwards, don't let it
-            return;
         }
 
         Vector yMovePosition = getPosition().addY(yMoveAmount);
