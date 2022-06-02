@@ -15,7 +15,7 @@ public abstract class Entity extends GameObject implements Renderable {
     private boolean grounded;
     private Vector velocity = new Vector(0, 0);
     private double gravity = 0;
-    private boolean antiTileCollision = false;
+    private boolean phasesTiles = false;
 
     private Size size = new Size(1, 1);
     private Sprite sprite;
@@ -32,21 +32,13 @@ public abstract class Entity extends GameObject implements Renderable {
         // Do nothing
     }
 
-    private void move() {
-        if (antiTileCollision && grounded && velocity.y() < 0) {
-            // Prevent accelerating through tile below when antiTileCollision enabled
+    private void moveWithTileCollision() {
+        if (grounded && velocity.y() < 0) {
+            // Prevent accelerating through the ground
             velocity = velocity.withY(0);
         }
 
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
-
-        if (!antiTileCollision) {
-            setPosition(getPosition().add(moveAmount));
-            return;
-        }
-
-        // Split movement into x and y component for detecting collision on individual
-        // axises
         double xMoveAmount = moveAmount.x();
         double yMoveAmount = moveAmount.y();
 
@@ -58,17 +50,20 @@ public abstract class Entity extends GameObject implements Renderable {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
                 // Right collision
-                setPosition(getPosition().withX(Math.ceil(getHitbox().right()) - size.width()
-                        / 2));
+                setPosition(
+                        getPosition()
+                                .withX(Math.ceil(getHitbox().right()) - size.width() / 2));
             } else {
                 // Left collision
-                setPosition(getPosition().withX(Math.floor(getHitbox().left()) + size.width()
-                        / 2));
+                setPosition(
+                        getPosition()
+                                .withX(Math.floor(getHitbox().left()) + size.width() / 2));
             }
         } else {
             setPosition(xMovePosition);
         }
 
+        // Move Y
         Vector yMovePosition = getPosition().addY(yMoveAmount);
         Hitbox yMoveHitbox = new Hitbox(yMovePosition, size);
         boolean yMoveCollision = world.getCollisionManager().getCollidingTiles(yMoveHitbox).size() > 0;
@@ -76,8 +71,7 @@ public abstract class Entity extends GameObject implements Renderable {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
                 // Top collision
-                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) -
-                        size.height()));
+                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) - size.height()));
             } else {
                 // Bottom collision
                 setPosition(getPosition().withY(Math.floor(getHitbox().bottom())));
@@ -85,6 +79,10 @@ public abstract class Entity extends GameObject implements Renderable {
         } else {
             setPosition(yMovePosition);
         }
+    }
+
+    public void move() {
+        setPosition(getPosition().add(velocity.multiply(getDeltaTimeSecs())));
     }
 
     @Override
@@ -105,7 +103,11 @@ public abstract class Entity extends GameObject implements Renderable {
         velocity = velocity.addY(-gravity * getDeltaTimeSecs());
 
         // Move entity
-        move();
+        if (phasesTiles) {
+            move();
+        } else {
+            moveWithTileCollision();
+        }
     }
 
     @Override
@@ -161,12 +163,12 @@ public abstract class Entity extends GameObject implements Renderable {
         this.sprite = sprite;
     }
 
-    public boolean isAntiTileCollision() {
-        return antiTileCollision;
+    public boolean phasesTiles() {
+        return phasesTiles;
     }
 
-    public void setAntiTileCollision(boolean antiTileCollision) {
-        this.antiTileCollision = antiTileCollision;
+    public void setPhasesTiles(boolean phasesTiles) {
+        this.phasesTiles = phasesTiles;
     }
 
     public World getLevel() {

@@ -35,7 +35,12 @@ public class World implements Updatable {
         this.camera.addRenderable(tilemap);
 
         Player player = new Player(this, game.getInputManager());
-        player.setControls(new PlayerControls(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D));
+        player.setControls(new PlayerControls(
+                KeyEvent.VK_W,
+                KeyEvent.VK_S,
+                KeyEvent.VK_A,
+                KeyEvent.VK_D,
+                KeyEvent.VK_F));
         player.setPosition(new Vector(0, 2));
         instantiateEntity(player);
 

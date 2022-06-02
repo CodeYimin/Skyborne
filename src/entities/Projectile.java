@@ -8,5 +8,6 @@ public class Projectile extends Entity {
         super(world);
 
         setSprite(new Sprite("../assets/player.jpg"));
+        setPhasesTiles(true);
     }
 }

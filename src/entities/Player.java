@@ -20,7 +20,7 @@ public class Player extends Entity {
         setSprite(new Sprite("../assets/player.jpg"));
         setGravity(15);
         setSize(new Size(1, 1));
-        setAntiTileCollision(true);
+        setPhasesTiles(false);
 
         weapon = new Weapon(level);
     }
@@ -29,6 +29,11 @@ public class Player extends Entity {
     public void update() {
         super.update();
 
+        keyboardMovement();
+        keyboardShoot();
+    }
+
+    public void keyboardMovement() {
         Vector newVelocity = getVelocity();
 
         // X movement
@@ -51,6 +56,12 @@ public class Player extends Entity {
         }
 
         setVelocity(newVelocity);
+    }
+
+    public void keyboardShoot() {
+        if (inputManager.isKeyDown(playerControls.attack)) {
+            weapon.shoot(getPosition(), Vector.RIGHT.multiply(10));
+        }
     }
 
     public PlayerControls getControls() {
