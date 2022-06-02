@@ -1,14 +1,14 @@
 package core;
 
 import input.InputManager;
-import scenes.Level;
+import scenes.World;
 import util.Const;
 
 public class Game {
     private GameWindow window = new GameWindow("Epic Game");
     private InputManager inputManager = new InputManager();
 
-    private Level level = new Level(this);
+    private World level = new World(this);
 
     public Game() {
         window.addKeyListener(inputManager);

@@ -34,8 +34,8 @@ public class Camera extends GameObject implements Drawable {
 
     @Override
     public void draw(Graphics g) {
-        for (Renderable renderable : renderables) {
-            renderable.render(g, this);
+        for (int i = 0; i < renderables.size(); i++) {
+            renderables.get(i).render(g, this);
         }
     }
 
@@ -84,5 +84,9 @@ public class Camera extends GameObject implements Drawable {
 
     public void addRenderable(Renderable renderable) {
         renderables.add(renderable);
+    }
+
+    public boolean removeRenderable(Renderable renderable) {
+        return renderables.remove(renderable);
     }
 }

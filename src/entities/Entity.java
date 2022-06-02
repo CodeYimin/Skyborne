@@ -5,15 +5,14 @@ import java.awt.Graphics;
 import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
-import scenes.Level;
+import scenes.World;
 import util.Size;
 import util.Vector;
 
 public abstract class Entity extends GameObject implements Renderable {
-    private Level level;
+    private World world;
 
     private boolean grounded;
-    private double speed = 5;
     private Vector velocity = new Vector(0, 0);
     private double gravity = 0;
     private boolean antiTileCollision = false;
@@ -21,8 +20,8 @@ public abstract class Entity extends GameObject implements Renderable {
     private Size size = new Size(1, 1);
     private Sprite sprite;
 
-    public Entity(Level level) {
-        this.level = level;
+    public Entity(World world) {
+        this.world = world;
     }
 
     public void onCollision(Entity other) {
@@ -54,7 +53,7 @@ public abstract class Entity extends GameObject implements Renderable {
         // Move X
         Vector xMovePosition = getPosition().addX(xMoveAmount);
         Hitbox xMoveHitbox = new Hitbox(xMovePosition, size);
-        boolean xMoveCollision = level.getCollidingTiles(xMoveHitbox).size() > 0;
+        boolean xMoveCollision = world.getCollisionManager().getCollidingTiles(xMoveHitbox).size() > 0;
         if (xMoveCollision) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
@@ -72,7 +71,7 @@ public abstract class Entity extends GameObject implements Renderable {
 
         Vector yMovePosition = getPosition().addY(yMoveAmount);
         Hitbox yMoveHitbox = new Hitbox(yMovePosition, size);
-        boolean yMoveCollision = level.getCollidingTiles(yMoveHitbox).size() > 0;
+        boolean yMoveCollision = world.getCollisionManager().getCollidingTiles(yMoveHitbox).size() > 0;
         if (yMoveCollision) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
@@ -95,7 +94,7 @@ public abstract class Entity extends GameObject implements Renderable {
         // Test if entity is grounded
         Vector positionBelow = getPosition().ceilY().subtractY(1);
         Hitbox hitboxBelow = new Hitbox(positionBelow, size);
-        boolean collisionBelow = level.getCollidingTiles(hitboxBelow).size() > 0;
+        boolean collisionBelow = world.getCollisionManager().getCollidingTiles(hitboxBelow).size() > 0;
         if (collisionBelow) {
             grounded = true;
         } else {
@@ -124,14 +123,6 @@ public abstract class Entity extends GameObject implements Renderable {
 
     public boolean collidesWith(Entity other) {
         return getHitbox().intersects(other.getHitbox());
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public Vector getVelocity() {
@@ -178,12 +169,12 @@ public abstract class Entity extends GameObject implements Renderable {
         this.antiTileCollision = antiTileCollision;
     }
 
-    public Level getLevel() {
-        return level;
+    public World getLevel() {
+        return world;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
+    public void setLevel(World level) {
+        this.world = level;
     }
 
     public boolean isGrounded() {

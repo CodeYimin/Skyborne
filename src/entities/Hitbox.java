@@ -24,6 +24,10 @@ public class Hitbox {
         return position;
     }
 
+    public void setPosition(Vector position) {
+        this.position = position;
+    }
+
     public double width() {
         return width;
     }

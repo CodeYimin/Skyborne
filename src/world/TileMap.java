@@ -3,23 +3,16 @@ package world;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import entities.Entity;
-import entities.GameObject;
 import entities.Hitbox;
 import graphics.Camera;
 import graphics.Renderable;
 import util.Vector;
 
-public class Tilemap extends GameObject implements Renderable {
+public class Tilemap implements Renderable {
     private int[][] tiles;
 
     public Tilemap(int[][] tiles) {
         this.tiles = tiles;
-    }
-
-    @Override
-    public Vector getPosition() {
-        return Vector.ZERO;
     }
 
     @Override
@@ -55,10 +48,6 @@ public class Tilemap extends GameObject implements Renderable {
         }
 
         return collidingTiles;
-    }
-
-    public ArrayList<Integer> getCollidingTiles(Entity entity) {
-        return getCollidingTiles(entity.getHitbox());
     }
 
     public int getTileAt(int x, int y) {

@@ -3,7 +3,7 @@ package entities;
 import graphics.Sprite;
 import input.InputManager;
 import input.PlayerControls;
-import scenes.Level;
+import scenes.World;
 import util.Size;
 import util.Vector;
 
@@ -11,8 +11,9 @@ public class Player extends Entity {
     private double speed = 5;
     private InputManager inputManager;
     private PlayerControls playerControls;
+    private Weapon weapon;
 
-    public Player(Level level, InputManager inputManager) {
+    public Player(World level, InputManager inputManager) {
         super(level);
         this.inputManager = inputManager;
 
@@ -20,6 +21,8 @@ public class Player extends Entity {
         setGravity(15);
         setSize(new Size(1, 1));
         setAntiTileCollision(true);
+
+        weapon = new Weapon(level);
     }
 
     @Override
