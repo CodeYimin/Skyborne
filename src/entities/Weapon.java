@@ -1,21 +1,35 @@
 package entities;
 
-import scenes.World;
 import util.Vector;
 
 public class Weapon {
-    private World world;
+    private Entity owner;
+    private int delay = 100;
+    private long lastShootTime = 0;
 
-    public Weapon(World world) {
-        this.world = world;
+    public Weapon(Entity owner) {
+        this.owner = owner;
     }
 
-    public Projectile shoot(Vector position, Vector velocity) {
-        Projectile projectile = new Projectile(world);
-        projectile.setPosition(position);
-        projectile.setVelocity(velocity);
+    public long getTimeSinceShoot() {
+        return System.currentTimeMillis() - lastShootTime;
+    }
 
-        world.instantiateEntity(projectile);
+    public Projectile shoot() {
+        if (getTimeSinceShoot() < delay) {
+            return null;
+        }
+
+        Projectile projectile = new Projectile(owner.getWorld());
+        projectile.setPosition(owner.getPosition());
+        if (owner.getDirection().x() > 0) {
+            projectile.setVelocity(Vector.RIGHT.multiply(10));
+        } else {
+            projectile.setVelocity(Vector.LEFT.multiply(10));
+        }
+
+        owner.getWorld().instantiateEntity(projectile);
+        lastShootTime = System.currentTimeMillis();
         return projectile;
     }
 }

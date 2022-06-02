@@ -22,7 +22,7 @@ public class Player extends Entity {
         setSize(new Size(1, 1));
         setPhasesTiles(false);
 
-        weapon = new Weapon(level);
+        weapon = new Weapon(this);
     }
 
     @Override
@@ -34,25 +34,23 @@ public class Player extends Entity {
     }
 
     public void keyboardMovement() {
-        Vector newVelocity = getVelocity();
+        Vector newVelocity = Vector.ZERO;
 
         // X movement
         if (inputManager.isKeyDown(playerControls.left)) {
-            newVelocity = newVelocity.withX(-speed);
+            newVelocity = newVelocity.add(-speed);
+            setDirection(Vector.LEFT_DIRECTION);
         }
         if (inputManager.isKeyDown(playerControls.right)) {
-            newVelocity = newVelocity.withX(speed);
-        }
-        if (!inputManager.isKeyDown(playerControls.right) && !inputManager.isKeyDown(playerControls.left)) {
-            newVelocity = newVelocity.withX(0);
+            newVelocity = newVelocity.add(speed);
+            setDirection(Vector.RIGHT_DIRECTION);
         }
 
         // Y movement
         if (isGrounded() && inputManager.isKeyDown(playerControls.up)) {
             newVelocity = newVelocity.withY(speed * 1.2);
-        }
-        if (inputManager.isKeyDown(playerControls.down)) {
-            newVelocity = newVelocity.withY(-speed);
+        } else {
+            newVelocity = newVelocity.withY(getVelocity().y());
         }
 
         setVelocity(newVelocity);
@@ -60,7 +58,7 @@ public class Player extends Entity {
 
     public void keyboardShoot() {
         if (inputManager.isKeyDown(playerControls.attack)) {
-            weapon.shoot(getPosition(), Vector.RIGHT.multiply(10));
+            weapon.shoot();
         }
     }
 

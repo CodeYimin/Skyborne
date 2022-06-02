@@ -8,6 +8,15 @@ public final class Vector {
     public static final Vector LEFT = new Vector(-1, 0);
     public static final Vector RIGHT = new Vector(1, 0);
 
+    public static final Vector UP_DIRECTION = UP;
+    public static final Vector DOWN_DIRECTION = DOWN;
+    public static final Vector LEFT_DIRECTION = LEFT;
+    public static final Vector RIGHT_DIRECTION = RIGHT;
+    public static final Vector UP_RIGHT_DIRECTION = new Vector(1, 1).normalized();
+    public static final Vector UP_LEFT_DIRECTION = new Vector(-1, 1).normalized();
+    public static final Vector DOWN_RIGHT_DIRECTION = new Vector(1, -1).normalized();
+    public static final Vector DOWN_LEFT_DIRECTION = new Vector(-1, -1).normalized();
+
     private final double x;
     private final double y;
 
@@ -145,5 +154,21 @@ public final class Vector {
     @Override
     public Vector clone() {
         return new Vector(x, y);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof Vector)) {
+            return false;
+        }
+
+        Vector otherVector = (Vector) other;
+        return x == otherVector.x && y == otherVector.y;
     }
 }

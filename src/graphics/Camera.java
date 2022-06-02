@@ -5,13 +5,13 @@ import java.util.ArrayList;
 
 import core.Drawable;
 import core.GraphicsPanel;
+import core.Updatable;
 import entities.Entity;
-import entities.GameObject;
 import util.Size;
 import util.Vector;
 
-public class Camera extends GameObject implements Drawable {
-    private Vector position = new Vector(0, 0);
+public class Camera implements Drawable, Updatable {
+    private Vector position = Vector.ZERO;
     private GraphicsPanel graphicsPanel;
     private ArrayList<Renderable> renderables = new ArrayList<>();
     private double zoom;
@@ -25,8 +25,6 @@ public class Camera extends GameObject implements Drawable {
 
     @Override
     public void update() {
-        super.update();
-
         if (following != null) {
             position = following.getPosition();
         }

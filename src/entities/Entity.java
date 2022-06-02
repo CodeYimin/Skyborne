@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.Graphics;
 
+import core.TimedUpdatable;
 import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
@@ -9,12 +10,14 @@ import scenes.World;
 import util.Size;
 import util.Vector;
 
-public abstract class Entity extends GameObject implements Renderable {
+public abstract class Entity extends TimedUpdatable implements Renderable {
     private World world;
 
-    private boolean grounded;
-    private Vector velocity = new Vector(0, 0);
+    private Vector position = Vector.ZERO;
+    private Vector velocity = Vector.ZERO;
+    private Vector direction = Vector.RIGHT_DIRECTION;
     private double gravity = 0;
+    private boolean grounded;
     private boolean phasesTiles = false;
 
     private Size size = new Size(1, 1);
@@ -43,21 +46,17 @@ public abstract class Entity extends GameObject implements Renderable {
         double yMoveAmount = moveAmount.y();
 
         // Move X
-        Vector xMovePosition = getPosition().addX(xMoveAmount);
+        Vector xMovePosition = position.addX(xMoveAmount);
         Hitbox xMoveHitbox = new Hitbox(xMovePosition, size);
         boolean xMoveCollision = world.getCollisionManager().getCollidingTiles(xMoveHitbox).size() > 0;
         if (xMoveCollision) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
                 // Right collision
-                setPosition(
-                        getPosition()
-                                .withX(Math.ceil(getHitbox().right()) - size.width() / 2));
+                position = position.withX(Math.ceil(getHitbox().right()) - size.width() / 2);
             } else {
                 // Left collision
-                setPosition(
-                        getPosition()
-                                .withX(Math.floor(getHitbox().left()) + size.width() / 2));
+                position = position.withX(Math.floor(getHitbox().left()) + size.width() / 2);
             }
         } else {
             setPosition(xMovePosition);
@@ -71,18 +70,18 @@ public abstract class Entity extends GameObject implements Renderable {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
                 // Top collision
-                setPosition(getPosition().withY(Math.ceil(getHitbox().top()) - size.height()));
+                position = position.withY(Math.ceil(getHitbox().top()) - size.height());
             } else {
                 // Bottom collision
-                setPosition(getPosition().withY(Math.floor(getHitbox().bottom())));
+                position = position.withY(Math.floor(getHitbox().bottom()));
             }
         } else {
-            setPosition(yMovePosition);
+            position = yMovePosition;
         }
     }
 
     public void move() {
-        setPosition(getPosition().add(velocity.multiply(getDeltaTimeSecs())));
+        position = position.add(velocity.multiply(getDeltaTimeSecs()));
     }
 
     @Override
@@ -90,7 +89,7 @@ public abstract class Entity extends GameObject implements Renderable {
         super.update();
 
         // Test if entity is grounded
-        Vector positionBelow = getPosition().ceilY().subtractY(1);
+        Vector positionBelow = position.ceilY().subtractY(1);
         Hitbox hitboxBelow = new Hitbox(positionBelow, size);
         boolean collisionBelow = world.getCollisionManager().getCollidingTiles(hitboxBelow).size() > 0;
         if (collisionBelow) {
@@ -125,6 +124,14 @@ public abstract class Entity extends GameObject implements Renderable {
 
     public boolean collidesWith(Entity other) {
         return getHitbox().intersects(other.getHitbox());
+    }
+
+    public Vector getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector position) {
+        this.position = position;
     }
 
     public Vector getVelocity() {
@@ -181,5 +188,25 @@ public abstract class Entity extends GameObject implements Renderable {
 
     public boolean isGrounded() {
         return grounded;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public void destroy() {
+        world.destroyEntity(this);
+    }
+
+    public Vector getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Vector direction) {
+        this.direction = direction;
     }
 }
