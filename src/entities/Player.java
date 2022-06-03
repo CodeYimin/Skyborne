@@ -22,7 +22,7 @@ public class Player extends Entity {
         setSize(new Size(1, 1));
         setPhasesTiles(false);
 
-        weapon = new Weapon(this);
+        weapon = new Weapon(this, Vector.UP.multiply(0.2));
     }
 
     @Override

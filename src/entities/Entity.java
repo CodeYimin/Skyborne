@@ -35,7 +35,12 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Do nothing
     }
 
-    private void moveWithTileCollision() {
+    public boolean positionCollidesTile(Vector position) {
+        Hitbox hitbox = new Hitbox(position, size);
+        return world.getCollisionManager().getCollidingTiles(hitbox).size() > 0;
+    }
+
+    private void moveNoTilePhase() {
         if (grounded && velocity.y() < 0) {
             // Prevent accelerating through the ground
             velocity = velocity.withY(0);
@@ -46,10 +51,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         double yMoveAmount = moveAmount.y();
 
         // Move X
-        Vector xMovePosition = position.addX(xMoveAmount);
-        Hitbox xMoveHitbox = new Hitbox(xMovePosition, size);
-        boolean xMoveCollision = world.getCollisionManager().getCollidingTiles(xMoveHitbox).size() > 0;
-        if (xMoveCollision) {
+        if (positionCollidesTile(position.addX(xMoveAmount))) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
                 // Right collision
@@ -59,14 +61,11 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
                 position = position.withX(Math.floor(getHitbox().left()) + size.width() / 2);
             }
         } else {
-            setPosition(xMovePosition);
+            position = position.addX(xMoveAmount);
         }
 
         // Move Y
-        Vector yMovePosition = getPosition().addY(yMoveAmount);
-        Hitbox yMoveHitbox = new Hitbox(yMovePosition, size);
-        boolean yMoveCollision = world.getCollisionManager().getCollidingTiles(yMoveHitbox).size() > 0;
-        if (yMoveCollision) {
+        if (positionCollidesTile(position.addY(yMoveAmount))) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
                 // Top collision
@@ -76,7 +75,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
                 position = position.withY(Math.floor(getHitbox().bottom()));
             }
         } else {
-            position = yMovePosition;
+            position = position.addY(yMoveAmount);
         }
     }
 
@@ -105,7 +104,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         if (phasesTiles) {
             move();
         } else {
-            moveWithTileCollision();
+            moveNoTilePhase();
         }
     }
 
