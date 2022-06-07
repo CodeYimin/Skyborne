@@ -1,6 +1,7 @@
 package entities;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import core.TimedUpdatable;
 import graphics.Camera;
@@ -18,7 +19,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     private Vector direction = Vector.RIGHT_DIRECTION;
     private double gravity = 0;
     private boolean grounded;
-    private boolean phasesTiles = false;
+    private boolean phaseTiles = false;
 
     private Size size = new Size(1, 1);
     private Sprite sprite;
@@ -35,52 +36,76 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Do nothing
     }
 
-    public boolean positionCollidesTile(Vector position) {
-        Hitbox hitbox = new Hitbox(position, size);
-        return world.getCollisionManager().getCollidingTiles(hitbox).size() > 0;
-    }
-
-    private void moveNoTilePhase() {
+    public void move(boolean phaseTiles) {
         if (grounded && velocity.y() < 0) {
             // Prevent accelerating through the ground
             velocity = velocity.withY(0);
         }
+
+        ArrayList<Integer> collidingTiles = new ArrayList<>();
+        ArrayList<Entity> collidingEntities = new ArrayList<>();
 
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
         double xMoveAmount = moveAmount.x();
         double yMoveAmount = moveAmount.y();
 
         // Move X
-        if (positionCollidesTile(position.addX(xMoveAmount))) {
-            // Adjust position on collision to perfectly align with tile
-            if (velocity.x() > 0) {
+        position = position.addX(xMoveAmount);
+        ArrayList<Integer> collidingTilesX = world.getCollidingTiles(this);
+        ArrayList<Entity> collidingEntitiesX = world.getCollidingEntities(this);
+
+        if (collidingTilesX.size() > 0 && !phaseTiles) {
+            if (xMoveAmount > 0) {
                 // Right collision
-                position = position.withX(Math.ceil(getHitbox().right()) - size.width() / 2);
+                position = position.withX(Math.floor(getHitbox().right()) - size.width() / 2);
             } else {
                 // Left collision
-                position = position.withX(Math.floor(getHitbox().left()) + size.width() / 2);
+                position = position.withX(Math.ceil(getHitbox().left()) + size.width() / 2);
             }
-        } else {
-            position = position.addX(xMoveAmount);
         }
 
         // Move Y
-        if (positionCollidesTile(position.addY(yMoveAmount))) {
-            // Adjust position on collision to perfectly align with tile
-            if (velocity.y() > 0) {
+        position = position.addY(yMoveAmount);
+        ArrayList<Integer> collidingTilesY = world.getCollidingTiles(this);
+        ArrayList<Entity> collidingEntitiesY = world.getCollidingEntities(this);
+
+        if (collidingTilesY.size() > 0 && !phaseTiles) {
+            if (yMoveAmount > 0) {
                 // Top collision
-                position = position.withY(Math.ceil(getHitbox().top()) - size.height());
+                position = position.withY(Math.floor(getHitbox().top()) - size.height());
             } else {
                 // Bottom collision
-                position = position.withY(Math.floor(getHitbox().bottom()));
+                position = position.withY(Math.ceil(getHitbox().bottom()));
             }
-        } else {
-            position = position.addY(yMoveAmount);
         }
-    }
 
-    public void move() {
-        position = position.add(velocity.multiply(getDeltaTimeSecs()));
+        for (int tile : collidingTilesX) {
+            if (!collidingTiles.contains(tile)) {
+                collidingTiles.add(tile);
+            }
+        }
+        for (int tile : collidingTilesY) {
+            if (!collidingTiles.contains(tile)) {
+                collidingTiles.add(tile);
+            }
+        }
+        for (Entity entity : collidingEntitiesX) {
+            if (!collidingEntities.contains(entity)) {
+                collidingEntities.add(entity);
+            }
+        }
+        for (Entity entity : collidingEntitiesY) {
+            if (!collidingEntities.contains(entity)) {
+                collidingEntities.add(entity);
+            }
+        }
+
+        for (Entity entity : collidingEntities) {
+            onCollision(entity);
+        }
+        for (int tile : collidingTiles) {
+            onCollision(tile);
+        }
     }
 
     @Override
@@ -90,7 +115,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Test if entity is grounded
         Vector positionBelow = position.ceilY().subtractY(1);
         Hitbox hitboxBelow = new Hitbox(positionBelow, size);
-        boolean collisionBelow = world.getCollisionManager().getCollidingTiles(hitboxBelow).size() > 0;
+        boolean collisionBelow = world.getCollidingTiles(hitboxBelow).size() > 0;
         if (collisionBelow) {
             grounded = true;
         } else {
@@ -101,11 +126,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         velocity = velocity.addY(-gravity * getDeltaTimeSecs());
 
         // Move entity
-        if (phasesTiles) {
-            move();
-        } else {
-            moveNoTilePhase();
-        }
+        move(phaseTiles);
     }
 
     @Override
@@ -170,11 +191,11 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     }
 
     public boolean phasesTiles() {
-        return phasesTiles;
+        return phaseTiles;
     }
 
     public void setPhasesTiles(boolean phasesTiles) {
-        this.phasesTiles = phasesTiles;
+        this.phaseTiles = phasesTiles;
     }
 
     public World getLevel() {
