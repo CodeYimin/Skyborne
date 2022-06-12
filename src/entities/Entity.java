@@ -135,7 +135,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
             return;
         }
 
-        // Bottom midpoint --> Top left corner
+        // Adjust from Bottom midpoint --> Top left corner
         Vector adjustedPosition = getPosition().subtractX(size.width() / 2).addY(size.height());
         Vector screenPosition = camera.worldToScreenPosition(adjustedPosition);
 

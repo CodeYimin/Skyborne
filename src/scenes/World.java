@@ -8,6 +8,7 @@ import core.Updatable;
 import entities.Entity;
 import entities.Hitbox;
 import entities.Player;
+import entities.Zombie;
 import graphics.Camera;
 import input.PlayerControls;
 import util.Vector;
@@ -56,6 +57,10 @@ public class World implements Updatable {
                 KeyEvent.VK_F));
         player.setPosition(new Vector(0, 2));
         instantiateEntity(player);
+
+        Zombie zombie = new Zombie(this);
+        zombie.setPosition(new Vector(1, 5));
+        instantiateEntity(zombie);
 
         this.camera.setFollowing(player);
         this.camera.setZoom(50);
