@@ -19,11 +19,21 @@ public class Tile {
             true
     };
 
-    public static Sprite getSprite(int id) {
+    private final int id;
+
+    public Tile(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Sprite getSprite() {
         return sprites[id];
     }
 
-    public static boolean isSolid(int id) {
+    public boolean isSolid() {
         return solid[id];
     }
 }

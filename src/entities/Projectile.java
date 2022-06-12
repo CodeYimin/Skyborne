@@ -24,8 +24,8 @@ public class Projectile extends Entity {
     }
 
     @Override
-    public void onCollision(int tile) {
-        if (Tile.isSolid(tile)) {
+    public void onCollision(Tile tile) {
+        if (tile.isSolid()) {
             destroy();
         }
     }

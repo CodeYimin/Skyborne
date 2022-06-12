@@ -12,6 +12,7 @@ import entities.Zombie;
 import graphics.Camera;
 import input.PlayerControls;
 import util.Vector;
+import world.Tile;
 import world.Tilemap;
 
 public class World implements Updatable {
@@ -87,11 +88,11 @@ public class World implements Updatable {
         }
     }
 
-    public ArrayList<Integer> getCollidingTiles(Hitbox hitbox) {
+    public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {
         return tilemap.getCollidingTiles(hitbox);
     }
 
-    public ArrayList<Integer> getCollidingTiles(Entity entity) {
+    public ArrayList<Tile> getCollidingTiles(Entity entity) {
         return tilemap.getCollidingTiles(entity.getHitbox());
     }
 

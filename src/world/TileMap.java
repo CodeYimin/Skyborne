@@ -9,10 +9,19 @@ import graphics.Renderable;
 import util.Vector;
 
 public class Tilemap implements Renderable {
-    private int[][] tiles;
+    private Tile[][] tiles;
 
-    public Tilemap(int[][] tiles) {
+    public Tilemap(Tile[][] tiles) {
         this.tiles = tiles;
+    }
+
+    public Tilemap(int[][] tileIds) {
+        this.tiles = new Tile[tileIds.length][tileIds[0].length];
+        for (int i = 0; i < tileIds.length; i++) {
+            for (int j = 0; j < tileIds[0].length; j++) {
+                this.tiles[i][j] = new Tile(tileIds[i][j]);
+            }
+        }
     }
 
     @Override
@@ -25,7 +34,7 @@ public class Tilemap implements Renderable {
                 Vector tilePosition = new Vector(x, y + 1);
                 Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
-                g.drawImage(Tile.getSprite(tiles[x][y]).getImage(),
+                g.drawImage(tiles[x][y].getSprite().getImage(),
                         (int) tileScreenPosition.x(),
                         (int) tileScreenPosition.y(),
                         (int) tileScreenSize,
@@ -35,13 +44,13 @@ public class Tilemap implements Renderable {
         }
     }
 
-    public ArrayList<Integer> getCollidingTiles(Hitbox hitbox) {
-        ArrayList<Integer> collidingTiles = new ArrayList<>();
+    public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {
+        ArrayList<Tile> collidingTiles = new ArrayList<>();
 
         for (int x = (int) hitbox.left(); x < hitbox.right(); x++) {
             for (int y = (int) hitbox.bottom(); y < hitbox.top(); y++) {
-                int tile = getTileAt(x, y);
-                if (tile != -1 && Tile.isSolid(tile)) {
+                Tile tile = getTileAt(x, y);
+                if (tile != null && tile.isSolid()) {
                     collidingTiles.add(tile);
                 }
             }
@@ -50,19 +59,19 @@ public class Tilemap implements Renderable {
         return collidingTiles;
     }
 
-    public int getTileAt(int x, int y) {
+    public Tile getTileAt(int x, int y) {
         if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
-            return -1;
+            return null;
         }
 
         return tiles[x][y];
     }
 
-    public int getTileAt(Vector position) {
+    public Tile getTileAt(Vector position) {
         return getTileAt((int) position.x(), (int) position.y());
     }
 
-    public void setTile(int x, int y, int tile) {
+    public void setTile(int x, int y, Tile tile) {
         tiles[x][y] = tile;
     }
 }

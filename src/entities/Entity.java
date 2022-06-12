@@ -10,6 +10,7 @@ import graphics.Sprite;
 import scenes.World;
 import util.Size;
 import util.Vector;
+import world.Tile;
 
 public abstract class Entity extends TimedUpdatable implements Renderable {
     private World world;
@@ -32,7 +33,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Do nothing
     }
 
-    public void onCollision(int tile) {
+    public void onCollision(Tile tile) {
         // Do nothing
     }
 
@@ -42,7 +43,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
             velocity = velocity.withY(0);
         }
 
-        ArrayList<Integer> collidingTiles = new ArrayList<>();
+        ArrayList<Tile> collidingTiles = new ArrayList<>();
         ArrayList<Entity> collidingEntities = new ArrayList<>();
 
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
@@ -51,7 +52,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
 
         // Move X
         position = position.addX(xMoveAmount);
-        ArrayList<Integer> collidingTilesX = world.getCollidingTiles(this);
+        ArrayList<Tile> collidingTilesX = world.getCollidingTiles(this);
         ArrayList<Entity> collidingEntitiesX = world.getCollidingEntities(this);
 
         if (collidingTilesX.size() > 0 && !phaseTiles) {
@@ -66,7 +67,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
 
         // Move Y
         position = position.addY(yMoveAmount);
-        ArrayList<Integer> collidingTilesY = world.getCollidingTiles(this);
+        ArrayList<Tile> collidingTilesY = world.getCollidingTiles(this);
         ArrayList<Entity> collidingEntitiesY = world.getCollidingEntities(this);
 
         if (collidingTilesY.size() > 0 && !phaseTiles) {
@@ -79,12 +80,12 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
             }
         }
 
-        for (int tile : collidingTilesX) {
+        for (Tile tile : collidingTilesX) {
             if (!collidingTiles.contains(tile)) {
                 collidingTiles.add(tile);
             }
         }
-        for (int tile : collidingTilesY) {
+        for (Tile tile : collidingTilesY) {
             if (!collidingTiles.contains(tile)) {
                 collidingTiles.add(tile);
             }
@@ -103,7 +104,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         for (Entity entity : collidingEntities) {
             onCollision(entity);
         }
-        for (int tile : collidingTiles) {
+        for (Tile tile : collidingTiles) {
             onCollision(tile);
         }
     }
