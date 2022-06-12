@@ -8,6 +8,7 @@ import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
 import scenes.World;
+import util.ArrayListUtils;
 import util.Size;
 import util.Vector;
 import world.Tile;
@@ -80,26 +81,10 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
             }
         }
 
-        for (Tile tile : collidingTilesX) {
-            if (!collidingTiles.contains(tile)) {
-                collidingTiles.add(tile);
-            }
-        }
-        for (Tile tile : collidingTilesY) {
-            if (!collidingTiles.contains(tile)) {
-                collidingTiles.add(tile);
-            }
-        }
-        for (Entity entity : collidingEntitiesX) {
-            if (!collidingEntities.contains(entity)) {
-                collidingEntities.add(entity);
-            }
-        }
-        for (Entity entity : collidingEntitiesY) {
-            if (!collidingEntities.contains(entity)) {
-                collidingEntities.add(entity);
-            }
-        }
+        ArrayListUtils.addAllUnique(collidingTiles, collidingTilesX);
+        ArrayListUtils.addAllUnique(collidingTiles, collidingTilesY);
+        ArrayListUtils.addAllUnique(collidingEntities, collidingEntitiesX);
+        ArrayListUtils.addAllUnique(collidingEntities, collidingEntitiesY);
 
         for (Entity entity : collidingEntities) {
             onCollision(entity);
