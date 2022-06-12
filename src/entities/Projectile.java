@@ -29,4 +29,11 @@ public class Projectile extends Entity {
             destroy();
         }
     }
+
+    @Override
+    public void onCollision(Entity entity) {
+        if (entity instanceof Zombie) {
+            entity.destroy();
+        }
+    }
 }

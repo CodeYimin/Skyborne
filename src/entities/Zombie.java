@@ -10,7 +10,7 @@ public class Zombie extends Entity {
         super(world);
 
         setSprite(new Sprite("../assets/entities/zombie.jpg"));
-        setGravity(10);
+        setAcceleration(Vector.DOWN.multiply(15));
         setSize(new Size(2, 2));
         setVelocity(Vector.RIGHT);
     }

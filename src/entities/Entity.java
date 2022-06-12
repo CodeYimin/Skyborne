@@ -9,6 +9,7 @@ import graphics.Renderable;
 import graphics.Sprite;
 import scenes.World;
 import util.ArrayListUtils;
+import util.Side;
 import util.Size;
 import util.Vector;
 import world.Tile;
@@ -19,7 +20,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     private Vector position = Vector.ZERO;
     private Vector velocity = Vector.ZERO;
     private Vector direction = Vector.RIGHT_DIRECTION;
-    private double gravity = 0;
+    private Vector acceleration = Vector.ZERO;
     private boolean grounded;
     private boolean phaseTiles = false;
 
@@ -39,9 +40,20 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     }
 
     public void move(boolean phaseTiles) {
-        if (grounded && velocity.y() < 0) {
-            // Prevent accelerating through the ground
-            velocity = velocity.withY(0);
+        if (!phaseTiles) {
+            ArrayList<Side> tileCollidingSides = getTileCollidingSides();
+            if (tileCollidingSides.contains(Side.TOP) && velocity.y() > 0) {
+                velocity = velocity.withY(0);
+            }
+            if (tileCollidingSides.contains(Side.BOTTOM) && velocity.y() < 0) {
+                velocity = velocity.withY(0);
+            }
+            if (tileCollidingSides.contains(Side.LEFT) && velocity.x() < 0) {
+                velocity = velocity.withX(0);
+            }
+            if (tileCollidingSides.contains(Side.RIGHT) && velocity.x() > 0) {
+                velocity = velocity.withX(0);
+            }
         }
 
         ArrayList<Tile> collidingTiles = new ArrayList<>();
@@ -98,18 +110,8 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     public void update() {
         super.update();
 
-        // Test if entity is grounded
-        Vector positionBelow = position.ceilY().subtractY(1);
-        Hitbox hitboxBelow = new Hitbox(positionBelow, size);
-        boolean collisionBelow = world.getCollidingTiles(hitboxBelow).size() > 0;
-        if (collisionBelow) {
-            grounded = true;
-        } else {
-            grounded = false;
-        }
-
-        // Apply gravity
-        velocity = velocity.addY(-gravity * getDeltaTimeSecs());
+        // Apply acceleration
+        velocity = velocity.add(acceleration.multiply(getDeltaTimeSecs()));
 
         // Move entity
         move(phaseTiles);
@@ -132,6 +134,41 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         return getHitbox().intersects(other.getHitbox());
     }
 
+    public ArrayList<Side> getTileCollidingSides() {
+        ArrayList<Side> tileCollidingSides = new ArrayList<>();
+
+        // Top
+        double yAbove = Math.floor(getHitbox().top());
+        Hitbox hitboxAbove = new Hitbox(position.withY(yAbove), size);
+        if (world.getCollidingTiles(hitboxAbove).size() > 0) {
+            tileCollidingSides.add(Side.TOP);
+        }
+
+        // Bottom
+        double yBelow = Math.ceil(getHitbox().bottom()) - 1;
+        Hitbox hitboxBelow = new Hitbox(position.withY(yBelow), size);
+        boolean collisionBelow = world.getCollidingTiles(hitboxBelow).size() > 0;
+        if (collisionBelow) {
+            tileCollidingSides.add(Side.BOTTOM);
+        }
+
+        // Left
+        double xLeft = Math.ceil(getHitbox().left());
+        Hitbox hitboxLeft = new Hitbox(position.withX(xLeft), size);
+        if (world.getCollidingTiles(hitboxLeft).size() > 0) {
+            tileCollidingSides.add(Side.LEFT);
+        }
+
+        // Right
+        double xRight = Math.floor(getHitbox().right());
+        Hitbox hitboxRight = new Hitbox(position.withX(xRight), size);
+        if (world.getCollidingTiles(hitboxRight).size() > 0) {
+            tileCollidingSides.add(Side.RIGHT);
+        }
+
+        return tileCollidingSides;
+    }
+
     public Vector getPosition() {
         return position;
     }
@@ -148,12 +185,12 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         this.velocity = velocity;
     }
 
-    public double getGravity() {
-        return gravity;
+    public Vector setAcceleration(Vector acceleration) {
+        return this.acceleration = acceleration;
     }
 
-    public void setGravity(double gravityAcceleration) {
-        this.gravity = gravityAcceleration;
+    public Vector getAcceleration() {
+        return acceleration;
     }
 
     public Size getSize() {

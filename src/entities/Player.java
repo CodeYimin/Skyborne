@@ -4,6 +4,7 @@ import graphics.Sprite;
 import input.InputManager;
 import input.PlayerControls;
 import scenes.World;
+import util.Side;
 import util.Size;
 import util.Vector;
 
@@ -18,7 +19,7 @@ public class Player extends Entity {
         this.inputManager = inputManager;
 
         setSprite(new Sprite("../assets/player.jpg"));
-        setGravity(15);
+        setAcceleration(Vector.DOWN.multiply(15));
         setSize(new Size(1, 1));
         setPhasesTiles(false);
 
@@ -47,7 +48,7 @@ public class Player extends Entity {
         }
 
         // Y movement
-        if (isGrounded() && inputManager.isKeyDown(playerControls.up)) {
+        if (getTileCollidingSides().contains(Side.BOTTOM) && inputManager.isKeyDown(playerControls.up)) {
             newVelocity = newVelocity.withY(speed * 1.2);
         } else {
             newVelocity = newVelocity.withY(getVelocity().y());
