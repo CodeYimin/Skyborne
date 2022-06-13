@@ -8,7 +8,6 @@ import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
 import scenes.World;
-import util.ArrayListUtils;
 import util.Side;
 import util.Size;
 import util.Vector;
@@ -39,70 +38,44 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Do nothing
     }
 
+    public boolean positionWillIntesectTiles(Vector position) {
+        Hitbox hitbox = new Hitbox(position, size);
+        return world.getCollisionManager().getIntersectingTiles(hitbox).size() > 0;
+    }
+
     public void move(boolean phaseTiles) {
-        if (!phaseTiles) {
-            ArrayList<Side> tileCollidingSides = getTileCollidingSides();
-            if (tileCollidingSides.contains(Side.TOP) && velocity.y() > 0) {
-                velocity = velocity.withY(0);
-            }
-            if (tileCollidingSides.contains(Side.BOTTOM) && velocity.y() < 0) {
-                velocity = velocity.withY(0);
-            }
-            if (tileCollidingSides.contains(Side.LEFT) && velocity.x() < 0) {
-                velocity = velocity.withX(0);
-            }
-            if (tileCollidingSides.contains(Side.RIGHT) && velocity.x() > 0) {
-                velocity = velocity.withX(0);
-            }
-        }
-
-        ArrayList<Tile> collidingTiles = new ArrayList<>();
-        ArrayList<Entity> collidingEntities = new ArrayList<>();
-
         Vector moveAmount = velocity.multiply(getDeltaTimeSecs());
         double xMoveAmount = moveAmount.x();
         double yMoveAmount = moveAmount.y();
 
         // Move X
-        position = position.addX(xMoveAmount);
-        ArrayList<Tile> collidingTilesX = world.getCollidingTiles(this);
-        ArrayList<Entity> collidingEntitiesX = world.getCollidingEntities(this);
-
-        if (collidingTilesX.size() > 0 && !phaseTiles) {
-            if (xMoveAmount > 0) {
+        if (positionWillIntesectTiles(position.addX(xMoveAmount))) {
+            // Adjust position on collision to perfectly align with tile
+            if (velocity.x() > 0) {
                 // Right collision
-                position = position.withX(Math.floor(getHitbox().right()) - size.width() / 2);
+                position = position.withX(Math.ceil(getHitbox().right()) - size.width() / 2);
             } else {
                 // Left collision
-                position = position.withX(Math.ceil(getHitbox().left()) + size.width() / 2);
+                position = position.withX(Math.floor(getHitbox().left()) + size.width() / 2);
             }
+            velocity = velocity.withX(0);
+        } else {
+            position = position.addX(xMoveAmount);
         }
 
         // Move Y
-        position = position.addY(yMoveAmount);
-        ArrayList<Tile> collidingTilesY = world.getCollidingTiles(this);
-        ArrayList<Entity> collidingEntitiesY = world.getCollidingEntities(this);
-
-        if (collidingTilesY.size() > 0 && !phaseTiles) {
-            if (yMoveAmount > 0) {
+        if (positionWillIntesectTiles(position.addY(yMoveAmount))) {
+            // Adjust position on collision to perfectly align with tile
+            if (velocity.y() > 0) {
                 // Top collision
-                position = position.withY(Math.floor(getHitbox().top()) - size.height());
+                position = position.withY(Math.ceil(getHitbox().top()) - size.height());
             } else {
                 // Bottom collision
-                position = position.withY(Math.ceil(getHitbox().bottom()));
+                position = position.withY(Math.floor(getHitbox().bottom()));
             }
-        }
-
-        ArrayListUtils.addAllUnique(collidingTiles, collidingTilesX);
-        ArrayListUtils.addAllUnique(collidingTiles, collidingTilesY);
-        ArrayListUtils.addAllUnique(collidingEntities, collidingEntitiesX);
-        ArrayListUtils.addAllUnique(collidingEntities, collidingEntitiesY);
-
-        for (Entity entity : collidingEntities) {
-            onCollision(entity);
-        }
-        for (Tile tile : collidingTiles) {
-            onCollision(tile);
+            velocity = velocity.withY(0);
+        } else {
+            position = position.addY(yMoveAmount);
         }
     }
 
@@ -114,7 +87,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         velocity = velocity.add(acceleration.multiply(getDeltaTimeSecs()));
 
         // Move entity
-        move(phaseTiles);
+        move(false);
     }
 
     @Override
@@ -138,31 +111,30 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         ArrayList<Side> tileCollidingSides = new ArrayList<>();
 
         // Top
-        double yAbove = Math.floor(getHitbox().top());
+        double yAbove = position.y() + 0.0000001;
         Hitbox hitboxAbove = new Hitbox(position.withY(yAbove), size);
-        if (world.getCollidingTiles(hitboxAbove).size() > 0) {
+        if (world.getCollisionManager().getIntersectingTiles(hitboxAbove).size() > 0) {
             tileCollidingSides.add(Side.TOP);
         }
 
         // Bottom
-        double yBelow = Math.ceil(getHitbox().bottom()) - 1;
+        double yBelow = position.y() - 0.0000001;
         Hitbox hitboxBelow = new Hitbox(position.withY(yBelow), size);
-        boolean collisionBelow = world.getCollidingTiles(hitboxBelow).size() > 0;
-        if (collisionBelow) {
+        if (world.getCollisionManager().getIntersectingTiles(hitboxBelow).size() > 0) {
             tileCollidingSides.add(Side.BOTTOM);
         }
 
         // Left
-        double xLeft = Math.ceil(getHitbox().left());
+        double xLeft = position.x() - 0.0000001;
         Hitbox hitboxLeft = new Hitbox(position.withX(xLeft), size);
-        if (world.getCollidingTiles(hitboxLeft).size() > 0) {
+        if (world.getCollisionManager().getIntersectingTiles(hitboxLeft).size() > 0) {
             tileCollidingSides.add(Side.LEFT);
         }
 
         // Right
-        double xRight = Math.floor(getHitbox().right());
+        double xRight = position.x() + 0.0000001;
         Hitbox hitboxRight = new Hitbox(position.withX(xRight), size);
-        if (world.getCollidingTiles(hitboxRight).size() > 0) {
+        if (world.getCollisionManager().getIntersectingTiles(hitboxRight).size() > 0) {
             tileCollidingSides.add(Side.RIGHT);
         }
 

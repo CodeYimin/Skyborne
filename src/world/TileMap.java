@@ -47,8 +47,8 @@ public class Tilemap implements Renderable {
     public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {
         ArrayList<Tile> collidingTiles = new ArrayList<>();
 
-        for (int x = (int) hitbox.left(); x < hitbox.right(); x++) {
-            for (int y = (int) hitbox.bottom(); y < hitbox.top(); y++) {
+        for (int x = (int) Math.ceil(hitbox.left()) - 1; x <= hitbox.right(); x++) {
+            for (int y = (int) Math.ceil(hitbox.bottom()) - 1; y <= hitbox.top(); y++) {
                 Tile tile = getTileAt(x, y);
                 if (tile != null && tile.isSolid()) {
                     collidingTiles.add(tile);
@@ -57,6 +57,21 @@ public class Tilemap implements Renderable {
         }
 
         return collidingTiles;
+    }
+
+    public ArrayList<Tile> getIntersectingTiles(Hitbox hitbox) {
+        ArrayList<Tile> intersectingTiles = new ArrayList<>();
+
+        for (int x = (int) hitbox.left(); x < hitbox.right(); x++) {
+            for (int y = (int) hitbox.bottom(); y < hitbox.top(); y++) {
+                Tile tile = getTileAt(x, y);
+                if (tile != null && tile.isSolid()) {
+                    intersectingTiles.add(tile);
+                }
+            }
+        }
+
+        return intersectingTiles;
     }
 
     public Tile getTileAt(int x, int y) {

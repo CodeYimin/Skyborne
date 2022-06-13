@@ -3,21 +3,21 @@ package scenes;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import collision.CollisionManager;
 import core.Game;
 import core.Updatable;
 import entities.Entity;
-import entities.Hitbox;
 import entities.Player;
 import entities.Zombie;
 import graphics.Camera;
 import input.PlayerControls;
 import util.Vector;
-import world.Tile;
 import world.Tilemap;
 
 public class World implements Updatable {
     private Game game;
     private Camera camera;
+    private CollisionManager collisionManager;
 
     private ArrayList<Entity> entities = new ArrayList<>();
     private Tilemap tilemap;
@@ -40,14 +40,15 @@ public class World implements Updatable {
                 { 1, 1, 0 },
                 { 1, 1, 1 },
                 { 1, 1, 1 },
-                { 1, 1, 1 },
-                { 1, 1, 1 },
-                { 1, 1, 1 },
-                { 1, 1, 1 },
+                { 1, 1, 0 },
+                { 1, 1, 0 },
+                { 1, 1, 0 },
+                { 1, 1, 0 },
                 { 1, 1, 1 },
                 { 1, 1, 1 },
         });
         this.camera.addRenderable(tilemap);
+        this.collisionManager = new CollisionManager(tilemap);
 
         Player player = new Player(this, game.getInputManager());
         player.setControls(new PlayerControls(
@@ -72,38 +73,22 @@ public class World implements Updatable {
         for (int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
         }
+        collisionManager.update();
         camera.update();
     }
 
     public void instantiateEntity(Entity entity) {
         entities.add(entity);
         camera.addRenderable(entity);
+        collisionManager.addEntity(entity);
     }
 
     public boolean destroyEntity(Entity entity) {
-        if (entities.remove(entity) && camera.removeRenderable(entity)) {
+        if (entities.remove(entity) && camera.removeRenderable(entity) && collisionManager.removeEntity(entity)) {
             return true;
         } else {
             return false;
         }
-    }
-
-    public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {
-        return tilemap.getCollidingTiles(hitbox);
-    }
-
-    public ArrayList<Tile> getCollidingTiles(Entity entity) {
-        return tilemap.getCollidingTiles(entity.getHitbox());
-    }
-
-    public ArrayList<Entity> getCollidingEntities(Entity entity) {
-        ArrayList<Entity> collidingEntities = new ArrayList<>();
-        for (Entity otherEntity : entities) {
-            if (entity != otherEntity && entity.getHitbox().intersects(otherEntity.getHitbox())) {
-                collidingEntities.add(otherEntity);
-            }
-        }
-        return collidingEntities;
     }
 
     public Tilemap getTilemap() {
@@ -112,5 +97,9 @@ public class World implements Updatable {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public CollisionManager getCollisionManager() {
+        return collisionManager;
     }
 }
