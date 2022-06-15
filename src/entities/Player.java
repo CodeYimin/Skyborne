@@ -12,7 +12,7 @@ public class Player extends Entity {
     private double speed = 5;
     private InputManager inputManager;
     private PlayerControls playerControls;
-    private Weapon weapon;
+    private Gun weapon;
 
     public Player(World level, InputManager inputManager) {
         super(level);
@@ -23,7 +23,9 @@ public class Player extends Entity {
         setSize(new Size(1, 1));
         setPhasesTiles(false);
 
-        weapon = new Weapon(this, Vector.UP.multiply(0.2));
+        weapon = new Gun(getWorld());
+        equipWeapon(weapon);
+        getWorld().instantiateEntity(weapon);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class Player extends Entity {
         }
 
         // Y movement
-        if (getTileCollidingSides().contains(Side.BOTTOM) && inputManager.isKeyDown(playerControls.up)) {
+        if (getSidesAlignedWithSolid().contains(Side.BOTTOM) && inputManager.isKeyDown(playerControls.up)) {
             newVelocity = newVelocity.withY(speed * 1.2);
         } else {
             newVelocity = newVelocity.withY(getVelocity().y());
@@ -58,7 +60,7 @@ public class Player extends Entity {
     }
 
     public void keyboardShoot() {
-        if (inputManager.isKeyDown(playerControls.attack)) {
+        if (weapon != null && inputManager.isKeyDown(playerControls.attack)) {
             weapon.shoot();
         }
     }
@@ -69,5 +71,19 @@ public class Player extends Entity {
 
     public void setControls(PlayerControls playerControls) {
         this.playerControls = playerControls;
+    }
+
+    public Gun getWeapon() {
+        return weapon;
+    }
+
+    public void equipWeapon(Gun weapon) {
+        this.weapon = weapon;
+        weapon.setOwner(this);
+        weapon.setOwnerPositionOffset(new Vector(1, 0.5));
+    }
+
+    public void dequipWeapon() {
+        weapon = null;
     }
 }

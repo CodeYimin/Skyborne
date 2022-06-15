@@ -11,7 +11,7 @@ import scenes.World;
 import util.Side;
 import util.Size;
 import util.Vector;
-import world.Tile;
+import world.TileCollision;
 
 public abstract class Entity extends TimedUpdatable implements Renderable {
     private World world;
@@ -34,7 +34,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         // Do nothing
     }
 
-    public void onCollision(Tile tile) {
+    public void onCollision(TileCollision collision) {
         // Do nothing
     }
 
@@ -49,30 +49,34 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         double yMoveAmount = moveAmount.y();
 
         // Move X
-        if (positionWillIntesectTiles(position.addX(xMoveAmount))) {
+        if (!phaseTiles && positionWillIntesectTiles(position.addX(xMoveAmount))) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.x() > 0) {
                 // Right collision
-                position = position.withX(Math.ceil(getHitbox().right()) - size.width() / 2);
+                setRight(Math.ceil(getRight()));
             } else {
                 // Left collision
-                position = position.withX(Math.floor(getHitbox().left()) + size.width() / 2);
+                setLeft(Math.floor(getLeft()));
             }
+
+            // Reset velocity since it hit a wall
             velocity = velocity.withX(0);
         } else {
             position = position.addX(xMoveAmount);
         }
 
         // Move Y
-        if (positionWillIntesectTiles(position.addY(yMoveAmount))) {
+        if (!phaseTiles && positionWillIntesectTiles(position.addY(yMoveAmount))) {
             // Adjust position on collision to perfectly align with tile
             if (velocity.y() > 0) {
                 // Top collision
-                position = position.withY(Math.ceil(getHitbox().top()) - size.height());
+                setTop(Math.ceil(getTop()));
             } else {
                 // Bottom collision
-                position = position.withY(Math.floor(getHitbox().bottom()));
+                setBottom(Math.floor(getBottom()));
             }
+
+            // Reset velocity since it hit a wall
             velocity = velocity.withY(0);
         } else {
             position = position.addY(yMoveAmount);
@@ -107,46 +111,88 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         return getHitbox().intersects(other.getHitbox());
     }
 
-    public ArrayList<Side> getTileCollidingSides() {
-        ArrayList<Side> tileCollidingSides = new ArrayList<>();
+    public ArrayList<Side> getSidesAlignedWithSolid() {
+        ArrayList<Side> sides = new ArrayList<>();
 
-        // Top
-        double yAbove = position.y() + 0.0000001;
-        Hitbox hitboxAbove = new Hitbox(position.withY(yAbove), size);
-        if (world.getCollisionManager().getIntersectingTiles(hitboxAbove).size() > 0) {
-            tileCollidingSides.add(Side.TOP);
+        ArrayList<TileCollision> tileCollisions = world.getCollisionManager().getTileCollisions(getHitbox());
+        for (TileCollision tileCollision : tileCollisions) {
+            Side side = tileCollision.getSideAlignedWithTile();
+            if (side != null && !sides.contains(side) && tileCollision.getTile().isSolid()) {
+                sides.add(side);
+            }
         }
 
-        // Bottom
-        double yBelow = position.y() - 0.0000001;
-        Hitbox hitboxBelow = new Hitbox(position.withY(yBelow), size);
-        if (world.getCollisionManager().getIntersectingTiles(hitboxBelow).size() > 0) {
-            tileCollidingSides.add(Side.BOTTOM);
+        return sides;
+    }
+
+    public ArrayList<Side> getSidesAlignedWithTile() {
+        ArrayList<Side> sides = new ArrayList<>();
+
+        ArrayList<TileCollision> tileCollisions = world.getCollisionManager().getTileCollisions(getHitbox());
+        for (TileCollision tileCollision : tileCollisions) {
+            Side side = tileCollision.getSideAlignedWithTile();
+            if (side != null && !sides.contains(side)) {
+                sides.add(side);
+            }
         }
 
-        // Left
-        double xLeft = position.x() - 0.0000001;
-        Hitbox hitboxLeft = new Hitbox(position.withX(xLeft), size);
-        if (world.getCollisionManager().getIntersectingTiles(hitboxLeft).size() > 0) {
-            tileCollidingSides.add(Side.LEFT);
-        }
-
-        // Right
-        double xRight = position.x() + 0.0000001;
-        Hitbox hitboxRight = new Hitbox(position.withX(xRight), size);
-        if (world.getCollisionManager().getIntersectingTiles(hitboxRight).size() > 0) {
-            tileCollidingSides.add(Side.RIGHT);
-        }
-
-        return tileCollidingSides;
+        return sides;
     }
 
     public Vector getPosition() {
         return position;
     }
 
+    public double getX() {
+        return position.x();
+    }
+
+    public double getY() {
+        return position.y();
+    }
+
+    public double getTop() {
+        return getHitbox().top();
+    }
+
+    public double getBottom() {
+        return getHitbox().bottom();
+    }
+
+    public double getLeft() {
+        return getHitbox().left();
+    }
+
+    public double getRight() {
+        return getHitbox().right();
+    }
+
     public void setPosition(Vector position) {
         this.position = position;
+    }
+
+    public void setX(double x) {
+        position = position.withX(x);
+    }
+
+    public void setY(double y) {
+        position = position.withY(y);
+    }
+
+    public void setTop(double y) {
+        setY(y - size.height());
+    }
+
+    public void setBottom(double y) {
+        setY(y);
+    }
+
+    public void setLeft(double x) {
+        setX(x + size.width() / 2);
+    }
+
+    public void setRight(double x) {
+        setX(x - size.width() / 2);
     }
 
     public Vector getVelocity() {

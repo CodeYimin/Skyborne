@@ -64,6 +64,14 @@ public class World implements Updatable {
         zombie.setPosition(new Vector(1, 5));
         instantiateEntity(zombie);
 
+        Zombie zombie2 = new Zombie(this);
+        zombie2.setPosition(new Vector(1, 6));
+        instantiateEntity(zombie2);
+
+        Zombie zombie3 = new Zombie(this);
+        zombie3.setPosition(new Vector(1, 7));
+        instantiateEntity(zombie3);
+
         this.camera.setFollowing(player);
         this.camera.setZoom(50);
     }

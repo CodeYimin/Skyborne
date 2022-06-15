@@ -3,7 +3,7 @@ package entities;
 import graphics.Sprite;
 import scenes.World;
 import util.Size;
-import world.Tile;
+import world.TileCollision;
 
 public class Projectile extends Entity {
     public Projectile(World world) {
@@ -24,8 +24,8 @@ public class Projectile extends Entity {
     }
 
     @Override
-    public void onCollision(Tile tile) {
-        if (tile.isSolid()) {
+    public void onCollision(TileCollision collision) {
+        if (collision.getTile().isSolid()) {
             destroy();
         }
     }
@@ -33,7 +33,8 @@ public class Projectile extends Entity {
     @Override
     public void onCollision(Entity entity) {
         if (entity instanceof Zombie) {
-            entity.destroy();
+            ((Zombie) entity).kill();
+            destroy();
         }
     }
 }

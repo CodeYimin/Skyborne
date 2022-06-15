@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import entities.Hitbox;
 import graphics.Camera;
 import graphics.Renderable;
+import util.Side;
 import util.Vector;
 
 public class Tilemap implements Renderable {
@@ -42,6 +43,33 @@ public class Tilemap implements Renderable {
                         null);
             }
         }
+    }
+
+    public ArrayList<TileCollision> getTileCollisions(Hitbox hitbox) {
+        ArrayList<TileCollision> tileCollisions = new ArrayList<>();
+
+        for (int x = (int) Math.ceil(hitbox.left()) - 1; x <= hitbox.right(); x++) {
+            for (int y = (int) Math.ceil(hitbox.bottom()) - 1; y <= hitbox.top(); y++) {
+                Tile tile = getTileAt(x, y);
+                if (tile != null) {
+                    Side perfectlyCollidingSide = null;
+
+                    if (hitbox.left() - 1 == x) {
+                        perfectlyCollidingSide = Side.LEFT;
+                    } else if (hitbox.right() == x) {
+                        perfectlyCollidingSide = Side.RIGHT;
+                    } else if (hitbox.bottom() - 1 == y) {
+                        perfectlyCollidingSide = Side.BOTTOM;
+                    } else if (hitbox.top() == y) {
+                        perfectlyCollidingSide = Side.TOP;
+                    }
+
+                    tileCollisions.add(new TileCollision(tile, perfectlyCollidingSide));
+                }
+            }
+        }
+
+        return tileCollisions;
     }
 
     public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {

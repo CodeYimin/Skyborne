@@ -6,6 +6,7 @@ import core.Updatable;
 import entities.Entity;
 import entities.Hitbox;
 import world.Tile;
+import world.TileCollision;
 import world.Tilemap;
 
 public class CollisionManager implements Updatable {
@@ -25,9 +26,9 @@ public class CollisionManager implements Updatable {
                 entity.onCollision(collidingEntity);
             }
 
-            ArrayList<Tile> collidingTiles = getCollidingTiles(entity);
-            for (Tile collidingTile : collidingTiles) {
-                entity.onCollision(collidingTile);
+            ArrayList<TileCollision> tileCollisions = getTileCollisions(entity);
+            for (TileCollision tileCollision : tileCollisions) {
+                entity.onCollision(tileCollision);
             }
         }
     }
@@ -52,6 +53,14 @@ public class CollisionManager implements Updatable {
             }
         }
         return collidingEntities;
+    }
+
+    public ArrayList<TileCollision> getTileCollisions(Entity entity) {
+        return tilemap.getTileCollisions(entity.getHitbox());
+    }
+
+    public ArrayList<TileCollision> getTileCollisions(Hitbox hitbox) {
+        return tilemap.getTileCollisions(hitbox);
     }
 
     public void addEntity(Entity entity) {
