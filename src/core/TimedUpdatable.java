@@ -1,36 +1,19 @@
 package core;
 
-public abstract class TimedUpdatable implements Updatable {
-    private final long creationTime = System.currentTimeMillis();
-    private long lastUpdateTime = 0;
-    private long deltaTime = 0;
+public abstract class TimedUpdatable {
+    private long lastUpdateTime;
+    private int updateInterval;
 
-    public TimedUpdatable() {
-        // Do nothing
+    public TimedUpdatable(int updateInterval) {
+        this.updateInterval = updateInterval;
     }
 
-    @Override
-    public void update() {
-        if (lastUpdateTime == 0) {
+    public abstract void timedUpdate();
+
+    public final void update() {
+        if (System.currentTimeMillis() - lastUpdateTime >= updateInterval) {
             lastUpdateTime = System.currentTimeMillis();
+            timedUpdate();
         }
-        deltaTime = System.currentTimeMillis() - lastUpdateTime;
-        lastUpdateTime = System.currentTimeMillis();
-    }
-
-    public long getDeltaTime() {
-        return deltaTime;
-    }
-
-    public double getDeltaTimeSecs() {
-        return deltaTime / 1000.0;
-    }
-
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    public long getTimeSinceCreation() {
-        return System.currentTimeMillis() - creationTime;
     }
 }

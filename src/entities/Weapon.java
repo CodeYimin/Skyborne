@@ -5,15 +5,15 @@ import scenes.World;
 import util.Size;
 import util.Vector;
 
-public class Item extends Entity {
+public abstract class Weapon extends Entity {
     private Entity owner;
-    private Vector ownerPositionOffset = Vector.ZERO;
+    private Vector relativePosition = Vector.ZERO;
 
-    public Item(World world) {
+    public Weapon(World world) {
         super(world);
 
         setSprite(new Sprite("../assets/player.jpg"));
-        setSize(new Size(2, 2));
+        setSize(new Size(1, 1));
     }
 
     @Override
@@ -21,9 +21,11 @@ public class Item extends Entity {
         super.update();
 
         if (owner != null) {
-            setPosition(owner.getPosition().add(ownerPositionOffset));
+            setPosition(owner.getPosition().add(relativePosition));
         }
     }
+
+    public abstract Projectile shoot();
 
     public Entity getOwner() {
         return owner;
@@ -33,11 +35,11 @@ public class Item extends Entity {
         this.owner = owner;
     }
 
-    public Vector getOwnerPositionOffset() {
-        return ownerPositionOffset;
+    public Vector getRelativePosition() {
+        return relativePosition;
     }
 
-    public void setOwnerPositionOffset(Vector ownerPositionOffset) {
-        this.ownerPositionOffset = ownerPositionOffset;
+    public void setRelativePosition(Vector relativePosition) {
+        this.relativePosition = relativePosition;
     }
 }

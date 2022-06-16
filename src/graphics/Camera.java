@@ -10,7 +10,7 @@ import entities.Entity;
 import util.Size;
 import util.Vector;
 
-public class Camera implements Drawable, Updatable {
+public class Camera extends Updatable implements Drawable {
     private Vector position = Vector.ZERO;
     private GraphicsPanel graphicsPanel;
     private ArrayList<Renderable> renderables = new ArrayList<>();

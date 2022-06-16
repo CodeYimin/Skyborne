@@ -8,11 +8,10 @@ import util.Side;
 import util.Size;
 import util.Vector;
 
-public class Player extends Entity {
+public class Player extends Character {
     private double speed = 5;
     private InputManager inputManager;
     private PlayerControls playerControls;
-    private Gun weapon;
 
     public Player(World level, InputManager inputManager) {
         super(level);
@@ -20,12 +19,8 @@ public class Player extends Entity {
 
         setSprite(new Sprite("../assets/player.jpg"));
         setAcceleration(Vector.DOWN.multiply(15));
-        setSize(new Size(1, 1));
+        setSize(new Size(0.8, 1));
         setPhasesTiles(false);
-
-        weapon = new Gun(getWorld());
-        equipWeapon(weapon);
-        getWorld().instantiateEntity(weapon);
     }
 
     @Override
@@ -60,8 +55,8 @@ public class Player extends Entity {
     }
 
     public void keyboardShoot() {
-        if (weapon != null && inputManager.isKeyDown(playerControls.attack)) {
-            weapon.shoot();
+        if (getWeapon() != null && inputManager.isKeyDown(playerControls.attack)) {
+            getWeapon().shoot();
         }
     }
 
@@ -71,19 +66,5 @@ public class Player extends Entity {
 
     public void setControls(PlayerControls playerControls) {
         this.playerControls = playerControls;
-    }
-
-    public Gun getWeapon() {
-        return weapon;
-    }
-
-    public void equipWeapon(Gun weapon) {
-        this.weapon = weapon;
-        weapon.setOwner(this);
-        weapon.setOwnerPositionOffset(new Vector(1, 0.5));
-    }
-
-    public void dequipWeapon() {
-        weapon = null;
     }
 }

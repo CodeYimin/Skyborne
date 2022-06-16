@@ -3,7 +3,7 @@ package entities;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import core.TimedUpdatable;
+import core.Updatable;
 import graphics.Camera;
 import graphics.Renderable;
 import graphics.Sprite;
@@ -13,7 +13,7 @@ import util.Size;
 import util.Vector;
 import world.TileCollision;
 
-public abstract class Entity extends TimedUpdatable implements Renderable {
+public abstract class Entity extends Updatable implements Renderable {
     private World world;
 
     private Vector position = Vector.ZERO;
@@ -101,7 +101,7 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
         }
 
         // Adjust from Bottom midpoint --> Top left corner
-        Vector adjustedPosition = getPosition().subtractX(size.width() / 2).addY(size.height());
+        Vector adjustedPosition = getPosition().subtractX(size.width() / 2).addY(size.height() / 2);
         Vector screenPosition = camera.worldToScreenPosition(adjustedPosition);
 
         sprite.render(g, screenPosition, size.multiply(camera.getZoom()));
@@ -180,11 +180,11 @@ public abstract class Entity extends TimedUpdatable implements Renderable {
     }
 
     public void setTop(double y) {
-        setY(y - size.height());
+        setY(y - size.height() / 2);
     }
 
     public void setBottom(double y) {
-        setY(y);
+        setY(y + size.height() / 2);
     }
 
     public void setLeft(double x) {

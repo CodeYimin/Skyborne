@@ -1,15 +1,18 @@
 package entities;
 
 import scenes.World;
+import util.Size;
 import util.Vector;
 
-public class Gun extends Item {
+public class Gun extends Weapon {
     private int delay = 100;
     private long lastShootTime = 0;
     private int ammo = 10;
 
     public Gun(World world) {
         super(world);
+
+        setSize(new Size(3, 0.5));
     }
 
     public long getTimeSinceShoot() {
@@ -28,6 +31,7 @@ public class Gun extends Item {
         }
     }
 
+    @Override
     public Projectile shoot() {
         if (getTimeSinceShoot() < delay || ammo == 0) {
             return null;

@@ -7,6 +7,7 @@ import collision.CollisionManager;
 import core.Game;
 import core.Updatable;
 import entities.Entity;
+import entities.Gun;
 import entities.Player;
 import entities.Zombie;
 import graphics.Camera;
@@ -14,10 +15,11 @@ import input.PlayerControls;
 import util.Vector;
 import world.Tilemap;
 
-public class World implements Updatable {
+public class World extends Updatable {
     private Game game;
     private Camera camera;
     private CollisionManager collisionManager;
+    private ZombieSpawner zombieSpawner = new ZombieSpawner(this, 2500);
 
     private ArrayList<Entity> entities = new ArrayList<>();
     private Tilemap tilemap;
@@ -57,8 +59,12 @@ public class World implements Updatable {
                 KeyEvent.VK_A,
                 KeyEvent.VK_D,
                 KeyEvent.VK_F));
-        player.setPosition(new Vector(0, 2));
+        player.setPosition(new Vector(0, 5));
         instantiateEntity(player);
+
+        Gun gun = new Gun(this);
+        player.equipWeapon(gun);
+        instantiateEntity(gun);
 
         Zombie zombie = new Zombie(this);
         zombie.setPosition(new Vector(1, 5));
@@ -81,6 +87,7 @@ public class World implements Updatable {
         for (int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
         }
+        zombieSpawner.update();
         collisionManager.update();
         camera.update();
     }
@@ -97,6 +104,10 @@ public class World implements Updatable {
         } else {
             return false;
         }
+    }
+
+    public boolean entityInstantiated(Entity entity) {
+        return entities.contains(entity);
     }
 
     public Tilemap getTilemap() {

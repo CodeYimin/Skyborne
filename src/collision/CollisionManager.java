@@ -9,7 +9,7 @@ import world.Tile;
 import world.TileCollision;
 import world.Tilemap;
 
-public class CollisionManager implements Updatable {
+public class CollisionManager extends Updatable {
     private ArrayList<Entity> entities = new ArrayList<>();
     private Tilemap tilemap;
 

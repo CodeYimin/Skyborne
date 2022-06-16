@@ -45,11 +45,11 @@ public class Hitbox {
     }
 
     public double top() {
-        return position.y() + height;
+        return position.y() + height / 2;
     }
 
     public double bottom() {
-        return position.y();
+        return position.y() - height / 2;
     }
 
     public double left() {
