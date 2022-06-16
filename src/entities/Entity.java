@@ -100,7 +100,7 @@ public abstract class Entity extends Updatable implements Renderable {
             return;
         }
 
-        // Adjust from Bottom midpoint --> Top left corner
+        // Adjust from Center --> Top left corner
         Vector adjustedPosition = getPosition().subtractX(size.width() / 2).addY(size.height() / 2);
         Vector screenPosition = camera.worldToScreenPosition(adjustedPosition);
 
