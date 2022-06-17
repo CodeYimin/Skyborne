@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class InputManager implements KeyListener {
+public class Keyboard implements KeyListener {
     private HashSet<Integer> keysDown = new HashSet<>();
     private ArrayList<KeyListener> keyListeners = new ArrayList<>();
 

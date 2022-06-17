@@ -1,17 +1,25 @@
 package core;
 
-import input.InputManager;
+import input.Keyboard;
+import input.Mouse;
 import scenes.Level;
 import util.Const;
 
 public class Game {
     private GameWindow window = new GameWindow("Epic Game");
-    private InputManager inputManager = new InputManager();
+    private Keyboard keyboard;
+    private Mouse mouse;
 
-    private Level level = new Level(this);
+    private Level level;
 
     public Game() {
-        window.addKeyListener(inputManager);
+        keyboard = new Keyboard();
+        mouse = new Mouse(window.getGraphicsPanel());
+
+        window.addKeyListener(keyboard);
+        window.getGraphicsPanel().addMouseListener(mouse);
+
+        level = new Level(this);
 
         startGameLoop();
     }
@@ -37,7 +45,11 @@ public class Game {
         return window;
     }
 
-    public InputManager getInputManager() {
-        return inputManager;
+    public Keyboard getkeyboard() {
+        return keyboard;
+    }
+
+    public Mouse getMouse() {
+        return mouse;
     }
 }

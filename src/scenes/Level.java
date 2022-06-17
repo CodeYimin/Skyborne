@@ -5,12 +5,14 @@ import java.util.ArrayList;
 
 import core.Game;
 import core.Updatable;
-import entities.Creature;
+import entities.AntiTileCollisionMovementListener;
+import entities.Entity;
 import entities.PlayerMovementController;
 import graphics.AnimatedSprite;
 import graphics.Camera;
 import graphics.Sprite;
 import input.PlayerControls;
+import util.Vector;
 import world.Tilemap;
 
 public class Level implements Updatable {
@@ -18,7 +20,7 @@ public class Level implements Updatable {
     private Camera camera;
     // private ZombieSpawner zombieSpawner = new ZombieSpawner(this, 2500);
 
-    private ArrayList<Creature> creatures = new ArrayList<>();
+    private ArrayList<Entity> entities = new ArrayList<>();
     private Tilemap tilemap;
 
     public Level(Game game) {
@@ -55,7 +57,7 @@ public class Level implements Updatable {
                 KeyEvent.VK_D,
                 KeyEvent.VK_SPACE);
         PlayerMovementController playerMovementController = new PlayerMovementController(
-                game.getInputManager(),
+                game.getkeyboard(),
                 playerControls);
         AnimatedSprite playerSprite = new AnimatedSprite(
                 100,
@@ -65,9 +67,11 @@ public class Level implements Updatable {
                         new Sprite("../assets/big_demon_idle_anim_f2.png"),
                         new Sprite("../assets/big_demon_idle_anim_f3.png") },
                 new Sprite[] {});
-        Creature player = new Creature(this, playerMovementController);
+        Entity player = new Entity(this, playerMovementController);
+        player.setPosition(new Vector(1, 5));
         player.setSprite(playerSprite);
-        this.creatures.add(player);
+        player.getMovementManager().addListener(new AntiTileCollisionMovementListener(player));
+        this.entities.add(player);
 
         this.camera.setFollowing(player);
         this.camera.setZoom(50);
@@ -75,11 +79,12 @@ public class Level implements Updatable {
 
     @Override
     public void update() {
-        for (int i = 0; i < creatures.size(); i++) {
-            creatures.get(i).update();
+        for (int i = 0; i < entities.size(); i++) {
+            entities.get(i).update();
         }
         // zombieSpawner.update();
         camera.update();
+        System.out.println(getGame().getMouse().getMousePosition());
     }
 
     public Game getGame() {
@@ -94,7 +99,7 @@ public class Level implements Updatable {
         return camera;
     }
 
-    public ArrayList<Creature> getCreatures() {
-        return creatures;
+    public ArrayList<Entity> getEntities() {
+        return entities;
     }
 }

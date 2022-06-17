@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import core.Drawable;
 import core.GraphicsPanel;
 import core.Updatable;
-import entities.Creature;
+import entities.Entity;
 import util.Size;
 import util.Vector;
 
@@ -15,7 +15,7 @@ public class Camera implements Drawable, Updatable {
     private GraphicsPanel graphicsPanel;
     private ArrayList<Renderable> renderables = new ArrayList<>();
     private double zoom;
-    private Creature following;
+    private Entity following;
 
     public Camera(GraphicsPanel graphicsPanel) {
         this.graphicsPanel = graphicsPanel;
@@ -26,7 +26,7 @@ public class Camera implements Drawable, Updatable {
     @Override
     public void update() {
         if (following != null) {
-            position = following.getMovementManager().getPosition();
+            position = following.getPosition();
         }
     }
 
@@ -72,11 +72,11 @@ public class Camera implements Drawable, Updatable {
         return this.graphicsPanel;
     }
 
-    public Creature getFollowing() {
+    public Entity getFollowing() {
         return following;
     }
 
-    public void setFollowing(Creature following) {
+    public void setFollowing(Entity following) {
         this.following = following;
     }
 
