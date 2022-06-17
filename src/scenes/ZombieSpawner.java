@@ -5,9 +5,9 @@ import entities.Zombie;
 import util.Vector;
 
 public class ZombieSpawner extends TimedUpdatable {
-    private World world;
+    private Level world;
 
-    public ZombieSpawner(World world, int spawnInterval) {
+    public ZombieSpawner(Level world, int spawnInterval) {
         super(spawnInterval);
 
         this.world = world;

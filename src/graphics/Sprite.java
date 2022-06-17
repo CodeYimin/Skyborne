@@ -24,12 +24,27 @@ public class Sprite {
         return image;
     }
 
+    public void draw(Graphics g, Vector screenPosition, Size size, boolean flip) {
+        if (flip) {
+            g.drawImage(
+                    image,
+                    (int) (screenPosition.x() + size.width() / 2),
+                    (int) (screenPosition.y() - size.height() / 2),
+                    (int) -size.width(),
+                    (int) size.height(),
+                    null);
+        } else {
+            g.drawImage(
+                    image,
+                    (int) (screenPosition.x() - size.width() / 2),
+                    (int) (screenPosition.y() - size.height() / 2),
+                    (int) size.width(),
+                    (int) size.height(),
+                    null);
+        }
+    }
+
     public void render(Graphics g, Vector screenPosition, Size size) {
-        g.drawImage(image,
-                (int) screenPosition.x(),
-                (int) screenPosition.y(),
-                (int) size.width(),
-                (int) size.height(),
-                null);
+        draw(g, screenPosition, size, false);
     }
 }

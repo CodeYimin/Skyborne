@@ -9,8 +9,8 @@ public class Tile {
 
     private static final Sprite[] sprites = new Sprite[] {
             // new Sprite("dirt.png"),
-            new Sprite("../assets/blocks/grass.png"),
-            new Sprite("../assets/blocks/stone.png")
+            new Sprite("../assets/floor_1.png"),
+            new Sprite("../assets/floor_2.png")
     };
 
     private static final boolean[] solid = new boolean[] {
