@@ -1,6 +1,4 @@
-package world;
-
-import graphics.Sprite;
+package structures;
 
 public class Tile {
     public static final int DIRT = 0;

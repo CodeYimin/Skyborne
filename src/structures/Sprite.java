@@ -1,13 +1,10 @@
-package graphics;
+package structures;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-
-import components.Vector;
-import util.Size;
 
 public class Sprite {
     private BufferedImage image;
@@ -24,27 +21,27 @@ public class Sprite {
         return image;
     }
 
-    public void draw(Graphics g, Vector screenPosition, Size size, boolean flip) {
+    public void draw(Graphics g, Vector screenPosition, Vector size, boolean flip) {
         if (flip) {
             g.drawImage(
                     image,
-                    (int) (screenPosition.getX() + size.width() / 2),
-                    (int) (screenPosition.getY() - size.height() / 2),
-                    (int) -size.width(),
-                    (int) size.height(),
+                    (int) (screenPosition.getX() + size.getX() / 2),
+                    (int) (screenPosition.getY() - size.getY() / 2),
+                    (int) -size.getX(),
+                    (int) size.getY(),
                     null);
         } else {
             g.drawImage(
                     image,
-                    (int) (screenPosition.getX() - size.width() / 2),
-                    (int) (screenPosition.getY() - size.height() / 2),
-                    (int) size.width(),
-                    (int) size.height(),
+                    (int) (screenPosition.getX() - size.getX() / 2),
+                    (int) (screenPosition.getY() - size.getY() / 2),
+                    (int) size.getX(),
+                    (int) size.getY(),
                     null);
         }
     }
 
-    public void render(Graphics g, Vector screenPosition, Size size) {
+    public void render(Graphics g, Vector screenPosition, Vector size) {
         draw(g, screenPosition, size, false);
     }
 }

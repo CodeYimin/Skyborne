@@ -1,12 +1,29 @@
 package components;
 
-public class Transform {
+import structures.Vector;
+
+public class Transform extends Component {
     public Vector position;
     public Vector size;
+
+    public Transform() {
+        this.position = Vector.ZERO;
+        this.size = Vector.ONE;
+    }
 
     public Transform(Vector position, Vector size) {
         this.position = position;
         this.size = size;
+    }
+
+    public Vector getScreenPosition() {
+        Camera camera = getGameObject().getScene().getComponent(Camera.class);
+        return camera.worldToScreenPosition(position);
+    }
+
+    public Vector getScreenSize() {
+        Camera camera = getGameObject().getScene().getComponent(Camera.class);
+        return camera.worldToScreenSize(size);
     }
 
     public Vector getPosition() {
@@ -34,11 +51,11 @@ public class Transform {
     }
 
     public void setWidth(double width) {
-        this.size.setX(width);
+        size = size.withX(width);
     }
 
     public void setHeight(double height) {
-        this.size.setY(height);
+        size = size.withY(height);
     }
 
     public double getX() {
@@ -50,11 +67,11 @@ public class Transform {
     }
 
     public void setX(double x) {
-        this.position.setX(x);
+        position = position.withX(x);
     }
 
     public void setY(double y) {
-        this.position.setY(y);
+        position = position.withY(y);
     }
 
     public double getTop() {
@@ -74,18 +91,18 @@ public class Transform {
     }
 
     public void setTop(double top) {
-        this.position.setY(top - size.getY() / 2);
+        position = position.withY(top - size.getY() / 2);
     }
 
     public void setBottom(double bottom) {
-        this.position.setY(bottom + size.getY() / 2);
+        position = position.withY(bottom + size.getY() / 2);
     }
 
     public void setLeft(double left) {
-        this.position.setX(left + size.getX() / 2);
+        position = position.withX(left + size.getX() / 2);
     }
 
     public void setRight(double right) {
-        this.position.setX(right - size.getX() / 2);
+        position = position.withX(right - size.getX() / 2);
     }
 }

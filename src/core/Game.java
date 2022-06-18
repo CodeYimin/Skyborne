@@ -2,29 +2,37 @@ package core;
 
 import input.Keyboard;
 import input.Mouse;
-import scenes.Level;
+import scenes.LevelScene;
+import scenes.Scene;
 import util.Const;
 
 public class Game {
-    private GameWindow window = new GameWindow("Epic Game");
+    private GameWindow window;
     private Keyboard keyboard;
     private Mouse mouse;
-
-    private Level level;
+    private Scene currentScene;
+    private UpdateTimeTracker updateTimeTracker;
 
     public Game() {
-        keyboard = new Keyboard();
-        mouse = new Mouse(window.getGraphicsPanel());
+        this.window = new GameWindow("Epic Game");
+        this.keyboard = new Keyboard();
+        this.mouse = new Mouse(window.getGraphicsPanel());
+        this.updateTimeTracker = new UpdateTimeTracker();
 
         window.addKeyListener(keyboard);
         window.getGraphicsPanel().addMouseListener(mouse);
 
-        level = new Level(this);
-
-        startGameLoop();
+        init();
+        start();
     }
 
-    private void startGameLoop() {
+    private void init() {
+        currentScene = new LevelScene(this);
+        currentScene.init();
+    }
+
+    private void start() {
+        currentScene.start();
         while (true) {
             update();
             try {
@@ -36,16 +44,17 @@ public class Game {
     }
 
     private void update() {
-        level.update();
-
+        currentScene.update(updateTimeTracker.getDeltaTimeSecs());
         window.getGraphicsPanel().repaint();
+
+        updateTimeTracker.update();
     }
 
     public GameWindow getWindow() {
         return window;
     }
 
-    public Keyboard getkeyboard() {
+    public Keyboard getKeyboard() {
         return keyboard;
     }
 

@@ -1,6 +1,8 @@
 package components;
 
-public class Hitbox {
+import structures.Vector;
+
+public class Hitbox extends Component {
     private Vector position;
     private double width;
     private double height;

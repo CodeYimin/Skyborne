@@ -1,9 +1,6 @@
-package graphics;
+package structures;
 
 import java.awt.Graphics;
-
-import components.Vector;
-import util.Size;
 
 public class AnimatedSprite {
     public static final int IDLE = 0;
@@ -20,7 +17,7 @@ public class AnimatedSprite {
         this.runningFrames = runningFrames;
     }
 
-    public void draw(Graphics g, Vector screenPosition, Size size, boolean flip) {
+    public void draw(Graphics g, Vector screenPosition, Vector size, boolean flip) {
         Sprite sprite = getCurrentSprite();
         sprite.draw(g, screenPosition, size, flip);
     }
