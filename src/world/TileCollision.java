@@ -1,6 +1,6 @@
 package world;
 
-import util.Side;
+import components.Side;
 
 public class TileCollision {
     private final Tile tile;

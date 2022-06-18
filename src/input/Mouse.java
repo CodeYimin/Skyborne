@@ -4,8 +4,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import components.Vector;
 import core.GraphicsPanel;
-import util.Vector;
 
 public class Mouse implements MouseListener {
     private GraphicsPanel graphicsPanel;

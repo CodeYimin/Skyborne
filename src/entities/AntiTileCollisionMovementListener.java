@@ -1,6 +1,6 @@
 package entities;
 
-import util.Vector;
+import components.Vector;
 
 public class AntiTileCollisionMovementListener implements MovementListener {
     private Entity entity;
@@ -14,8 +14,8 @@ public class AntiTileCollisionMovementListener implements MovementListener {
         Vector moveAmount = newPosition.subtract(oldPosition);
 
         // Move X
-        double xMoveAmount = moveAmount.x();
-        Vector xMovePosition = new Vector(newPosition.x(), oldPosition.y());
+        double xMoveAmount = moveAmount.getX();
+        Vector xMovePosition = new Vector(newPosition.getX(), oldPosition.getY());
         if (entity.getCollisionManager().getIntersectingTiles(xMovePosition).size() > 0) {
             // Adjust position on collision to perfectly align with tile
             if (xMoveAmount > 0) {
@@ -28,8 +28,8 @@ public class AntiTileCollisionMovementListener implements MovementListener {
         }
 
         // Move Y
-        double yMoveAmount = moveAmount.y();
-        Vector yMovePosition = new Vector(oldPosition.x(), newPosition.y());
+        double yMoveAmount = moveAmount.getY();
+        Vector yMovePosition = new Vector(oldPosition.getX(), newPosition.getY());
         if (entity.getCollisionManager().getIntersectingTiles(yMovePosition).size() > 0) {
             // Adjust position on collision to perfectly align with tile
             if (yMoveAmount > 0) {

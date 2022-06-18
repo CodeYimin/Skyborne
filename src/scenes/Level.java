@@ -5,20 +5,19 @@ import java.util.ArrayList;
 
 import core.Game;
 import core.Updatable;
-import entities.AntiTileCollisionMovementListener;
 import entities.Entity;
 import entities.PlayerMovementController;
 import graphics.AnimatedSprite;
 import graphics.Camera;
 import graphics.Sprite;
 import input.PlayerControls;
-import util.Vector;
+import systems.System;
 import world.Tilemap;
 
 public class Level implements Updatable {
     private Game game;
     private Camera camera;
-    // private ZombieSpawner zombieSpawner = new ZombieSpawner(this, 2500);
+    private ArrayList<System<?>> systems = new ArrayList<>();
 
     private ArrayList<Entity> entities = new ArrayList<>();
     private Tilemap tilemap;
@@ -67,10 +66,7 @@ public class Level implements Updatable {
                         new Sprite("../assets/big_demon_idle_anim_f2.png"),
                         new Sprite("../assets/big_demon_idle_anim_f3.png") },
                 new Sprite[] {});
-        Entity player = new Entity(this, playerMovementController);
-        player.setPosition(new Vector(1, 5));
-        player.setSprite(playerSprite);
-        player.getMovementManager().addListener(new AntiTileCollisionMovementListener(player));
+        Entity player = new Entity();
         this.entities.add(player);
 
         this.camera.setFollowing(player);
@@ -82,9 +78,30 @@ public class Level implements Updatable {
         for (int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
         }
-        // zombieSpawner.update();
         camera.update();
-        System.out.println(getGame().getMouse().getMousePosition());
+    }
+
+    public boolean addSystem(System<?> system) {
+        if (getSystem(system.getClass()) != null) {
+            return false;
+        }
+
+        systems.add(system);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends System<?>> T getSystem(Class<T> systemClass) {
+        for (System<?> system : systems) {
+            if (system.getClass() == systemClass) {
+                return (T) system;
+            }
+        }
+        return null;
+    }
+
+    public boolean removeSystem(System<?> system) {
+        return systems.remove(system);
     }
 
     public Game getGame() {

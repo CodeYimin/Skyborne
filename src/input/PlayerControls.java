@@ -1,10 +1,10 @@
 package input;
 
-public final class PlayerControls {
-    private final int moveUp;
-    private final int moveDown;
-    private final int moveLeft;
-    private final int moveRight;
+public class PlayerControls {
+    private int moveUp;
+    private int moveDown;
+    private int moveLeft;
+    private int moveRight;
 
     private final int attack;
     // public final int interact;

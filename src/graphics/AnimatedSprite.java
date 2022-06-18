@@ -2,8 +2,8 @@ package graphics;
 
 import java.awt.Graphics;
 
+import components.Vector;
 import util.Size;
-import util.Vector;
 
 public class AnimatedSprite {
     public static final int IDLE = 0;

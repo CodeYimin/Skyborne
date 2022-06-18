@@ -1,4 +1,4 @@
-package util;
+package components;
 
 public enum Side {
     TOP,

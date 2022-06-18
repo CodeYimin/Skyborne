@@ -1,5 +1,5 @@
 package core;
 
 public interface Updatable {
-    public void update();
+    public void update(double deltaTime);
 }

@@ -3,12 +3,12 @@ package graphics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import components.Vector;
 import core.Drawable;
 import core.GraphicsPanel;
 import core.Updatable;
 import entities.Entity;
 import util.Size;
-import util.Vector;
 
 public class Camera implements Drawable, Updatable {
     private Vector position = Vector.ZERO;

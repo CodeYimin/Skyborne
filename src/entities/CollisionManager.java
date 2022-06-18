@@ -2,9 +2,10 @@ package entities;
 
 import java.util.ArrayList;
 
+import components.Hitbox;
+import components.Vector;
 import core.Updatable;
 import scenes.Level;
-import util.Vector;
 import world.Tile;
 
 public class CollisionManager implements Updatable {

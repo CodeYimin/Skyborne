@@ -6,8 +6,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import components.Vector;
 import util.Size;
-import util.Vector;
 
 public class Sprite {
     private BufferedImage image;
@@ -28,16 +28,16 @@ public class Sprite {
         if (flip) {
             g.drawImage(
                     image,
-                    (int) (screenPosition.x() + size.width() / 2),
-                    (int) (screenPosition.y() - size.height() / 2),
+                    (int) (screenPosition.getX() + size.width() / 2),
+                    (int) (screenPosition.getY() - size.height() / 2),
                     (int) -size.width(),
                     (int) size.height(),
                     null);
         } else {
             g.drawImage(
                     image,
-                    (int) (screenPosition.x() - size.width() / 2),
-                    (int) (screenPosition.y() - size.height() / 2),
+                    (int) (screenPosition.getX() - size.width() / 2),
+                    (int) (screenPosition.getY() - size.height() / 2),
                     (int) size.width(),
                     (int) size.height(),
                     null);

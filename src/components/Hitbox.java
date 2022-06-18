@@ -1,7 +1,4 @@
-package entities;
-
-import util.Size;
-import util.Vector;
+package components;
 
 public class Hitbox {
     private Vector position;
@@ -14,10 +11,16 @@ public class Hitbox {
         this.height = height;
     }
 
-    public Hitbox(Vector position, Size size) {
+    public Hitbox(Vector position, Vector size) {
         this.position = position;
-        this.width = size.width();
-        this.height = size.height();
+        this.width = size.getX();
+        this.height = size.getY();
+    }
+
+    public Hitbox(Transform transform) {
+        this.position = transform.getPosition();
+        this.width = transform.getSize().getX();
+        this.height = transform.getSize().getY();
     }
 
     public Vector position() {
@@ -45,19 +48,19 @@ public class Hitbox {
     }
 
     public double top() {
-        return position.y() + height / 2;
+        return position.getY() + height / 2;
     }
 
     public double bottom() {
-        return position.y() - height / 2;
+        return position.getY() - height / 2;
     }
 
     public double left() {
-        return position.x() - width / 2;
+        return position.getX() - width / 2;
     }
 
     public double right() {
-        return position.x() + width / 2;
+        return position.getX() + width / 2;
     }
 
     public boolean intersects(Hitbox other) {

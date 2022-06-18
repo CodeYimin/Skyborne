@@ -3,11 +3,11 @@ package world;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import entities.Hitbox;
+import components.Hitbox;
+import components.Side;
+import components.Vector;
 import graphics.Camera;
 import graphics.Renderable;
-import util.Side;
-import util.Vector;
 
 public class Tilemap implements Renderable {
     private Tile[][] tiles;
@@ -36,8 +36,8 @@ public class Tilemap implements Renderable {
                 Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
                 g.drawImage(tiles[x][y].getSprite().getImage(),
-                        (int) tileScreenPosition.x(),
-                        (int) tileScreenPosition.y(),
+                        (int) tileScreenPosition.getX(),
+                        (int) tileScreenPosition.getY(),
                         (int) tileScreenSize,
                         (int) tileScreenSize,
                         null);
@@ -111,7 +111,7 @@ public class Tilemap implements Renderable {
     }
 
     public Tile getTileAt(Vector position) {
-        return getTileAt((int) position.x(), (int) position.y());
+        return getTileAt((int) position.getX(), (int) position.getY());
     }
 
     public void setTile(int x, int y, Tile tile) {
