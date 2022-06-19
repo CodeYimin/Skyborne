@@ -34,6 +34,7 @@ public class LevelScene extends Scene {
     @Override
     public void init() {
         GameObject tilemap = new GameObject();
+        tilemap.addComponent(new Transform(new Vector(0, 0)));
         tilemap.addComponent(new Tilemap("../data/tilemap.txt"));
         tilemap.addComponent(new TilemapRenderer());
         addGameObject(tilemap);
@@ -41,7 +42,7 @@ public class LevelScene extends Scene {
         GameObject player = new GameObject();
         player.addComponent(new Player());
         player.addComponent(new Health(10));
-        player.addComponent(new Transform(new Vector(0, -1), Vector.ONE));
+        player.addComponent(new Transform(new Vector(0, 0), Vector.ONE));
         player.addComponent(new BoxCollider());
         player.addComponent(new SpriteRenderer(new Sprite("../assets/big_demon_idle_anim_f0.png")));
         player.addComponent(new TilemapMotion());

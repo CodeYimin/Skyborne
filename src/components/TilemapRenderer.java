@@ -19,7 +19,7 @@ public class TilemapRenderer extends Renderer {
         for (int x = 0; x < tiles.length; x++) {
             for (int y = 0; y < tiles[0].length; y++) {
                 // Bottom left -> Center
-                Vector tilePosition = new Vector(x + 0.5, y + 0.5);
+                Vector tilePosition = tilemap.getTileWorldPosition(x, y).add(0.5);
                 Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
                 tiles[x][y].getSprite().draw(g, tileScreenPosition, tileScreenSize, 0, false, false);

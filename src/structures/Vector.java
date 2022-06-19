@@ -17,8 +17,7 @@ public final class Vector {
     public static final Vector DOWN_RIGHT_DIRECTION = new Vector(1, -1).normalized();
     public static final Vector DOWN_LEFT_DIRECTION = new Vector(-1, -1).normalized();
 
-    private final double x;
-    private final double y;
+    private final double x, y;
 
     public Vector(double x, double y) {
         this.x = x;
