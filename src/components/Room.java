@@ -3,12 +3,14 @@ package components;
 import java.util.ArrayList;
 
 import core.GameObject;
+import structures.Directions;
 import structures.Tile;
 import structures.Vector;
 import util.Const;
 import util.ObjectCreator;
 
 public class Room extends Tilemap {
+    private Directions doorDirections = new Directions();
     private int floorMaterial;
     private int wallMaterial;
     private int doorMaterial;
@@ -22,11 +24,12 @@ public class Room extends Tilemap {
         this.floorMaterial = floorMaterial;
         this.wallMaterial = wallMaterial;
         this.doorMaterial = doorMaterial;
+
+        generateFloors();
     }
 
     @Override
     public void start() {
-        generateFloors();
         generateWalls();
         spawnEnemies();
         freezeObjects();
@@ -83,10 +86,9 @@ public class Room extends Tilemap {
                 unfreezeObjects();
             }
 
-            ArrayList<Enemy> enemyComponents = getGameObject().getScene().getComponents(Enemy.class);
             int enemiesInRoom = 0;
-            for (Enemy enemyComponent : enemyComponents) {
-                if (isInRoom(enemyComponent.getGameObject())) {
+            for (GameObject child : getGameObject().getChildren()) {
+                if (child.getComponent(Enemy.class) != null) {
                     enemiesInRoom++;
                 }
             }
@@ -108,10 +110,7 @@ public class Room extends Tilemap {
     }
 
     public boolean isInRoom(GameObject gameObject) {
-        return isInRoom(gameObject.getTransform());
-    }
-
-    public boolean isInRoom(Transform transform) {
+        Transform transform = gameObject.getTransform();
         Vector position = transform.getPosition();
         Vector scale = transform.getScale();
         Vector localPosition = getLocalPosition(position);
@@ -135,10 +134,19 @@ public class Room extends Tilemap {
         Tile[][] tiles = new Tile[getWidth()][getHeight()];
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                boolean isBorder = x == 0 || x == getWidth() - 1 || y == 0 || y == getHeight() - 1;
-                boolean isHallway = (x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH)
-                        || (y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH);
-                if (isBorder && !isHallway) {
+                boolean isTopBorder = y == getHeight() - 1;
+                boolean isBottomBorder = y == 0;
+                boolean isLeftBorder = x == 0;
+                boolean isRightBorder = x == getWidth() - 1;
+                boolean isBorder = isTopBorder || isBottomBorder || isLeftBorder || isRightBorder;
+                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH;
+                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH;
+                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
+                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
+                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();
+                boolean isRightDoor = isRightBorder && isVerticalDoorRow && doorDirections.hasRight();
+                boolean isDoor = isTopDoor || isBottomDoor || isLeftDoor || isRightDoor;
+                if (isBorder && !isDoor) {
                     tiles[x][y] = new Tile(wallMaterial);
                 } else {
                     tiles[x][y] = new Tile(0);
@@ -152,10 +160,18 @@ public class Room extends Tilemap {
         Tile[][] tiles = new Tile[getWidth()][getHeight()];
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                boolean isBorder = x == 0 || x == getWidth() - 1 || y == 0 || y == getHeight() - 1;
-                boolean isHallway = (x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH)
-                        || (y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH);
-                if (isBorder && isHallway) {
+                boolean isTopBorder = y == getHeight() - 1;
+                boolean isBottomBorder = y == 0;
+                boolean isLeftBorder = x == 0;
+                boolean isRightBorder = x == getWidth() - 1;
+                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH;
+                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH;
+                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
+                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
+                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();
+                boolean isRightDoor = isRightBorder && isVerticalDoorRow && doorDirections.hasRight();
+                boolean isDoor = isTopDoor || isBottomDoor || isLeftDoor || isRightDoor;
+                if (isDoor) {
                     tiles[x][y] = new Tile(doorMaterial);
                 } else {
                     tiles[x][y] = new Tile(0);
@@ -168,5 +184,9 @@ public class Room extends Tilemap {
 
     public void clearDoors() {
         removeLayer(doorLayer);
+    }
+
+    public Directions getDoorDirections() {
+        return doorDirections;
     }
 }

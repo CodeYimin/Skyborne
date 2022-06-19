@@ -1,37 +1,33 @@
 package components;
 
-import core.GameObject;
 import structures.Vector;
+import util.Timer;
 
 public class EnemyMotionController extends Component {
-    private GameObject target;
     private double speed;
+    private Timer directionChangeTimer;
 
-    public EnemyMotionController(GameObject target, double speed) {
-        this.target = target;
+    public EnemyMotionController(double speed) {
         this.speed = speed;
+        this.directionChangeTimer = new Timer(2500);
     }
 
     @Override
     public void update(double deltaTime) {
-        Transform transform = getGameObject().getTransform();
-        Transform targetTransform = target.getTransform();
         Motion motion = getGameObject().getComponent(Motion.class);
-
-        if (transform == null || targetTransform == null || motion == null) {
+        if (motion == null) {
             return;
         }
 
-        if (transform.getPosition().distance(targetTransform.getPosition()) < 1) {
-            motion.setVelocity(Vector.ZERO);
-            return;
+        if (directionChangeTimer.isDone()) {
+            if (Math.random() < 0.25) {
+                motion.setVelocity(Vector.ZERO);
+            } else {
+                Vector direction = Vector.random();
+                motion.setVelocity(direction.multiply(speed));
+            }
+            directionChangeTimer.reset();
         }
-
-        Vector direction = targetTransform.getPosition().subtract(transform.getPosition());
-        double angle = direction.toAngle();
-        double roundedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
-        Vector roundedDirection = new Vector(roundedAngle);
-        motion.setVelocity(roundedDirection.normalized().multiply(speed));
     }
 
     public double getSpeed() {

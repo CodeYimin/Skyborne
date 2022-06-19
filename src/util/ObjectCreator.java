@@ -35,7 +35,7 @@ public class ObjectCreator {
     public static GameObject createEnemy(GameObject target, Vector position, Vector size, int health, String spritePath) {
         GameObject enemy = ObjectCreator.createTilemapCreature(position, size, health, spritePath);
         enemy.addComponent(new Enemy());
-        enemy.addComponent(new EnemyMotionController(target, 1));
+        enemy.addComponent(new EnemyMotionController(1));
         enemy.addComponent(new DestroyOnDeath());
         enemy.addComponent(new HPBar());
         return enemy;

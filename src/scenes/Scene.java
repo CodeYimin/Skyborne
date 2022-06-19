@@ -51,8 +51,8 @@ public abstract class Scene {
 
     public ArrayList<GameObject> getGameObjects() {
         ArrayList<GameObject> gameObjects = new ArrayList<>();
-        for (GameObject gameObject : this.gameObjects) {
-            gameObjects.add(gameObject);
+        for (int i = 0; i < this.gameObjects.size(); i++) {
+            gameObjects.add(this.gameObjects.get(i));
         }
         return gameObjects;
     }
@@ -60,54 +60,19 @@ public abstract class Scene {
     public ArrayList<GameObject> getGameObjects(Class<? extends Component> componentClass) {
         ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-        for (GameObject gameObject : this.gameObjects) {
-            if (gameObject.getComponent(componentClass) != null) {
-                gameObjects.add(gameObject);
+        for (int i = 0; i < this.gameObjects.size(); i++) {
+            if (this.gameObjects.get(i).getComponent(componentClass) != null) {
+                gameObjects.add(this.gameObjects.get(i));
             }
         }
 
         return gameObjects;
-    }
-
-    @SuppressWarnings("unchecked")
-    public ArrayList<GameObject> getGameObjects(Class<? extends Component>... componentClasses) {
-        ArrayList<GameObject> gameObjects = new ArrayList<>();
-
-        for (GameObject gameObject : this.gameObjects) {
-            boolean hasAllComponents = true;
-            for (Class<? extends Component> componentClass : componentClasses) {
-                if (gameObject.getComponent(componentClass) == null) {
-                    hasAllComponents = false;
-                }
-            }
-            if (hasAllComponents) {
-                gameObjects.add(gameObject);
-            }
-        }
-
-        return gameObjects;
-    }
-
-    @SuppressWarnings("unchecked")
-    public GameObject getGameObject(Class<? extends Component>... componentClasses) {
-        for (GameObject gameObject : this.gameObjects) {
-            boolean hasAllComponents = true;
-            for (Class<? extends Component> componentClass : componentClasses) {
-                if (gameObject.getComponent(componentClass) == null) {
-                    hasAllComponents = false;
-                }
-            }
-            if (hasAllComponents) {
-                return gameObject;
-            }
-        }
-        return null;
     }
 
     public GameObject getGameObject(Class<? extends Component> componentClass) {
-        for (GameObject gameObject : this.gameObjects) {
-            if (gameObject.getComponent(componentClass) != null) {
-                return gameObject;
+        for (int i = 0; i < this.gameObjects.size(); i++) {
+            if (this.gameObjects.get(i).getComponent(componentClass) != null) {
+                return this.gameObjects.get(i);
             }
         }
         return null;

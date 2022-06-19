@@ -29,6 +29,10 @@ public final class Vector {
         this.y = Math.sin(angle);
     }
 
+    public static Vector random() {
+        return new Vector(Math.random() * 2 * Math.PI);
+    }
+
     public double getX() {
         return x;
     }

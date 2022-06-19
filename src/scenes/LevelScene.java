@@ -3,6 +3,7 @@ package scenes;
 import java.awt.event.KeyEvent;
 
 import components.Camera;
+import components.Dungeon;
 import components.Enemy;
 import components.HealthUI;
 import components.KeyboardMotionController;
@@ -14,7 +15,6 @@ import components.UICamera;
 import components.Weapon;
 import core.Game;
 import core.GameObject;
-import structures.IntVector;
 import structures.Sprite;
 import structures.Vector;
 import util.ObjectCreator;
@@ -76,13 +76,18 @@ public class LevelScene extends Scene {
     public void start() {
         super.start();
 
-        GameObject room1 = ObjectCreator.createRoom(new IntVector(0, 0), "../data/room1.txt");
-        addGameObject(room1, 0);
+        // GameObject room1 = ObjectCreator.createRoom(new IntVector(0, 0),
+        // "../data/room1.txt");
+        // addGameObject(room1, 0);
 
-        GameObject room2 = ObjectCreator.createRoom(new IntVector(1, 0), "../data/room2.txt");
-        addGameObject(room2, 0);
+        // GameObject room2 = ObjectCreator.createRoom(new IntVector(1, 0),
+        // "../data/room2.txt");
+        // addGameObject(room2, 0);
 
-        GameObject hallway = ObjectCreator.createHallway(room1, room2);
-        addGameObject(hallway, 0);
+        // GameObject hallway = ObjectCreator.createHallway(room1, room2);
+        // addGameObject(hallway, 0);
+        GameObject dungeon = new GameObject();
+        dungeon.addComponent(new Dungeon());
+        addGameObject(dungeon, 0);
     }
 }
