@@ -55,10 +55,8 @@ public class ObjectCreator {
 
     public static GameObject createRoom(IntVector position, String mapPath) {
         GameObject gameObject = new GameObject();
-        Tilemap tilemap = new Tilemap(mapPath);
         gameObject.getTransform().setPosition(position.toVector().multiply(Const.DISTANCE_BETWEEN_ROOMS));
-        gameObject.addComponent(tilemap);
-        gameObject.addComponent(new Room(tilemap, 1, 2, 3));
+        gameObject.addComponent(new Room(mapPath, 1, 2, 3));
         return gameObject;
     }
 

@@ -8,8 +8,7 @@ import structures.Vector;
 import util.Const;
 import util.ObjectCreator;
 
-public class Room extends Component {
-    private Tilemap tilemap;
+public class Room extends Tilemap {
     private int floorMaterial;
     private int wallMaterial;
     private int doorMaterial;
@@ -17,8 +16,9 @@ public class Room extends Component {
     private boolean cleared;
     private int doorLayer;
 
-    public Room(Tilemap tilemap, int floorMaterial, int wallMaterial, int doorMaterial) {
-        this.tilemap = tilemap;
+    public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial) {
+        super(mapPath);
+
         this.floorMaterial = floorMaterial;
         this.wallMaterial = wallMaterial;
         this.doorMaterial = doorMaterial;
@@ -33,8 +33,8 @@ public class Room extends Component {
     }
 
     public void spawnEnemies() {
-        for (int x = -tilemap.getWidth() / 2 + 1; x < tilemap.getWidth() / 2 - 1; x++) {
-            for (int y = -tilemap.getHeight() / 2 + 1; y < tilemap.getHeight() / 2 - 1; y++) {
+        for (int x = -getWidth() / 2 + 1; x < getWidth() / 2 - 1; x++) {
+            for (int y = -getHeight() / 2 + 1; y < getHeight() / 2 - 1; y++) {
                 if (Math.random() < 0.05) {
                     Transform transform = getGameObject().getTransform();
                     GameObject enemy = ObjectCreator.createEnemy(getGameObject().getScene().getGameObject(Player.class),
@@ -70,7 +70,13 @@ public class Room extends Component {
 
     @Override
     public void update(double deltaTime) {
-        if (!cleared && getPlayersInRoom().size() > 0) {
+        if (!discovered) {
+            for (GameObject bullet : getGameObjectsInRoom(Bullet.class)) {
+                bullet.destroy();
+            }
+        }
+
+        if (!cleared && getGameObjectsInRoom(Player.class).size() > 0) {
             if (!discovered) {
                 discovered = true;
                 generateDoors();
@@ -91,14 +97,14 @@ public class Room extends Component {
         }
     }
 
-    public ArrayList<GameObject> getPlayersInRoom() {
-        ArrayList<GameObject> players = new ArrayList<>();
-        for (GameObject playerObject : getGameObject().getScene().getGameObjects(Player.class)) {
-            if (isInRoom(playerObject)) {
-                players.add(playerObject);
+    public ArrayList<GameObject> getGameObjectsInRoom(Class<? extends Component> componentClass) {
+        ArrayList<GameObject> objects = new ArrayList<>();
+        for (GameObject object : getGameObject().getScene().getGameObjects(componentClass)) {
+            if (isInRoom(object)) {
+                objects.add(object);
             }
         }
-        return players;
+        return objects;
     }
 
     public boolean isInRoom(GameObject gameObject) {
@@ -108,30 +114,30 @@ public class Room extends Component {
     public boolean isInRoom(Transform transform) {
         Vector position = transform.getPosition();
         Vector scale = transform.getScale();
-        Vector localPosition = tilemap.getLocalPosition(position);
+        Vector localPosition = getLocalPosition(position);
         return localPosition.getX() >= 1 + scale.getX() / 2
-                && localPosition.getX() < tilemap.getWidth() - 1 - scale.getX() / 2
+                && localPosition.getX() < getWidth() - 1 - scale.getX() / 2
                 && localPosition.getY() >= 1 + scale.getY() / 2
-                && localPosition.getY() < tilemap.getHeight() - 1 - scale.getY() / 2;
+                && localPosition.getY() < getHeight() - 1 - scale.getY() / 2;
     }
 
     private void generateFloors() {
-        Tile[][] tiles = new Tile[tilemap.getWidth() + 2][tilemap.getHeight() + 2];
-        for (int x = 0; x < tilemap.getWidth() + 2; x++) {
-            for (int y = 0; y < tilemap.getHeight() + 2; y++) {
+        Tile[][] tiles = new Tile[getWidth() + 2][getHeight() + 2];
+        for (int x = 0; x < getWidth() + 2; x++) {
+            for (int y = 0; y < getHeight() + 2; y++) {
                 tiles[x][y] = new Tile(floorMaterial);
             }
         }
-        tilemap.addLayer(0, tiles);
+        addLayer(0, tiles);
     }
 
     private void generateWalls() {
-        Tile[][] tiles = new Tile[tilemap.getWidth()][tilemap.getHeight()];
-        for (int x = 0; x < tilemap.getWidth(); x++) {
-            for (int y = 0; y < tilemap.getHeight(); y++) {
-                boolean isBorder = x == 0 || x == tilemap.getWidth() - 1 || y == 0 || y == tilemap.getHeight() - 1;
-                boolean isHallway = (x * 2 + 2 > tilemap.getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= tilemap.getWidth() + Const.HALLWAY_WIDTH)
-                        || (y * 2 + 2 > tilemap.getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= tilemap.getHeight() + Const.HALLWAY_WIDTH);
+        Tile[][] tiles = new Tile[getWidth()][getHeight()];
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                boolean isBorder = x == 0 || x == getWidth() - 1 || y == 0 || y == getHeight() - 1;
+                boolean isHallway = (x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH)
+                        || (y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH);
                 if (isBorder && !isHallway) {
                     tiles[x][y] = new Tile(wallMaterial);
                 } else {
@@ -139,16 +145,16 @@ public class Room extends Component {
                 }
             }
         }
-        tilemap.addLayer(tiles);
+        addLayer(tiles);
     }
 
     private void generateDoors() {
-        Tile[][] tiles = new Tile[tilemap.getWidth()][tilemap.getHeight()];
-        for (int x = 0; x < tilemap.getWidth(); x++) {
-            for (int y = 0; y < tilemap.getHeight(); y++) {
-                boolean isBorder = x == 0 || x == tilemap.getWidth() - 1 || y == 0 || y == tilemap.getHeight() - 1;
-                boolean isHallway = (x * 2 + 2 > tilemap.getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= tilemap.getWidth() + Const.HALLWAY_WIDTH)
-                        || (y * 2 + 2 > tilemap.getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= tilemap.getHeight() + Const.HALLWAY_WIDTH);
+        Tile[][] tiles = new Tile[getWidth()][getHeight()];
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                boolean isBorder = x == 0 || x == getWidth() - 1 || y == 0 || y == getHeight() - 1;
+                boolean isHallway = (x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH)
+                        || (y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH);
                 if (isBorder && isHallway) {
                     tiles[x][y] = new Tile(doorMaterial);
                 } else {
@@ -156,11 +162,11 @@ public class Room extends Component {
                 }
             }
         }
-        tilemap.addLayer(tiles);
-        doorLayer = tilemap.getLayers().size() - 1;
+        addLayer(tiles);
+        doorLayer = getLayers().size() - 1;
     }
 
     public void clearDoors() {
-        tilemap.removeLayer(doorLayer);
+        removeLayer(doorLayer);
     }
 }
