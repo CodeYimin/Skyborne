@@ -93,7 +93,7 @@ public abstract class Scene {
     public boolean removeGameObject(GameObject gameObject) {
         gameObject.stop();
         for (GameObject child : gameObject.getChildren()) {
-            child.setParent(null);
+            removeGameObject(child);
         }
         return gameObjects.remove(gameObject);
     }

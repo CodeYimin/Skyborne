@@ -18,7 +18,7 @@ public class TilemapMotion extends Motion {
 
         // Move X
         transform.setPosition(transform.getPosition().addX(moveX));
-        if (boxCollider.intersectsWithTiles()) {
+        if (boxCollider.isIntersectingTiles()) {
             // Adjust position on collision to perfectly align with tile
             if (moveX > 0) {
                 // Right collision
@@ -31,7 +31,7 @@ public class TilemapMotion extends Motion {
 
         // Move Y
         transform.setPosition(transform.getPosition().addY(moveY));
-        if (boxCollider.intersectsWithTiles()) {
+        if (boxCollider.isIntersectingTiles()) {
             // Adjust position on collision to perfectly align with tile
             if (moveY > 0) {
                 // Top collision

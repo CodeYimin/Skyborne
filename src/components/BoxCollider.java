@@ -2,6 +2,7 @@ package components;
 
 import java.util.ArrayList;
 
+import core.GameObject;
 import structures.Tile;
 import structures.Vector;
 
@@ -18,6 +19,10 @@ public class BoxCollider extends Component {
         return intersectingTiles;
     }
 
+    public boolean isIntersectingTiles() {
+        return !getIntersectingTiles().isEmpty();
+    }
+
     public ArrayList<Tile> getCollidingTiles() {
         ArrayList<Tilemap> tilemaps = getGameObject().getScene().getComponents(Tilemap.class);
         ArrayList<Tile> collidingTiles = new ArrayList<Tile>();
@@ -29,20 +34,41 @@ public class BoxCollider extends Component {
         return collidingTiles;
     }
 
-    public boolean intersectsWithTiles() {
-        return !getIntersectingTiles().isEmpty();
-    }
-
-    public boolean collidesWithTiles() {
+    public boolean isCollidingTiles() {
         return !getCollidingTiles().isEmpty();
     }
 
-    public boolean intersects(BoxCollider other) {
+    public ArrayList<BoxCollider> getCollidingBoxColliders() {
+        ArrayList<BoxCollider> collidingBoxColliders = new ArrayList<BoxCollider>();
 
-        return getRight() > other.getLeft()
-                && getLeft() < other.getRight()
-                && getTop() < other.getBottom()
-                && getBottom() > other.getTop();
+        for (BoxCollider boxCollider : getGameObject().getScene().getComponents(BoxCollider.class)) {
+            if (boxCollider != this && boxCollider.collides(this)) {
+                collidingBoxColliders.add(boxCollider);
+            }
+        }
+
+        return collidingBoxColliders;
+    }
+
+    public ArrayList<GameObject> getCollidingObjects() {
+        ArrayList<GameObject> collidingGameObjects = new ArrayList<GameObject>();
+
+        for (BoxCollider boxCollider : getCollidingBoxColliders()) {
+            collidingGameObjects.add(boxCollider.getGameObject());
+        }
+
+        return collidingGameObjects;
+    }
+
+    public boolean isCollidingBoxColliders() {
+        return !getCollidingBoxColliders().isEmpty();
+    }
+
+    public boolean collides(BoxCollider other) {
+        return getRight() >= other.getLeft()
+                && getLeft() <= other.getRight()
+                && getTop() >= other.getBottom()
+                && getBottom() <= other.getTop();
     }
 
     public double getLeft() {
