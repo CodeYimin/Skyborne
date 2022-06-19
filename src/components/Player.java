@@ -27,13 +27,13 @@ public class Player extends Component {
         }
         equippedItem = gameObject;
         gameObject.setParent(getGameObject());
-        gameObject.getComponent(Transform.class).setLocalPosition(Vector.ZERO);
+        gameObject.getTransform().setLocalPosition(Vector.ZERO);
     }
 
     public void dequip(GameObject gameObject) {
         equippedItem = null;
         gameObject.setParent(null);
-        gameObject.getComponent(Transform.class).setPosition(getGameObject().getComponent(Transform.class).getPosition());
+        gameObject.getTransform().setPosition(getGameObject().getTransform().getPosition());
     }
 
     public boolean isInteracting() {

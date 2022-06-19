@@ -5,7 +5,7 @@ import structures.Vector;
 public class MouseRotation extends Component {
     @Override
     public void update(double deltaTime) {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         Camera camera = getGameObject().getScene().getComponent(Camera.class);
         if (transform == null || camera == null) {
             return;

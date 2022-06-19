@@ -72,32 +72,32 @@ public class BoxCollider extends Component {
     }
 
     public double getLeft() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getLeft();
     }
 
     public double getRight() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getRight();
     }
 
     public double getTop() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getTop();
     }
 
     public double getBottom() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getBottom();
     }
 
     public Vector getPosition() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getPosition();
     }
 
     public Vector getScale() {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         return transform.getScale();
     }
 }

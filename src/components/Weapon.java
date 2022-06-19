@@ -20,8 +20,8 @@ public class Weapon extends Component {
         if (getGameObject().getParent() == null) {
             Player player = getGameObject().getScene().getComponent(Player.class);
             if (player != null && player.isInteracting()) {
-                Transform transform = getGameObject().getComponent(Transform.class);
-                Transform playerTransform = player.getGameObject().getComponent(Transform.class);
+                Transform transform = getGameObject().getTransform();
+                Transform playerTransform = player.getGameObject().getTransform();
 
                 if (transform.getPosition().distance(playerTransform.getPosition()) < 0.5) {
                     player.equip(getGameObject());
@@ -34,21 +34,20 @@ public class Weapon extends Component {
         if (getGameObject().getParent() == null) {
             return;
         }
-        Motion motion = getGameObject().getParent().getComponent(Motion.class);
-
-        if (!cooldownTimer.isDone() || (motion != null && motion.getState() == Motion.FROZEN)) {
+        if (!cooldownTimer.isDone()) {
             return;
         }
 
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
 
         GameObject bullet = new GameObject();
-        bullet.addComponent(new Transform(transform.getPosition(), Vector.ONE.multiply(0.3)));
         bullet.addComponent(new BoxCollider());
         bullet.addComponent(new Bullet(targetClass));
         bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(bulletSpeed)));
         bullet.addComponent(new SpriteRenderer("../assets/coin_anim_f0.png"));
         bullet.addComponent(new AutoDestroy(3));
+        bullet.getTransform().setPosition(getGameObject().getTransform().getPosition());
+        bullet.getTransform().setScale(Vector.ONE.multiply(0.3));
         getGameObject().getScene().addGameObject(bullet);
 
         cooldownTimer.reset();

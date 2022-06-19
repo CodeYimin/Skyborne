@@ -3,12 +3,20 @@ package core;
 import java.util.ArrayList;
 
 import components.Component;
+import components.Transform;
 import scenes.Scene;
 
 public class GameObject {
     private GameObject parent = null;
+    private Transform transform = null;
     private Scene scene = null;
+    private boolean enabled = true;
     private ArrayList<Component> components = new ArrayList<>();
+
+    public GameObject() {
+        this.transform = new Transform();
+        addComponent(this.transform);
+    }
 
     public void start() {
         for (int i = 0; i < components.size(); i++) {
@@ -17,6 +25,10 @@ public class GameObject {
     }
 
     public void update(double deltaTime) {
+        if (!enabled) {
+            return;
+        }
+
         for (int i = 0; i < components.size(); i++) {
             components.get(i).update(deltaTime);
         }
@@ -62,6 +74,28 @@ public class GameObject {
             }
         }
         return false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void enable() {
+        enabled = true;
+        for (GameObject child : getChildren()) {
+            child.enable();
+        }
+    }
+
+    public void disable() {
+        enabled = false;
+        for (GameObject child : getChildren()) {
+            child.disable();
+        }
+    }
+
+    public Transform getTransform() {
+        return transform;
     }
 
     public Scene getScene() {

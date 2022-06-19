@@ -123,8 +123,8 @@ public abstract class Scene {
 
     public <T extends Component> ArrayList<T> getComponents(Class<T> componentClass) {
         ArrayList<T> components = new ArrayList<>();
-        for (GameObject gameObject : gameObjects) {
-            ArrayList<T> gameObjectComponents = gameObject.getComponents(componentClass);
+        for (int i = 0; i < gameObjects.size(); i++) {
+            ArrayList<T> gameObjectComponents = gameObjects.get(i).getComponents(componentClass);
             if (gameObjectComponents != null) {
                 components.addAll(gameObjectComponents);
             }
@@ -133,8 +133,8 @@ public abstract class Scene {
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
-        for (GameObject gameObject : gameObjects) {
-            T component = gameObject.getComponent(componentClass);
+        for (int i = 0; i < gameObjects.size(); i++) {
+            T component = gameObjects.get(i).getComponent(componentClass);
             if (component != null) {
                 return component;
             }

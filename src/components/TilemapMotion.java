@@ -5,7 +5,7 @@ import structures.Vector;
 public class TilemapMotion extends Motion {
     @Override
     public void move(double deltaTime) {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         BoxCollider boxCollider = getGameObject().getComponent(BoxCollider.class);
 
         if (boxCollider == null || transform == null) {

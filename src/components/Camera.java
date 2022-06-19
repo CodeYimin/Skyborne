@@ -40,7 +40,7 @@ public class Camera extends Component implements Drawable {
             return;
         }
 
-        Transform followingTransform = following.getComponent(Transform.class);
+        Transform followingTransform = following.getTransform();
         if (followingTransform == null) {
             return;
         }

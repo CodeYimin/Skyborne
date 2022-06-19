@@ -38,7 +38,7 @@ public class Transform extends Component {
             return localPosition;
         }
 
-        Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+        Transform parentTransform = getGameObject().getParent().getTransform();
         if (parentTransform == null) {
             return localPosition;
         } else {
@@ -50,7 +50,7 @@ public class Transform extends Component {
         if (getGameObject().getParent() == null) {
             this.localPosition = position;
         } else {
-            Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+            Transform parentTransform = getGameObject().getParent().getTransform();
             if (parentTransform == null) {
                 this.localPosition = position;
             } else {
@@ -77,7 +77,7 @@ public class Transform extends Component {
             return localScale;
         }
 
-        Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+        Transform parentTransform = getGameObject().getParent().getTransform();
         if (parentTransform == null) {
             return localScale;
         } else {
@@ -89,7 +89,7 @@ public class Transform extends Component {
         if (getGameObject().getParent() == null) {
             this.localScale = scale;
         } else {
-            Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+            Transform parentTransform = getGameObject().getParent().getTransform();
             if (parentTransform == null) {
                 this.localScale = scale;
             } else {
@@ -116,7 +116,7 @@ public class Transform extends Component {
             return localRotation;
         }
 
-        Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+        Transform parentTransform = getGameObject().getParent().getTransform();
         if (parentTransform == null) {
             return localRotation;
         } else {
@@ -128,7 +128,7 @@ public class Transform extends Component {
         if (getGameObject().getParent() == null) {
             this.localRotation = rotation;
         } else {
-            Transform parentTransform = getGameObject().getParent().getComponent(Transform.class);
+            Transform parentTransform = getGameObject().getParent().getTransform();
             if (parentTransform == null) {
                 this.localRotation = rotation;
             } else {

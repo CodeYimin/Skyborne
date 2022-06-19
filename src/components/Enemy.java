@@ -6,7 +6,7 @@ public class Enemy extends Component {
         // GameObject playerWeapon = new GameObject();
         // playerWeapon.addComponent(new Weapon(Enemy.class, 10, 100));
         // playerWeapon.addComponent(new
-        // Transform(getGameObject().getComponent(Transform.class).getPosition(),
+        // Transform(getGameObject().getTransform().getPosition(),
         // Vector.ONE.multiply(0.8)));
         // playerWeapon.addComponent(new SpriteRenderer("../assets/flask_green.png"));
         // playerWeapon.addComponent(new MouseRotation());

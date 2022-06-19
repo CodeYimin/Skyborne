@@ -35,7 +35,7 @@ public class SpriteRenderer extends Renderer {
 
     @Override
     public void render(Graphics g, Camera camera) {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         if (transform == null) {
             return;
         }

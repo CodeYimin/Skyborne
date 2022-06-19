@@ -10,7 +10,6 @@ import components.MouseFire;
 import components.MouseRotation;
 import components.Player;
 import components.SpriteRenderer;
-import components.Transform;
 import components.UICamera;
 import components.Weapon;
 import core.Game;
@@ -43,7 +42,6 @@ public class LevelScene extends Scene {
 
         GameObject playerWeapon = new GameObject();
         playerWeapon.addComponent(new Weapon(Enemy.class, 10, 100));
-        playerWeapon.addComponent(new Transform(Vector.ZERO, Vector.ONE.multiply(0.8)));
         playerWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
         playerWeapon.addComponent(new MouseRotation());
         playerWeapon.addComponent(new MouseFire());
@@ -51,7 +49,8 @@ public class LevelScene extends Scene {
         player.getComponent(Player.class).equip(playerWeapon);
         addGameObject(playerWeapon);
 
-        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0), Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
+        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0),
+                Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
         addGameObject(enemy);
 
         GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
@@ -61,7 +60,8 @@ public class LevelScene extends Scene {
                 1, 500, 5);
         addGameObject(enemyWeapon);
 
-        GameObject enemy2 = ObjectCreator.createEnemy(player, new Vector(30, 0), Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
+        GameObject enemy2 = ObjectCreator.createEnemy(player, new Vector(30, 0),
+                Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
         addGameObject(enemy2);
 
         GameObject enemy2Weapon = ObjectCreator.createEnemyWeapon(

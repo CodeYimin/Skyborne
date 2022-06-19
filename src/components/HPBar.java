@@ -8,7 +8,7 @@ import structures.Vector;
 public class HPBar extends Renderer {
     @Override
     public void render(Graphics g, Camera camera) {
-        Transform transform = getGameObject().getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
         Health health = getGameObject().getComponent(Health.class);
 
         Vector position = transform.getPosition();

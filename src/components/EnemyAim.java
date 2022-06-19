@@ -12,8 +12,8 @@ public class EnemyAim extends Component {
 
     @Override
     public void update(double deltaTime) {
-        Transform transform = getGameObject().getComponent(Transform.class);
-        Transform targetTransform = target.getComponent(Transform.class);
+        Transform transform = getGameObject().getTransform();
+        Transform targetTransform = target.getTransform();
 
         if (transform == null || targetTransform == null) {
             return;

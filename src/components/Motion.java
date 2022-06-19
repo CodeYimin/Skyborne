@@ -22,9 +22,7 @@ public abstract class Motion extends Component {
 
     @Override
     public void update(double deltaTime) {
-        if (state != FROZEN) {
-            move(deltaTime);
-        }
+        move(deltaTime);
     }
 
     public Vector getVelocity() {
