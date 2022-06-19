@@ -1,62 +1,45 @@
 package components;
 
-import java.util.ArrayList;
-
 import structures.Vector;
 
 public class TilemapMotion extends Motion {
     @Override
     public void update(double deltaTime) {
-        ArrayList<Tilemap> tilemaps = getGameObject().getScene().getComponents(Tilemap.class);
         Transform transform = getGameObject().getComponent(Transform.class);
+        BoxCollider boxCollider = getGameObject().getComponent(BoxCollider.class);
 
-        if (tilemaps == null || transform == null) {
+        if (boxCollider == null || transform == null) {
             return;
         }
 
-        Vector moveAmount = getVelocity().multiply(deltaTime);
+        Vector moveXY = getVelocity().multiply(deltaTime);
+        double moveX = moveXY.getX();
+        double moveY = moveXY.getY();
 
         // Move X
-        double xMoveAmount = moveAmount.getX();
-        Vector xMovePosition = transform.getPosition().addX(xMoveAmount);
-        Hitbox xMoveHitbox = new Hitbox(xMovePosition, transform.getScale());
-        if (hitboxIntesectsTilemaps(xMoveHitbox, tilemaps)) {
+        transform.setPosition(transform.getPosition().addX(moveX));
+        if (boxCollider.intersectsWithTiles()) {
             // Adjust position on collision to perfectly align with tile
-            if (xMoveAmount > 0) {
+            if (moveX > 0) {
                 // Right collision
-                transform.setRight(Math.ceil(transform.getRight()));
+                transform.setRight(Math.floor(transform.getRight()));
             } else {
                 // Left collision
-                transform.setLeft(Math.floor(transform.getLeft()));
+                transform.setLeft(Math.ceil(transform.getLeft()));
             }
-        } else {
-            transform.setPosition(xMovePosition);
         }
 
         // Move Y
-        double yMoveAmount = moveAmount.getY();
-        Vector yMovePosition = transform.getPosition().addY(yMoveAmount);
-        Hitbox yMoveHitbox = new Hitbox(yMovePosition, transform.getScale());
-        if (hitboxIntesectsTilemaps(yMoveHitbox, tilemaps)) {
+        transform.setPosition(transform.getPosition().addY(moveY));
+        if (boxCollider.intersectsWithTiles()) {
             // Adjust position on collision to perfectly align with tile
-            if (yMoveAmount > 0) {
+            if (moveY > 0) {
                 // Top collision
-                transform.setTop(Math.ceil(transform.getTop()));
+                transform.setTop(Math.floor(transform.getTop()));
             } else {
                 // Bottom collision
-                transform.setBottom(Math.floor(transform.getBottom()));
-            }
-        } else {
-            transform.setPosition(yMovePosition);
-        }
-    }
-
-    private boolean hitboxIntesectsTilemaps(Hitbox hitbox, ArrayList<Tilemap> tilemaps) {
-        for (Tilemap tilemap : tilemaps) {
-            if (tilemap.getIntersectingTiles(hitbox).size() > 0) {
-                return true;
+                transform.setBottom(Math.ceil(transform.getBottom()));
             }
         }
-        return false;
     }
 }

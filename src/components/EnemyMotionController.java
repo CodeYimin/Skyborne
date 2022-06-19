@@ -1,26 +1,28 @@
 package components;
 
+import core.GameObject;
 import structures.Vector;
 
 public class EnemyMotionController extends Component {
+    private GameObject target;
     private double speed;
 
-    public EnemyMotionController(double speed) {
+    public EnemyMotionController(GameObject target, double speed) {
+        this.target = target;
         this.speed = speed;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void update(double deltaTime) {
         Transform transform = getGameObject().getComponent(Transform.class);
-        Transform playerTransform = getGameObject().getScene().getGameObject(Player.class).getComponent(Transform.class);
+        Transform targetTransform = target.getComponent(Transform.class);
         Motion motion = getGameObject().getComponent(Motion.class);
 
-        if (transform == null || playerTransform == null || motion == null) {
+        if (transform == null || targetTransform == null || motion == null) {
             return;
         }
 
-        Vector direction = playerTransform.getPosition().subtract(transform.getPosition());
+        Vector direction = targetTransform.getPosition().subtract(transform.getPosition());
         double angle = direction.toAngle();
         double roundedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
         Vector roundedDirection = new Vector(roundedAngle);

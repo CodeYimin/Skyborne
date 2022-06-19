@@ -2,6 +2,8 @@ package scenes;
 
 import java.awt.event.KeyEvent;
 
+import components.AutoFire;
+import components.BoxCollider;
 import components.Camera;
 import components.Enemy;
 import components.EnemyAim;
@@ -37,6 +39,7 @@ public class LevelScene extends Scene {
         GameObject player = new GameObject();
         player.addComponent(new Player());
         player.addComponent(new Transform(new Vector(0, -1), Vector.ONE));
+        player.addComponent(new BoxCollider());
         player.addComponent(new SpriteRenderer(new Sprite("../assets/big_demon_idle_anim_f0.png")));
         player.addComponent(new TilemapMotion());
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
@@ -47,29 +50,31 @@ public class LevelScene extends Scene {
         camera.addComponent(new Camera(player, 50));
         addGameObject(camera);
 
-        GameObject weapon = new GameObject();
-        weapon.addComponent(new Weapon(100));
-        weapon.addComponent(new Transform(Vector.ZERO, Vector.ONE.multiply(0.8)));
-        weapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
-        weapon.addComponent(new MouseRotation());
-        weapon.addComponent(new MouseFire());
-        weapon.setParent(player);
-        addGameObject(weapon);
+        GameObject playerWeapon = new GameObject();
+        playerWeapon.addComponent(new Weapon(10, 100));
+        playerWeapon.addComponent(new Transform(Vector.ZERO, Vector.ONE.multiply(0.8)));
+        playerWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
+        playerWeapon.addComponent(new MouseRotation());
+        playerWeapon.addComponent(new MouseFire());
+        playerWeapon.setParent(player);
+        addGameObject(playerWeapon);
 
         GameObject enemy = new GameObject();
         enemy.addComponent(new Enemy());
         enemy.addComponent(new Transform(new Vector(0, 1)));
+        enemy.addComponent(new BoxCollider());
         enemy.addComponent(new SpriteRenderer(new Sprite("../assets/masked_orc_idle_anim_f0.png")));
         enemy.addComponent(new TilemapMotion());
-        enemy.addComponent(new EnemyMotionController(1));
+        enemy.addComponent(new EnemyMotionController(player, 1));
         enemy.addComponent(new MotionSpriteFlipper());
         addGameObject(enemy);
 
         GameObject enemyWeapon = new GameObject();
-        enemyWeapon.addComponent(new Weapon(100));
+        enemyWeapon.addComponent(new Weapon(5, 100));
         enemyWeapon.addComponent(new Transform(Vector.ZERO, Vector.ONE.multiply(0.8)));
         enemyWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
-        enemyWeapon.addComponent(new EnemyAim());
+        enemyWeapon.addComponent(new EnemyAim(player));
+        enemyWeapon.addComponent(new AutoFire(500));
         enemyWeapon.setParent(enemy);
         addGameObject(enemyWeapon);
     }

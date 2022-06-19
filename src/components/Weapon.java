@@ -2,28 +2,19 @@ package components;
 
 import core.GameObject;
 import structures.Vector;
+import util.Timer;
 
 public class Weapon extends Component {
-    private int cooldown;
-    private int cooldownTimer;
+    private double bulletSpeed;
+    private Timer cooldownTimer;
 
-    public Weapon(int cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public void update(double deltaTime) {
-        cooldownTimer -= (int) (deltaTime * 1000);
-        if (cooldownTimer <= 0) {
-            cooldownTimer = 0;
-        }
-    }
-
-    public boolean isReady() {
-        return cooldownTimer <= 0;
+    public Weapon(double bulletSpeed, int cooldown) {
+        this.bulletSpeed = bulletSpeed;
+        this.cooldownTimer = new Timer(cooldown);
     }
 
     public void fire() {
-        if (!isReady()) {
+        if (!cooldownTimer.isDone()) {
             return;
         }
 
@@ -31,11 +22,11 @@ public class Weapon extends Component {
 
         GameObject bullet = new GameObject();
         bullet.addComponent(new Transform(transform.getPosition(), Vector.ONE.multiply(0.3)));
-        bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(10)));
+        bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(bulletSpeed)));
         bullet.addComponent(new SpriteRenderer("../assets/coin_anim_f0.png"));
         bullet.addComponent(new AutoDestroy(3));
         getGameObject().getScene().addGameObject(bullet);
 
-        cooldownTimer = cooldown;
+        cooldownTimer.reset();
     }
 }

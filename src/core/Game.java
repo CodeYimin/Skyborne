@@ -11,13 +11,13 @@ public class Game {
     private Keyboard keyboard;
     private Mouse mouse;
     private Scene currentScene;
-    private UpdateTimeTracker updateTimeTracker;
+    private DeltaTimeTracker updateTimeTracker;
 
     public Game() {
         this.window = new GameWindow("Epic Game");
         this.keyboard = new Keyboard();
         this.mouse = new Mouse(window.getGraphicsPanel());
-        this.updateTimeTracker = new UpdateTimeTracker();
+        this.updateTimeTracker = new DeltaTimeTracker();
 
         window.addKeyListener(keyboard);
         window.getGraphicsPanel().addMouseListener(mouse);
@@ -47,7 +47,7 @@ public class Game {
         currentScene.update(updateTimeTracker.getDeltaTimeSecs());
         window.getGraphicsPanel().repaint();
 
-        updateTimeTracker.update();
+        updateTimeTracker.updateDeltaTime();
     }
 
     public GameWindow getWindow() {

@@ -25,11 +25,11 @@ public class Tilemap extends Component {
         }
     }
 
-    public ArrayList<Tile> getCollidingTiles(Hitbox hitbox) {
+    public ArrayList<Tile> getCollidingTiles(BoxCollider boxCollider) {
         ArrayList<Tile> collidingTiles = new ArrayList<>();
 
-        for (int x = (int) Math.ceil(hitbox.left()) - 1; x <= hitbox.right(); x++) {
-            for (int y = (int) Math.ceil(hitbox.bottom()) - 1; y <= hitbox.top(); y++) {
+        for (int x = (int) Math.ceil(boxCollider.getLeft()) - 1; x <= boxCollider.getRight(); x++) {
+            for (int y = (int) Math.ceil(boxCollider.getBottom()) - 1; y <= boxCollider.getTop(); y++) {
                 Tile tile = getTileAt(x, y);
                 if (tile != null && tile.isSolid()) {
                     collidingTiles.add(tile);
@@ -40,11 +40,11 @@ public class Tilemap extends Component {
         return collidingTiles;
     }
 
-    public ArrayList<Tile> getIntersectingTiles(Hitbox hitbox) {
+    public ArrayList<Tile> getIntersectingTiles(BoxCollider boxCollider) {
         ArrayList<Tile> intersectingTiles = new ArrayList<>();
 
-        for (int x = (int) hitbox.left(); x < hitbox.right(); x++) {
-            for (int y = (int) hitbox.bottom(); y < hitbox.top(); y++) {
+        for (int x = (int) boxCollider.getLeft(); x < boxCollider.getRight(); x++) {
+            for (int y = (int) boxCollider.getBottom(); y < boxCollider.getTop(); y++) {
                 Tile tile = getTileAt(x, y);
                 if (tile != null && tile.isSolid()) {
                     intersectingTiles.add(tile);
