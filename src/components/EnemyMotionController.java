@@ -22,6 +22,11 @@ public class EnemyMotionController extends Component {
             return;
         }
 
+        if (transform.getPosition().distance(targetTransform.getPosition()) < 1) {
+            motion.setVelocity(Vector.ZERO);
+            return;
+        }
+
         Vector direction = targetTransform.getPosition().subtract(transform.getPosition());
         double angle = direction.toAngle();
         double roundedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);

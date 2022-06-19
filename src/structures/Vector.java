@@ -41,6 +41,10 @@ public final class Vector {
         return Math.sqrt(x * x + y * y);
     }
 
+    public double distance(Vector other) {
+        return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
+    }
+
     public Vector normalized() {
         if (length() == 0) {
             return new Vector(0, 0);

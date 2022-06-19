@@ -16,7 +16,9 @@ public class Weapon extends Component {
     }
 
     public void fire() {
-        if (!cooldownTimer.isDone()) {
+        Motion motion = getGameObject().getParent().getComponent(Motion.class);
+
+        if (!cooldownTimer.isDone() || (motion != null && motion.getState() == Motion.FROZEN)) {
             return;
         }
 

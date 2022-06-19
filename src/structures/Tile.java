@@ -1,17 +1,20 @@
 package structures;
 
 public class Tile {
-    public static final int DIRT = 0;
-    public static final int GRASS = 1;
-    public static final int STONE = 2;
+    public static final int AIR = 0;
+    public static final int FLOOR = 1;
+    public static final int WALL = 2;
+    public static final int DOOR = 3;
 
     private static final Sprite[] sprites = new Sprite[] {
-            // new Sprite("dirt.png"),
+            null,
             new Sprite("../assets/floor_1.png"),
-            new Sprite("../assets/floor_2.png")
+            new Sprite("../assets/floor_2.png"),
+            new Sprite("../assets/hole.png")
     };
 
     private static final boolean[] solid = new boolean[] {
+            false,
             false,
             true,
             true

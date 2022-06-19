@@ -2,29 +2,21 @@ package scenes;
 
 import java.awt.event.KeyEvent;
 
-import components.AutoFire;
-import components.BoxCollider;
 import components.Camera;
-import components.DestroyOnDeath;
 import components.Enemy;
-import components.EnemyAim;
-import components.EnemyMotionController;
-import components.Health;
 import components.KeyboardMotionController;
-import components.MotionSpriteFlipper;
 import components.MouseFire;
 import components.MouseRotation;
 import components.Player;
 import components.SpriteRenderer;
-import components.Tilemap;
-import components.TilemapMotion;
-import components.TilemapRenderer;
 import components.Transform;
 import components.Weapon;
 import core.Game;
 import core.GameObject;
+import structures.IntVector;
 import structures.Sprite;
 import structures.Vector;
+import util.ObjectCreator;
 
 public class LevelScene extends Scene {
     public LevelScene(Game game) {
@@ -33,21 +25,10 @@ public class LevelScene extends Scene {
 
     @Override
     public void init() {
-        GameObject tilemap = new GameObject();
-        tilemap.addComponent(new Transform(new Vector(0, 0)));
-        tilemap.addComponent(new Tilemap("../data/tilemap.txt"));
-        tilemap.addComponent(new TilemapRenderer());
-        addGameObject(tilemap);
 
-        GameObject player = new GameObject();
+        GameObject player = ObjectCreator.createTilemapCreature(new Vector(0, 0), Vector.ONE, 10, "../assets/big_demon_idle_anim_f0.png");
         player.addComponent(new Player());
-        player.addComponent(new Health(10));
-        player.addComponent(new Transform(new Vector(0, 0), Vector.ONE));
-        player.addComponent(new BoxCollider());
-        player.addComponent(new SpriteRenderer(new Sprite("../assets/big_demon_idle_anim_f0.png")));
-        player.addComponent(new TilemapMotion());
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
-        player.addComponent(new MotionSpriteFlipper());
         addGameObject(player);
 
         GameObject camera = new GameObject();
@@ -63,25 +44,38 @@ public class LevelScene extends Scene {
         playerWeapon.setParent(player);
         addGameObject(playerWeapon);
 
-        GameObject enemy = new GameObject();
-        enemy.addComponent(new Enemy());
-        enemy.addComponent(new Health(10));
-        enemy.addComponent(new Transform(new Vector(0, 1)));
-        enemy.addComponent(new BoxCollider());
-        enemy.addComponent(new SpriteRenderer(new Sprite("../assets/masked_orc_idle_anim_f0.png")));
-        enemy.addComponent(new TilemapMotion());
-        enemy.addComponent(new EnemyMotionController(player, 1));
-        enemy.addComponent(new MotionSpriteFlipper());
-        enemy.addComponent(new DestroyOnDeath());
+        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0), Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
         addGameObject(enemy);
 
-        GameObject enemyWeapon = new GameObject();
-        enemyWeapon.addComponent(new Weapon(Player.class, 5, 100));
-        enemyWeapon.addComponent(new Transform(Vector.ZERO, Vector.ONE.multiply(0.8)));
-        enemyWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
-        enemyWeapon.addComponent(new EnemyAim(player));
-        enemyWeapon.addComponent(new AutoFire(500));
-        enemyWeapon.setParent(enemy);
+        GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
+                enemy, player,
+                Vector.ONE.multiply(0.8),
+                "../assets/flask_green.png",
+                1, 500, 5);
         addGameObject(enemyWeapon);
+
+        GameObject enemy2 = ObjectCreator.createEnemy(player, new Vector(30, 0), Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
+        addGameObject(enemy2);
+
+        GameObject enemy2Weapon = ObjectCreator.createEnemyWeapon(
+                enemy2, player,
+                Vector.ONE.multiply(0.8),
+                "../assets/flask_green.png",
+                1, 500, 5);
+        addGameObject(enemy2Weapon);
+    }
+
+    @Override
+    public void start() {
+        super.start();
+
+        GameObject room1 = ObjectCreator.createRoom(new IntVector(0, 0), "../data/room1.txt");
+        addGameObject(room1, 0);
+
+        GameObject room2 = ObjectCreator.createRoom(new IntVector(1, 0), "../data/room2.txt");
+        addGameObject(room2, 0);
+
+        GameObject hallway = ObjectCreator.createHallway(room1, room2);
+        addGameObject(hallway, 0);
     }
 }

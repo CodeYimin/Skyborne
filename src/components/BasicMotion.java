@@ -12,7 +12,7 @@ public class BasicMotion extends Motion {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void move(double deltaTime) {
         Transform transform = getGameObject().getComponent(Transform.class);
         if (transform == null) {
             return;

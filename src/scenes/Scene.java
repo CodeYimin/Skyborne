@@ -20,10 +20,12 @@ public abstract class Scene {
     public abstract void init();
 
     public void start() {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.start();
-        }
         running = true;
+
+        int size = gameObjects.size();
+        for (int i = 0; i < size; i++) {
+            gameObjects.get(i).start();
+        }
     }
 
     public void update(double deltaTime) {
@@ -52,6 +54,18 @@ public abstract class Scene {
         for (GameObject gameObject : this.gameObjects) {
             gameObjects.add(gameObject);
         }
+        return gameObjects;
+    }
+
+    public ArrayList<GameObject> getGameObjects(Class<? extends Component> componentClass) {
+        ArrayList<GameObject> gameObjects = new ArrayList<>();
+
+        for (GameObject gameObject : this.gameObjects) {
+            if (gameObject.getComponent(componentClass) != null) {
+                gameObjects.add(gameObject);
+            }
+        }
+
         return gameObjects;
     }
 
@@ -90,6 +104,15 @@ public abstract class Scene {
         return null;
     }
 
+    public GameObject getGameObject(Class<? extends Component> componentClass) {
+        for (GameObject gameObject : this.gameObjects) {
+            if (gameObject.getComponent(componentClass) != null) {
+                return gameObject;
+            }
+        }
+        return null;
+    }
+
     public boolean removeGameObject(GameObject gameObject) {
         gameObject.stop();
         for (GameObject child : gameObject.getChildren()) {
@@ -122,5 +145,16 @@ public abstract class Scene {
     public void addGameObject(GameObject gameObject) {
         gameObject.setScene(this);
         this.gameObjects.add(gameObject);
+        if (running) {
+            gameObject.start();
+        }
+    }
+
+    public void addGameObject(GameObject gameObject, int index) {
+        gameObject.setScene(this);
+        this.gameObjects.add(index, gameObject);
+        if (running) {
+            gameObject.start();
+        }
     }
 }
