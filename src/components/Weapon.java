@@ -15,7 +15,25 @@ public class Weapon extends Component {
         this.cooldownTimer = new Timer(cooldown);
     }
 
+    @Override
+    public void update(double deltaTime) {
+        if (getGameObject().getParent() == null) {
+            Player player = getGameObject().getScene().getComponent(Player.class);
+            if (player != null && player.isInteracting()) {
+                Transform transform = getGameObject().getComponent(Transform.class);
+                Transform playerTransform = player.getGameObject().getComponent(Transform.class);
+
+                if (transform.getPosition().distance(playerTransform.getPosition()) < 0.5) {
+                    player.equip(getGameObject());
+                }
+            }
+        }
+    }
+
     public void fire() {
+        if (getGameObject().getParent() == null) {
+            return;
+        }
         Motion motion = getGameObject().getParent().getComponent(Motion.class);
 
         if (!cooldownTimer.isDone() || (motion != null && motion.getState() == Motion.FROZEN)) {

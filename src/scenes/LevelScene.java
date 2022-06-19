@@ -4,12 +4,14 @@ import java.awt.event.KeyEvent;
 
 import components.Camera;
 import components.Enemy;
+import components.HealthUI;
 import components.KeyboardMotionController;
 import components.MouseFire;
 import components.MouseRotation;
 import components.Player;
 import components.SpriteRenderer;
 import components.Transform;
+import components.UICamera;
 import components.Weapon;
 import core.Game;
 import core.GameObject;
@@ -25,15 +27,19 @@ public class LevelScene extends Scene {
 
     @Override
     public void init() {
-
         GameObject player = ObjectCreator.createTilemapCreature(new Vector(0, 0), Vector.ONE, 10, "../assets/big_demon_idle_anim_f0.png");
         player.addComponent(new Player());
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
+        player.addComponent(new HealthUI());
         addGameObject(player);
 
         GameObject camera = new GameObject();
         camera.addComponent(new Camera(player, 50));
         addGameObject(camera);
+
+        GameObject UICamera = new GameObject();
+        UICamera.addComponent(new UICamera());
+        addGameObject(UICamera);
 
         GameObject playerWeapon = new GameObject();
         playerWeapon.addComponent(new Weapon(Enemy.class, 10, 100));
@@ -42,9 +48,10 @@ public class LevelScene extends Scene {
         playerWeapon.addComponent(new MouseRotation());
         playerWeapon.addComponent(new MouseFire());
         playerWeapon.setParent(player);
+        player.getComponent(Player.class).equip(playerWeapon);
         addGameObject(playerWeapon);
 
-        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0), Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
+        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0), Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
         addGameObject(enemy);
 
         GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(

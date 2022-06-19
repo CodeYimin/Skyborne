@@ -6,6 +6,7 @@ import components.DestroyOnDeath;
 import components.Enemy;
 import components.EnemyAim;
 import components.EnemyMotionController;
+import components.HPBar;
 import components.Health;
 import components.MotionSpriteFlipper;
 import components.Player;
@@ -37,6 +38,7 @@ public class ObjectCreator {
         enemy.addComponent(new Enemy());
         enemy.addComponent(new EnemyMotionController(target, 1));
         enemy.addComponent(new DestroyOnDeath());
+        enemy.addComponent(new HPBar());
         return enemy;
     }
 
