@@ -16,7 +16,7 @@ public class Mouse implements MouseListener {
         this.graphicsPanel = graphicsPanel;
     }
 
-    public Vector getMousePosition() {
+    public Vector getPosition() {
         Point mousePosition = graphicsPanel.getMousePosition();
         if (mousePosition == null) {
             return null;
@@ -31,6 +31,10 @@ public class Mouse implements MouseListener {
 
     public boolean isOnScreen() {
         return onScreen;
+    }
+
+    public void addListener(MouseListener mouseListener) {
+        graphicsPanel.addMouseListener(mouseListener);
     }
 
     @Override

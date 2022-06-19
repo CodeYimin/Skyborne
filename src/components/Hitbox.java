@@ -21,8 +21,8 @@ public class Hitbox extends Component {
 
     public Hitbox(Transform transform) {
         this.position = transform.getPosition();
-        this.width = transform.getSize().getX();
-        this.height = transform.getSize().getY();
+        this.width = transform.getScale().getX();
+        this.height = transform.getScale().getY();
     }
 
     public Vector position() {

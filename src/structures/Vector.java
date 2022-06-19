@@ -25,6 +25,11 @@ public final class Vector {
         this.y = y;
     }
 
+    public Vector(double angle) {
+        this.x = Math.cos(angle);
+        this.y = Math.sin(angle);
+    }
+
     public double getX() {
         return x;
     }
@@ -137,11 +142,11 @@ public final class Vector {
         return new Vector(Math.floor(x), Math.floor(y));
     }
 
-    public Vector ceilgetX() {
+    public Vector ceilX() {
         return new Vector(Math.ceil(x), y);
     }
 
-    public Vector ceilgetY() {
+    public Vector ceilY() {
         return new Vector(x, Math.ceil(y));
     }
 
@@ -149,11 +154,11 @@ public final class Vector {
         return new Vector(Math.ceil(x), Math.ceil(y));
     }
 
-    public Vector roundgetX() {
+    public Vector roundX() {
         return new Vector(Math.round(x), y);
     }
 
-    public Vector roundgetY() {
+    public Vector roundY() {
         return new Vector(x, Math.round(y));
     }
 
@@ -161,16 +166,32 @@ public final class Vector {
         return new Vector(Math.round(x), Math.round(y));
     }
 
-    public Vector absgetX() {
+    public Vector absX() {
         return new Vector(Math.abs(x), y);
     }
 
-    public Vector absgetY() {
+    public Vector absY() {
         return new Vector(x, Math.abs(y));
     }
 
     public Vector abs() {
         return new Vector(Math.abs(x), Math.abs(y));
+    }
+
+    public Vector rotate(Vector other) {
+        return new Vector(x * other.getX() - y * other.getY(), x * other.getY() + y * other.getX());
+    }
+
+    public Vector rotate(double angle) {
+        return rotate(new Vector(Math.cos(angle), Math.sin(angle)));
+    }
+
+    public double getAngle(Vector other) {
+        return Math.atan2(other.getY() - y, other.getX() - x);
+    }
+
+    public double toAngle() {
+        return Math.atan2(y, x);
     }
 
     @Override

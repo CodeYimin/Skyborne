@@ -27,8 +27,8 @@ public abstract class Scene {
     }
 
     public void update(double deltaTime) {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(deltaTime);
+        for (int i = 0; i < gameObjects.size(); i++) {
+            gameObjects.get(i).update(deltaTime);
         }
     };
 
@@ -90,12 +90,20 @@ public abstract class Scene {
         return null;
     }
 
+    public boolean removeGameObject(GameObject gameObject) {
+        gameObject.stop();
+        for (GameObject child : gameObject.getChildren()) {
+            child.setParent(null);
+        }
+        return gameObjects.remove(gameObject);
+    }
+
     public <T extends Component> ArrayList<T> getComponents(Class<T> componentClass) {
         ArrayList<T> components = new ArrayList<>();
         for (GameObject gameObject : gameObjects) {
-            T component = gameObject.getComponent(componentClass);
-            if (component != null) {
-                components.add(component);
+            ArrayList<T> gameObjectComponents = gameObject.getComponents(componentClass);
+            if (gameObjectComponents != null) {
+                components.addAll(gameObjectComponents);
             }
         }
         return components;

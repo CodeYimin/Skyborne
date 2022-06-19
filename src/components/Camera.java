@@ -19,6 +19,12 @@ public class Camera extends Component implements Drawable {
         this.following = following;
     }
 
+    public Camera(GameObject following, double zoom) {
+        this.position = Vector.ZERO;
+        this.zoom = zoom;
+        this.following = following;
+    }
+
     @Override
     public void start() {
         getGraphicsPanel().addDrawable(this);
@@ -66,8 +72,27 @@ public class Camera extends Component implements Drawable {
         return screenPosition;
     }
 
+    public Vector screenToWorldPosition(Vector position) {
+        Vector screenSize = new Vector(
+                getGraphicsPanel().getWidth(),
+                getGraphicsPanel().getHeight());
+        Vector screenCenter = screenSize.divide(2);
+
+        Vector cameraDistToPosition = position.subtract(screenCenter);
+        Vector worldPosition = cameraDistToPosition
+                .multiplyY(-1)
+                .multiply(1 / zoom)
+                .add(getPosition());
+
+        return worldPosition;
+    }
+
     public Vector worldToScreenSize(Vector size) {
         return size.multiply(zoom);
+    }
+
+    public Vector screenToWorldSize(Vector size) {
+        return size.divide(zoom);
     }
 
     public GraphicsPanel getGraphicsPanel() {

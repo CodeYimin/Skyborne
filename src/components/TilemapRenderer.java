@@ -22,7 +22,7 @@ public class TilemapRenderer extends Renderer {
                 Vector tilePosition = new Vector(x + 0.5, y + 0.5);
                 Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
-                tiles[x][y].getSprite().draw(g, tileScreenPosition, tileScreenSize, true);
+                tiles[x][y].getSprite().draw(g, tileScreenPosition, tileScreenSize, 0, false, false);
             }
         }
     }

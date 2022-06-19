@@ -19,7 +19,7 @@ public class TilemapMotion extends Motion {
         // Move X
         double xMoveAmount = moveAmount.getX();
         Vector xMovePosition = transform.getPosition().addX(xMoveAmount);
-        Hitbox xMoveHitbox = new Hitbox(xMovePosition, transform.getSize());
+        Hitbox xMoveHitbox = new Hitbox(xMovePosition, transform.getScale());
         if (hitboxIntesectsTilemaps(xMoveHitbox, tilemaps)) {
             // Adjust position on collision to perfectly align with tile
             if (xMoveAmount > 0) {
@@ -36,7 +36,7 @@ public class TilemapMotion extends Motion {
         // Move Y
         double yMoveAmount = moveAmount.getY();
         Vector yMovePosition = transform.getPosition().addY(yMoveAmount);
-        Hitbox yMoveHitbox = new Hitbox(yMovePosition, transform.getSize());
+        Hitbox yMoveHitbox = new Hitbox(yMovePosition, transform.getScale());
         if (hitboxIntesectsTilemaps(yMoveHitbox, tilemaps)) {
             // Adjust position on collision to perfectly align with tile
             if (yMoveAmount > 0) {
