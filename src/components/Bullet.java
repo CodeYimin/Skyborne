@@ -16,10 +16,12 @@ public class Bullet extends Component {
             return;
         }
 
+        boolean attacked = false;
         for (GameObject collidingObject : boxCollider.getCollidingObjects()) {
-            if (collidingObject.getComponent(targetClass) != null) {
+            if (collidingObject.getComponent(targetClass) != null && !attacked) {
                 collidingObject.getComponent(Health.class).damage(1);
                 getGameObject().destroy();
+                attacked = true;
             }
         }
 

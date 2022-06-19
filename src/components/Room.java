@@ -6,6 +6,7 @@ import core.GameObject;
 import structures.Tile;
 import structures.Vector;
 import util.Const;
+import util.ObjectCreator;
 
 public class Room extends Component {
     private Tilemap tilemap;
@@ -27,11 +28,45 @@ public class Room extends Component {
     public void start() {
         generateFloors();
         generateWalls();
+        spawnEnemies();
+        freezeMotion();
+    }
 
+    public void spawnEnemies() {
+        for (int x = -tilemap.getWidth() / 2 + 1; x < tilemap.getWidth() / 2 - 1; x++) {
+            for (int y = -tilemap.getHeight() / 2 + 1; y < tilemap.getHeight() / 2 - 1; y++) {
+                if (Math.random() < 0.05) {
+                    Transform transform = getGameObject().getComponent(Transform.class);
+                    GameObject enemy = ObjectCreator.createEnemy(getGameObject().getScene().getGameObject(Player.class),
+                            transform.getPosition().add(x, y), Vector.ONE,
+                            20, "../assets/masked_orc_idle_anim_f0.png");
+                    getGameObject().getScene().addGameObject(enemy);
+
+                    GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
+                            enemy, getGameObject().getScene().getGameObject(Player.class),
+                            Vector.ONE.multiply(0.8),
+                            "../assets/flask_green.png",
+                            1, 500, 5);
+                    getGameObject().getScene().addGameObject(enemyWeapon);
+                }
+            }
+        }
+    }
+
+    private void freezeMotion() {
         ArrayList<Motion> motionComponents = getGameObject().getScene().getComponents(Motion.class);
         for (Motion motionComponent : motionComponents) {
             if (isInRoom(motionComponent.getGameObject())) {
                 motionComponent.setState(Motion.FROZEN);
+            }
+        }
+    }
+
+    private void unfreezeMotion() {
+        ArrayList<Motion> motionComponents = getGameObject().getScene().getComponents(Motion.class);
+        for (Motion motionComponent : motionComponents) {
+            if (isInRoom(motionComponent.getGameObject())) {
+                motionComponent.setState(Motion.IDLE);
             }
         }
     }
@@ -42,13 +77,7 @@ public class Room extends Component {
             if (!discovered) {
                 discovered = true;
                 generateDoors();
-
-                ArrayList<Motion> motionComponents = getGameObject().getScene().getComponents(Motion.class);
-                for (Motion motionComponent : motionComponents) {
-                    if (isInRoom(motionComponent.getGameObject())) {
-                        motionComponent.setState(Motion.IDLE);
-                    }
-                }
+                unfreezeMotion();
             }
 
             ArrayList<Enemy> enemyComponents = getGameObject().getScene().getComponents(Enemy.class);
