@@ -36,8 +36,8 @@ public class Room extends Tilemap {
     }
 
     public void spawnEnemies() {
-        for (int x = -getWidth() / 2 + 1; x < getWidth() / 2 - 1; x++) {
-            for (int y = -getHeight() / 2 + 1; y < getHeight() / 2 - 1; y++) {
+        for (int x = -getWidth() / 2 + 2; x < getWidth() / 2 - 2; x++) {
+            for (int y = -getHeight() / 2 + 2; y < getHeight() / 2 - 2; y++) {
                 if (Math.random() < 0.05) {
                     Transform transform = getGameObject().getTransform();
                     GameObject enemy = ObjectCreator.createEnemy(getGameObject().getScene().getGameObject(Player.class),
@@ -45,14 +45,14 @@ public class Room extends Tilemap {
                             20, "../assets/masked_orc_idle_anim_f0.png");
                     enemy.getTransform().setLocalPosition(new Vector(x, y));
                     enemy.setParent(getGameObject());
-                    enemy.getTransform().setRotation(Math.PI / 2);
+                    enemy.getTransform().setRotation(0);
                     getGameObject().getScene().addGameObject(enemy);
 
                     GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
                             enemy, getGameObject().getScene().getGameObject(Player.class),
                             Vector.ONE.multiply(0.8),
                             "../assets/flask_green.png",
-                            1, 500, 5);
+                            1, 1500, 3);
                     getGameObject().getScene().addGameObject(enemyWeapon);
                 }
             }
@@ -114,10 +114,10 @@ public class Room extends Tilemap {
         Vector position = transform.getPosition();
         Vector scale = transform.getScale();
         Vector localPosition = getLocalPosition(position);
-        return localPosition.getX() >= 1 + scale.getX() / 2
-                && localPosition.getX() < getWidth() - 1 - scale.getX() / 2
-                && localPosition.getY() >= 1 + scale.getY() / 2
-                && localPosition.getY() < getHeight() - 1 - scale.getY() / 2;
+        return localPosition.getX() - scale.getX() / 2 >= 1
+                && localPosition.getX() + scale.getX() / 2 <= getWidth() - 1
+                && localPosition.getY() - scale.getY() / 2 >= 1
+                && localPosition.getY() + scale.getY() / 2 <= getHeight() - 1;
     }
 
     private void generateFloors() {
@@ -188,5 +188,13 @@ public class Room extends Tilemap {
 
     public Directions getDoorDirections() {
         return doorDirections;
+    }
+
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    public boolean isDiscovered() {
+        return discovered;
     }
 }

@@ -1,5 +1,7 @@
 package components;
 
+import java.util.ArrayList;
+
 import core.GameObject;
 import structures.IntVector;
 import util.ObjectCreator;
@@ -7,8 +9,11 @@ import util.ObjectCreator;
 public class Dungeon extends Component {
     public static final int WIDTH = 5;
     public static final int HEIGHT = 5;
+    public static final int MIN_ROOMS = 5;
+    public static final int MAX_ROOMS = 10;
 
     private GameObject[][] rooms;
+    private int roomsGenerated = 0;
 
     public Dungeon() {
         rooms = new GameObject[WIDTH][HEIGHT];
@@ -28,34 +33,51 @@ public class Dungeon extends Component {
         }
     }
 
-    private void generate(int x, int y) {
-        double chance = 0.3;
+    private boolean generate(int x, int y) {
+        if (roomsGenerated >= MAX_ROOMS) {
+            return false;
+        }
 
         createRoom(x, y);
-        if (getRoom(x - 1, y) != null) {
-            connectRooms(x, y, x - 1, y);
-        } else if (Math.random() < chance && x > 0) {
-            generate(x - 1, y);
-            connectRooms(x, y, x - 1, y);
+        roomsGenerated++;
+
+        if (roomsGenerated < MIN_ROOMS) {
+            generateRandomDirection(x, y);
         }
-        if (getRoom(x + 1, y) != null) {
-            connectRooms(x, y, x + 1, y);
-        } else if (Math.random() < chance && x < WIDTH - 1) {
-            generate(x + 1, y);
-            connectRooms(x, y, x + 1, y);
+        if (roomsGenerated > 1 && Math.random() < 0.5) {
+            generateRandomDirection(x, y);
         }
-        if (getRoom(x, y - 1) != null) {
-            connectRooms(x, y, x, y - 1);
-        } else if (Math.random() < chance && y > 0) {
-            generate(x, y - 1);
-            connectRooms(x, y, x, y - 1);
+
+        return true;
+    }
+
+    private void generateRandomDirection(int x, int y) {
+        ArrayList<IntVector> availableDirections = getAvailableDirections(x, y);
+        if (availableDirections.size() == 0) {
+            return;
         }
-        if (getRoom(x, y + 1) != null) {
-            connectRooms(x, y, x, y + 1);
-        } else if (Math.random() < chance && y < HEIGHT - 1) {
-            generate(x, y + 1);
-            connectRooms(x, y, x, y + 1);
+        int randomIndex = (int) (Math.random() * availableDirections.size());
+        IntVector direction = availableDirections.get(randomIndex);
+        if (generate(x + direction.getX(), y + direction.getY())) {
+            connectRooms(x, y, x + direction.getX(), y + direction.getY());
         }
+    }
+
+    private ArrayList<IntVector> getAvailableDirections(int x, int y) {
+        ArrayList<IntVector> availableDirections = new ArrayList<>();
+        if (x > 0 && getRoom(x - 1, y) == null) {
+            availableDirections.add(new IntVector(-1, 0));
+        }
+        if (x < WIDTH - 1 && getRoom(x + 1, y) == null) {
+            availableDirections.add(new IntVector(1, 0));
+        }
+        if (y > 0 && getRoom(x, y - 1) == null) {
+            availableDirections.add(new IntVector(0, -1));
+        }
+        if (y < HEIGHT - 1 && getRoom(x, y + 1) == null) {
+            availableDirections.add(new IntVector(0, 1));
+        }
+        return availableDirections;
     }
 
     private GameObject createRoom(int x, int y) {
@@ -100,5 +122,13 @@ public class Dungeon extends Component {
 
     public GameObject[][] getRooms() {
         return rooms;
+    }
+
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    public int getHeight() {
+        return HEIGHT;
     }
 }

@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 
 import components.Camera;
 import components.Dungeon;
+import components.DungeonMinimapUI;
 import components.Enemy;
 import components.HealthUI;
 import components.KeyboardMotionController;
@@ -48,46 +49,15 @@ public class LevelScene extends Scene {
         playerWeapon.setParent(player);
         player.getComponent(Player.class).equip(playerWeapon);
         addGameObject(playerWeapon);
-
-        GameObject enemy = ObjectCreator.createEnemy(player, new Vector(0, 0),
-                Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
-        addGameObject(enemy);
-
-        GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
-                enemy, player,
-                Vector.ONE.multiply(0.8),
-                "../assets/flask_green.png",
-                1, 500, 5);
-        addGameObject(enemyWeapon);
-
-        GameObject enemy2 = ObjectCreator.createEnemy(player, new Vector(30, 0),
-                Vector.ONE, 10, "../assets/masked_orc_idle_anim_f0.png");
-        addGameObject(enemy2);
-
-        GameObject enemy2Weapon = ObjectCreator.createEnemyWeapon(
-                enemy2, player,
-                Vector.ONE.multiply(0.8),
-                "../assets/flask_green.png",
-                1, 500, 5);
-        addGameObject(enemy2Weapon);
     }
 
     @Override
     public void start() {
         super.start();
 
-        // GameObject room1 = ObjectCreator.createRoom(new IntVector(0, 0),
-        // "../data/room1.txt");
-        // addGameObject(room1, 0);
-
-        // GameObject room2 = ObjectCreator.createRoom(new IntVector(1, 0),
-        // "../data/room2.txt");
-        // addGameObject(room2, 0);
-
-        // GameObject hallway = ObjectCreator.createHallway(room1, room2);
-        // addGameObject(hallway, 0);
         GameObject dungeon = new GameObject();
         dungeon.addComponent(new Dungeon());
+        dungeon.addComponent(new DungeonMinimapUI());
         addGameObject(dungeon, 0);
     }
 }

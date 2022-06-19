@@ -44,7 +44,7 @@ public class ObjectCreator {
     public static GameObject createEnemyWeapon(GameObject parent, GameObject target, Vector size, String spritePath, int damage, int fireInterval,
             double bulletSpeed) {
         GameObject enemyWeapon = new GameObject();
-        enemyWeapon.addComponent(new Weapon(Player.class, 5, fireInterval));
+        enemyWeapon.addComponent(new Weapon(Player.class, bulletSpeed, fireInterval));
         enemyWeapon.addComponent(new SpriteRenderer(spritePath));
         enemyWeapon.addComponent(new EnemyAim(target));
         enemyWeapon.addComponent(new AutoFire(fireInterval));

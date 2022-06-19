@@ -20,6 +20,23 @@ public class Directions {
         this.right = right;
     }
 
+    public int getAmount() {
+        int amount = 0;
+        if (up) {
+            amount++;
+        }
+        if (down) {
+            amount++;
+        }
+        if (left) {
+            amount++;
+        }
+        if (right) {
+            amount++;
+        }
+        return amount;
+    }
+
     public boolean hasUp() {
         return up;
     }
