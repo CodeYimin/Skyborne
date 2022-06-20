@@ -1,27 +1,30 @@
 package components;
 
-import java.util.ArrayList;
+import events.EventManager;
+import events.HealthEvent;
 
 public class Health extends Component {
     private int health;
     private int maxHealth;
-    private ArrayList<Listener> listeners = new ArrayList<>();
+    private EventManager<HealthEvent> eventManager = new EventManager<>();
 
     public Health(int maxHealth) {
         this.health = maxHealth;
         this.maxHealth = maxHealth;
     }
 
+    public EventManager<HealthEvent> getEventManager() {
+        return eventManager;
+    }
+
     public int getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(int newHealth) {
         int oldHealth = this.health;
-        this.health = health;
-        for (Listener listener : listeners) {
-            listener.onHealthChanged(this, oldHealth, health);
-        }
+        this.health = newHealth;
+        eventManager.emit(new HealthEvent(oldHealth, newHealth));
     }
 
     public void damage(int damage) {
@@ -40,17 +43,5 @@ public class Health extends Component {
 
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
-    }
-
-    public void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(Listener listener) {
-        listeners.remove(listener);
-    }
-
-    public static interface Listener {
-        public void onHealthChanged(Health health, int oldHealth, int newHealth);
     }
 }

@@ -1,37 +1,28 @@
 package input;
 
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Keyboard implements KeyListener {
+import events.EventListener;
+import events.EventManager;
+import events.KeyPressEnterEvent;
+
+public class Keyboard extends KeyAdapter {
     private HashSet<Integer> keysDown = new HashSet<>();
-    private ArrayList<KeyListener> keyListeners = new ArrayList<>();
+    private EventManager<KeyPressEnterEvent> keyPressEnterEventManager = new EventManager<>();
 
     @Override
     public void keyPressed(KeyEvent event) {
-        keysDown.add(event.getKeyCode());
-
-        for (KeyListener listener : keyListeners) {
-            listener.keyPressed(event);
+        if (!keysDown.contains(event.getKeyCode())) {
+            keysDown.add(event.getKeyCode());
+            keyPressEnterEventManager.emit(new KeyPressEnterEvent(event.getKeyCode()));
         }
     }
 
     @Override
     public void keyReleased(KeyEvent event) {
         keysDown.remove(event.getKeyCode());
-
-        for (KeyListener listener : keyListeners) {
-            listener.keyReleased(event);
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent event) {
-        for (KeyListener listener : keyListeners) {
-            listener.keyTyped(event);
-        }
     }
 
     public boolean isKeyDown(int keyCode) {
@@ -42,11 +33,7 @@ public class Keyboard implements KeyListener {
         return keysDown;
     }
 
-    public void addKeyListener(KeyListener listener) {
-        keyListeners.add(listener);
-    }
-
-    public void removeKeyListener(KeyListener listener) {
-        keyListeners.remove(listener);
+    public void addKeyPressEnterListener(EventListener<KeyPressEnterEvent> listener) {
+        keyPressEnterEventManager.addListener(listener);
     }
 }

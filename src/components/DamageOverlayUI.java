@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import core.GraphicsPanel;
+import events.EventListener;
+import events.HealthEvent;
 import util.Timer;
 
 public class DamageOverlayUI extends UI {
@@ -19,10 +21,10 @@ public class DamageOverlayUI extends UI {
             return;
         }
 
-        health.addListener(new Health.Listener() {
+        health.getEventManager().addListener(new EventListener<HealthEvent>(0) {
             @Override
-            public void onHealthChanged(Health health, int oldHealth, int newHealth) {
-                if (oldHealth > newHealth && !displayTimer.isStarted()) {
+            public void onEvent(HealthEvent event) {
+                if (event.getOldHealth() > event.getNewHealth() && !displayTimer.isStarted()) {
                     displayTimer.resetAndStart();
                     DamageOverlayUI.this.setVisible(true);
                 }
