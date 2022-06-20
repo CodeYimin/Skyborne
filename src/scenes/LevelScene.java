@@ -44,7 +44,7 @@ public class LevelScene extends Scene {
         addGameObject(UICamera);
 
         GameObject playerWeapon = new GameObject();
-        playerWeapon.addComponent(new Weapon(Enemy.class, 10, 1, 100));
+        playerWeapon.addComponent(new Weapon(Enemy.class, 3, 10, 1, 500));
         playerWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
         addGameObject(playerWeapon);
 

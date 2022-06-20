@@ -23,6 +23,12 @@ public class Mana extends Component {
         setCurrent(this.mana - mana);
     }
 
+    public void add(int mana) {
+        if (this.mana < maxMana) {
+            setCurrent(this.mana + mana);
+        }
+    }
+
     public int getMax() {
         return maxMana;
     }

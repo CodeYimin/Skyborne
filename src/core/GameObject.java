@@ -139,4 +139,8 @@ public class GameObject {
     public void destroy() {
         scene.removeGameObject(this);
     }
+
+    public boolean isDestroyed() {
+        return scene == null;
+    }
 }

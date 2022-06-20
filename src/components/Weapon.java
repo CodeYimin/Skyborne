@@ -7,11 +7,13 @@ import util.Timer;
 public class Weapon extends Component {
     private Class<? extends Component> targetClass;
     private double bulletSpeed;
+    private int bulletDamage;
     private Timer cooldownTimer;
     private int manaCost;
 
-    public Weapon(Class<? extends Component> targetClass, double bulletSpeed, int manaCost, int cooldown) {
+    public Weapon(Class<? extends Component> targetClass, int bulletDamage, double bulletSpeed, int manaCost, int cooldown) {
         this.targetClass = targetClass;
+        this.bulletDamage = bulletDamage;
         this.bulletSpeed = bulletSpeed;
         this.manaCost = manaCost;
         this.cooldownTimer = new Timer(cooldown);
@@ -47,7 +49,7 @@ public class Weapon extends Component {
 
         GameObject bullet = new GameObject();
         bullet.addComponent(new BoxCollider());
-        bullet.addComponent(new Bullet(targetClass));
+        bullet.addComponent(new Bullet(targetClass, bulletDamage));
         bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(bulletSpeed)));
         bullet.addComponent(new SpriteRenderer("../assets/coin_anim_f0.png"));
         bullet.addComponent(new AutoDestroy(3));

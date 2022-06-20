@@ -33,6 +33,10 @@ public final class Vector {
         return new Vector(Math.random() * 2 * Math.PI);
     }
 
+    public Vector moveRandom(double maxDistance) {
+        return this.add(Vector.random().multiply(Math.random() * maxDistance));
+    }
+
     public double getX() {
         return x;
     }

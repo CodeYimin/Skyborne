@@ -4,9 +4,11 @@ import core.GameObject;
 
 public class Bullet extends Component {
     private Class<? extends Component> targetClass;
+    private int damage;
 
-    public Bullet(Class<? extends Component> targetClass) {
+    public Bullet(Class<? extends Component> targetClass, int damage) {
         this.targetClass = targetClass;
+        this.damage = damage;
     }
 
     @Override
@@ -19,7 +21,7 @@ public class Bullet extends Component {
         boolean attacked = false;
         for (GameObject collidingObject : boxCollider.getCollidingObjects()) {
             if (collidingObject.getComponent(targetClass) != null && !attacked) {
-                collidingObject.getComponent(Health.class).damage(1);
+                collidingObject.getComponent(Health.class).damage(damage);
                 getGameObject().destroy();
                 attacked = true;
             }
