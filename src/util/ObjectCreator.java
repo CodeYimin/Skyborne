@@ -15,6 +15,7 @@ import components.SpriteRenderer;
 import components.Tilemap;
 import components.TilemapMotion;
 import components.Transform;
+import components.UndiscoveredRoomOverlay;
 import components.Weapon;
 import core.GameObject;
 import structures.IntVector;
@@ -57,6 +58,7 @@ public class ObjectCreator {
         GameObject gameObject = new GameObject();
         gameObject.getTransform().setPosition(position.toVector().multiply(Const.DISTANCE_BETWEEN_ROOMS));
         gameObject.addComponent(new Room(mapPath, 1, 2, 3, maxEnemies));
+        gameObject.addComponent(new UndiscoveredRoomOverlay());
         return gameObject;
     }
 

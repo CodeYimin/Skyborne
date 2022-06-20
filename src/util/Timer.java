@@ -7,6 +7,7 @@ public class Timer {
 
     public Timer(int duration) {
         this.duration = duration;
+        this.lastStartTime = System.currentTimeMillis();
     }
 
     public boolean isDone() {
