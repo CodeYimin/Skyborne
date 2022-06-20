@@ -17,7 +17,7 @@ public class Health extends Component {
         return eventManager;
     }
 
-    public int getHealth() {
+    public int getCurrent() {
         return health;
     }
 
@@ -37,7 +37,7 @@ public class Health extends Component {
         }
     }
 
-    public int getMaxHealth() {
+    public int getMax() {
         return maxHealth;
     }
 

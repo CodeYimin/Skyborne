@@ -11,9 +11,9 @@ import structures.Vector;
 import util.Const;
 
 public class DungeonMinimapUI extends UI {
-    public static final int WIDTH = 200;
-    public static final int HEIGHT = 200;
-    public static final int MARGIN = 20;
+    public static final int WIDTH = Const.DUNGEON_MINIMAP_WIDTH;
+    public static final int HEIGHT = Const.DUNGEON_MINIMAP_HEIGHT;
+    public static final int MARGIN = Const.DUNGEON_MINIMAP_MARGIN;
 
     @Override
     public void draw(Graphics g) {
@@ -47,7 +47,7 @@ public class DungeonMinimapUI extends UI {
                     } else {
                         color = Color.BLACK;
                     }
-                    drawRectangle(g, transform.getLocalPosition().add(Const.DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color);
+                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color);
                 }
             }
         }
@@ -60,7 +60,7 @@ public class DungeonMinimapUI extends UI {
             Vector dungeonPosition = dungeonTransform.getPosition();
 
             Vector playerLocalPosition = playerPosition.subtract(dungeonPosition);
-            drawRectangle(g, playerLocalPosition.add(Const.DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK);
+            drawRectangle(g, playerLocalPosition.add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK);
         }
 
         g.setColor(Color.BLACK);
@@ -83,7 +83,7 @@ public class DungeonMinimapUI extends UI {
         int minimapLeft = screenWidth - WIDTH - MARGIN;
         int minimapBottom = minimapTop + HEIGHT;
 
-        double screenTileSize = (double) WIDTH / (mapWidth * Const.DISTANCE_BETWEEN_ROOMS);
+        double screenTileSize = (double) WIDTH / (mapWidth * Const.DUNGEON_DISTANCE_BETWEEN_ROOMS);
         Vector rectangleScreenSize = size.multiply(screenTileSize);
 
         Vector topLeftCorner = position.subtractX(size.getX() / 2).addY(size.getY() / 2);

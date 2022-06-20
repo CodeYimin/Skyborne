@@ -7,11 +7,12 @@ import components.DamageOverlayUI;
 import components.Dungeon;
 import components.DungeonMinimapUI;
 import components.Enemy;
-import components.HealthUI;
 import components.KeyboardMotionController;
+import components.Mana;
 import components.MouseFire;
 import components.MouseRotation;
 import components.Player;
+import components.PlayerStatsUI;
 import components.SpriteRenderer;
 import components.UICamera;
 import components.Weapon;
@@ -30,8 +31,9 @@ public class LevelScene extends Scene {
     public void init() {
         GameObject player = ObjectCreator.createTilemapCreature(new Vector(0, 0), Vector.ONE, 10, "../assets/big_demon_idle_anim_f0.png");
         player.addComponent(new Player());
+        player.addComponent(new Mana(200));
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
-        player.addComponent(new HealthUI());
+        player.addComponent(new PlayerStatsUI());
         player.addComponent(new DamageOverlayUI());
         addGameObject(player);
 

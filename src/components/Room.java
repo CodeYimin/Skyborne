@@ -145,8 +145,8 @@ public class Room extends Tilemap {
                 boolean isLeftBorder = x == 0;
                 boolean isRightBorder = x == getWidth() - 1;
                 boolean isBorder = isTopBorder || isBottomBorder || isLeftBorder || isRightBorder;
-                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH;
-                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH;
+                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.DUNGEON_HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.DUNGEON_HALLWAY_WIDTH;
+                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.DUNGEON_HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.DUNGEON_HALLWAY_WIDTH;
                 boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
                 boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
                 boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();
@@ -170,8 +170,8 @@ public class Room extends Tilemap {
                 boolean isBottomBorder = y == 0;
                 boolean isLeftBorder = x == 0;
                 boolean isRightBorder = x == getWidth() - 1;
-                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.HALLWAY_WIDTH;
-                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.HALLWAY_WIDTH;
+                boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.DUNGEON_HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.DUNGEON_HALLWAY_WIDTH;
+                boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.DUNGEON_HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.DUNGEON_HALLWAY_WIDTH;
                 boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
                 boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
                 boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();

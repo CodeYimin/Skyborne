@@ -14,9 +14,9 @@ public class HPBar extends Renderer {
         Vector position = transform.getPosition();
         Vector scale = transform.getScale();
 
-        Vector fullBarScale = new Vector(health.getMaxHealth() * 0.1, 0.1);
+        Vector fullBarScale = new Vector(health.getMax() * 0.1, 0.1);
         Vector fullBarPosition = position.addY(scale.getY() / 2 + 0.5).subtract(fullBarScale.divide(2));
-        Vector barScale = fullBarScale.multiplyX((double) health.getHealth() / health.getMaxHealth());
+        Vector barScale = fullBarScale.multiplyX((double) health.getCurrent() / health.getMax());
         Vector barPosition = fullBarPosition;
 
         g.setColor(Color.BLACK);

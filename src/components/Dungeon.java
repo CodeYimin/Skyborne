@@ -6,13 +6,14 @@ import java.util.Queue;
 
 import core.GameObject;
 import structures.IntVector;
+import util.Const;
 import util.ObjectCreator;
 
 public class Dungeon extends Component {
-    public static final int WIDTH = 5;
-    public static final int HEIGHT = 5;
-    public static final int MIN_ROOMS = 5;
-    public static final int MAX_ROOMS = 10;
+    public static final int WIDTH = Const.DUNGEON_WIDTH;
+    public static final int HEIGHT = Const.DUNGEON_HEIGHT;
+    public static final int MIN_ROOMS = Const.DUNGEON_MIN_ROOMS;
+    public static final int MAX_ROOMS = Const.DUNGEON_MAX_ROOMS;
 
     private GameObject[][] rooms;
     private int roomsGenerated = 0;

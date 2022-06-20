@@ -56,7 +56,7 @@ public class ObjectCreator {
 
     public static GameObject createRoom(IntVector position, String mapPath, int maxEnemies) {
         GameObject gameObject = new GameObject();
-        gameObject.getTransform().setPosition(position.toVector().multiply(Const.DISTANCE_BETWEEN_ROOMS));
+        gameObject.getTransform().setPosition(position.toVector().multiply(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS));
         gameObject.addComponent(new Room(mapPath, 1, 2, 3, maxEnemies));
         gameObject.addComponent(new UndiscoveredRoomOverlay());
         return gameObject;
@@ -84,12 +84,12 @@ public class ObjectCreator {
             double x2 = Math.max(position1.getX() - tilemap1.getWidth() / 2.0, position2.getX() - tilemap2.getWidth() / 2.0);
             position = new Vector((x1 + x2) / 2, position2.getY());
             size = new Vector(Math.abs(position1.getX() - position2.getX()) - tilemap1.getWidth() / 2 - tilemap2.getWidth() / 2,
-                    Const.HALLWAY_WIDTH + 2);
+                    Const.DUNGEON_HALLWAY_WIDTH + 2);
         } else {
             double y1 = Math.min(position1.getY() + tilemap1.getHeight() / 2, position2.getY() + tilemap2.getHeight() / 2);
             double y2 = Math.max(position1.getY() - tilemap1.getHeight() / 2, position2.getY() - tilemap2.getHeight() / 2);
             position = new Vector(position2.getX(), (y1 + y2) / 2);
-            size = new Vector(Const.HALLWAY_WIDTH + 2,
+            size = new Vector(Const.DUNGEON_HALLWAY_WIDTH + 2,
                     Math.abs(position1.getY() - position2.getY()) - tilemap1.getHeight() / 2 - tilemap2.getHeight() / 2);
         }
 
