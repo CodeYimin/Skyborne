@@ -38,7 +38,13 @@ public class Dungeon extends Component {
             return false;
         }
 
-        createRoom(x, y);
+        if (roomsGenerated == 0) {
+            createRoom(x, y, "../data/room0.txt", 0);
+        } else if (Math.random() < 0.5) {
+            createRoom(x, y, "../data/room1.txt", 10);
+        } else {
+            createRoom(x, y, "../data/room2.txt", 10);
+        }
         roomsGenerated++;
 
         if (roomsGenerated < MIN_ROOMS) {
@@ -80,13 +86,9 @@ public class Dungeon extends Component {
         return availableDirections;
     }
 
-    private GameObject createRoom(int x, int y) {
+    private GameObject createRoom(int x, int y, String mapPath, int maxEnemies) {
         GameObject room;
-        if (Math.random() < 0.5) {
-            room = ObjectCreator.createRoom(new IntVector(x, y), "../data/room1.txt");
-        } else {
-            room = ObjectCreator.createRoom(new IntVector(x, y), "../data/room2.txt");
-        }
+        room = ObjectCreator.createRoom(new IntVector(x, y), mapPath, maxEnemies);
         rooms[x][y] = room;
         return room;
     }

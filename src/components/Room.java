@@ -17,13 +17,15 @@ public class Room extends Tilemap {
     private boolean discovered;
     private boolean cleared;
     private int doorLayer;
+    private int maxEnemies;
 
-    public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial) {
+    public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial, int maxEnemies) {
         super(mapPath);
 
         this.floorMaterial = floorMaterial;
         this.wallMaterial = wallMaterial;
         this.doorMaterial = doorMaterial;
+        this.maxEnemies = maxEnemies;
 
         generateFloors();
     }
@@ -38,8 +40,8 @@ public class Room extends Tilemap {
     public void spawnEnemies() {
         for (int x = -getWidth() / 2 + 2; x < getWidth() / 2 - 2; x++) {
             for (int y = -getHeight() / 2 + 2; y < getHeight() / 2 - 2; y++) {
-                if (Math.random() < 0.05) {
-                    Transform transform = getGameObject().getTransform();
+                Transform transform = getGameObject().getTransform();
+                if (getEnemiesInRoom() < maxEnemies && Math.random() < 0.2 && !isSolidAt(transform.getPosition().add(x, y))) {
                     GameObject enemy = ObjectCreator.createEnemy(getGameObject().getScene().getGameObject(Player.class),
                             transform.getPosition().add(x, y), Vector.ONE,
                             20, "../assets/masked_orc_idle_anim_f0.png");
@@ -86,17 +88,21 @@ public class Room extends Tilemap {
                 unfreezeObjects();
             }
 
-            int enemiesInRoom = 0;
-            for (GameObject child : getGameObject().getChildren()) {
-                if (child.getComponent(Enemy.class) != null) {
-                    enemiesInRoom++;
-                }
-            }
-            if (enemiesInRoom == 0) {
+            if (getEnemiesInRoom() == 0) {
                 clearDoors();
                 cleared = true;
             }
         }
+    }
+
+    public int getEnemiesInRoom() {
+        int enemiesInRoom = 0;
+        for (GameObject child : getGameObject().getChildren()) {
+            if (child.getComponent(Enemy.class) != null) {
+                enemiesInRoom++;
+            }
+        }
+        return enemiesInRoom;
     }
 
     public ArrayList<GameObject> getGameObjectsInRoom(Class<? extends Component> componentClass) {
@@ -196,5 +202,13 @@ public class Room extends Tilemap {
 
     public boolean isDiscovered() {
         return discovered;
+    }
+
+    public int getMaxEnemies() {
+        return maxEnemies;
+    }
+
+    public void setMaxEnemies(int maxEnemies) {
+        this.maxEnemies = maxEnemies;
     }
 }

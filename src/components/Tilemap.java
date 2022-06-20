@@ -167,4 +167,14 @@ public class Tilemap extends Renderer {
         Transform transform = getGameObject().getTransform();
         return worldPosition.subtract(transform.getPosition()).add(getWidth() / 2.0, getHeight() / 2.0);
     }
+
+    public boolean isSolidAt(Vector worldPosition) {
+        for (int layer = 0; layer < layers.size(); layer++) {
+            Tile tile = getTileAtWorld(layer, worldPosition);
+            if (tile != null && tile.isSolid()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -53,10 +53,10 @@ public class ObjectCreator {
         return enemyWeapon;
     }
 
-    public static GameObject createRoom(IntVector position, String mapPath) {
+    public static GameObject createRoom(IntVector position, String mapPath, int maxEnemies) {
         GameObject gameObject = new GameObject();
         gameObject.getTransform().setPosition(position.toVector().multiply(Const.DISTANCE_BETWEEN_ROOMS));
-        gameObject.addComponent(new Room(mapPath, 1, 2, 3));
+        gameObject.addComponent(new Room(mapPath, 1, 2, 3, maxEnemies));
         return gameObject;
     }
 
