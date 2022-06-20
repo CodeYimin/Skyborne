@@ -21,19 +21,19 @@ public class Health extends Component {
         return health;
     }
 
-    public void setHealth(int newHealth) {
+    public void setCurrent(int newHealth) {
         int oldHealth = this.health;
         this.health = newHealth;
         eventManager.emit(new HealthEvent(oldHealth, newHealth));
     }
 
     public void damage(int damage) {
-        setHealth(health - damage);
+        setCurrent(health - damage);
     }
 
     public void heal(int heal) {
         if (this.health < maxHealth) {
-            setHealth(health + heal);
+            setCurrent(health + heal);
         }
     }
 
@@ -41,7 +41,7 @@ public class Health extends Component {
         return maxHealth;
     }
 
-    public void setMaxHealth(int maxHealth) {
+    public void setMax(int maxHealth) {
         this.maxHealth = maxHealth;
     }
 }

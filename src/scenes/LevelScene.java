@@ -9,8 +9,6 @@ import components.DungeonMinimapUI;
 import components.Enemy;
 import components.KeyboardMotionController;
 import components.Mana;
-import components.MouseFire;
-import components.MouseRotation;
 import components.Player;
 import components.PlayerStatsUI;
 import components.SpriteRenderer;
@@ -46,13 +44,11 @@ public class LevelScene extends Scene {
         addGameObject(UICamera);
 
         GameObject playerWeapon = new GameObject();
-        playerWeapon.addComponent(new Weapon(Enemy.class, 10, 100));
+        playerWeapon.addComponent(new Weapon(Enemy.class, 10, 1, 100));
         playerWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
-        playerWeapon.addComponent(new MouseRotation());
-        playerWeapon.addComponent(new MouseFire());
-        playerWeapon.setParent(player);
-        player.getComponent(Player.class).equip(playerWeapon);
         addGameObject(playerWeapon);
+
+        player.getComponent(Player.class).equipWeapon(playerWeapon);
     }
 
     @Override
