@@ -1,6 +1,8 @@
 package components;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import core.GameObject;
 import structures.IntVector;
@@ -33,40 +35,58 @@ public class Dungeon extends Component {
         }
     }
 
-    private boolean generate(int x, int y) {
-        if (roomsGenerated >= MAX_ROOMS) {
-            return false;
-        }
-
-        if (roomsGenerated == 0) {
-            createRoom(x, y, "../data/room0.txt", 0);
-        } else if (Math.random() < 0.5) {
-            createRoom(x, y, "../data/room1.txt", 10);
-        } else {
-            createRoom(x, y, "../data/room2.txt", 10);
-        }
+    private void generate(int x, int y) {
+        createRoom(0, 0, "../data/room0.txt", 0);
         roomsGenerated++;
 
-        if (roomsGenerated < MIN_ROOMS) {
-            generateRandomDirection(x, y);
-        }
-        if (roomsGenerated > 1 && Math.random() < 0.5) {
-            generateRandomDirection(x, y);
-        }
+        Queue<IntVector> queue = new LinkedList<>();
+        queue.add(new IntVector(0, 0));
 
-        return true;
+        while (roomsGenerated < MAX_ROOMS && !queue.isEmpty()) {
+            IntVector position = queue.remove();
+
+            for (int i = 0; i < 2; i++) {
+                if (roomsGenerated > 1 && Math.random() < 0.25) {
+                    String mapPath;
+                    if (Math.random() < 0.5) {
+                        mapPath = "../data/room1.txt";
+                    } else {
+                        mapPath = "../data/room2.txt";
+                    }
+                    IntVector newRoomPosition = createRoomRandomDirection(position.getX(), position.getY(), mapPath, 10);
+                    if (newRoomPosition != null) {
+                        queue.add(newRoomPosition);
+                        roomsGenerated++;
+                    }
+                }
+            }
+
+            if (roomsGenerated < MIN_ROOMS) {
+                String mapPath;
+                if (Math.random() < 0.5) {
+                    mapPath = "../data/room1.txt";
+                } else {
+                    mapPath = "../data/room2.txt";
+                }
+                IntVector newRoomPosition = createRoomRandomDirection(position.getX(), position.getY(), mapPath, 10);
+                if (newRoomPosition != null) {
+                    queue.add(newRoomPosition);
+                    roomsGenerated++;
+                }
+            }
+        }
     }
 
-    private void generateRandomDirection(int x, int y) {
+    private IntVector createRoomRandomDirection(int x, int y, String mapPath, int maxEnemies) {
         ArrayList<IntVector> availableDirections = getAvailableDirections(x, y);
         if (availableDirections.size() == 0) {
-            return;
+            return null;
         }
         int randomIndex = (int) (Math.random() * availableDirections.size());
         IntVector direction = availableDirections.get(randomIndex);
-        if (generate(x + direction.getX(), y + direction.getY())) {
-            connectRooms(x, y, x + direction.getX(), y + direction.getY());
-        }
+        createRoom(x + direction.getX(), y + direction.getY(), mapPath, maxEnemies);
+        connectRooms(x, y, x + direction.getX(), y + direction.getY());
+        return new IntVector(x, y).add(direction);
     }
 
     private ArrayList<IntVector> getAvailableDirections(int x, int y) {
