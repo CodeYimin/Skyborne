@@ -26,7 +26,7 @@ public class EnemyMotionController extends Component {
                 Vector direction = Vector.random();
                 motion.setVelocity(direction.multiply(speed));
             }
-            directionChangeTimer.reset();
+            directionChangeTimer.start();
         }
     }
 

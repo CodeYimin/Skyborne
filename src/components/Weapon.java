@@ -50,6 +50,6 @@ public class Weapon extends Component {
         bullet.getTransform().setScale(Vector.ONE.multiply(0.3));
         getGameObject().getScene().addGameObject(bullet);
 
-        cooldownTimer.reset();
+        cooldownTimer.start();
     }
 }

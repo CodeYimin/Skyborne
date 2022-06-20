@@ -1,7 +1,9 @@
 package components;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import core.GameObject;
 import core.GraphicsPanel;
@@ -22,15 +24,12 @@ public class DungeonMinimapUI extends UI {
 
         GraphicsPanel graphicsPanel = getGameObject().getScene().getGame().getWindow().getGraphicsPanel();
         int screenWidth = graphicsPanel.getWidth();
-        int screenHeight = graphicsPanel.getHeight();
 
         int mapWidth = dungeon.getWidth();
         int mapHeight = dungeon.getHeight();
         GameObject[][] rooms = dungeon.getRooms();
 
-        g.setColor(Color.BLACK);
-        g.fillRect(screenWidth - WIDTH - MARGIN - 3, MARGIN - 3, WIDTH + 6, HEIGHT + 6);
-        g.setColor(Color.WHITE);
+        g.setColor(new Color(255, 255, 255, 100));
         g.fillRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
 
         for (int x = 0; x < mapWidth; x++) {
@@ -63,6 +62,10 @@ public class DungeonMinimapUI extends UI {
             Vector playerLocalPosition = playerPosition.subtract(dungeonPosition);
             drawRectangle(g, playerLocalPosition.add(Const.DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK);
         }
+
+        g.setColor(Color.BLACK);
+        ((Graphics2D) g).setStroke(new BasicStroke(5));
+        g.drawRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
     }
 
     private void drawRectangle(Graphics g, Vector position, Vector size, Color color) {

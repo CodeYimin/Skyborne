@@ -3,6 +3,7 @@ package scenes;
 import java.awt.event.KeyEvent;
 
 import components.Camera;
+import components.DamageOverlayUI;
 import components.Dungeon;
 import components.DungeonMinimapUI;
 import components.Enemy;
@@ -31,6 +32,7 @@ public class LevelScene extends Scene {
         player.addComponent(new Player());
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
         player.addComponent(new HealthUI());
+        player.addComponent(new DamageOverlayUI());
         addGameObject(player);
 
         GameObject camera = new GameObject();

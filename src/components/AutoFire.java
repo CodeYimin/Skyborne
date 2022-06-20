@@ -12,7 +12,7 @@ public class AutoFire extends Component {
     @Override
     public void update(double deltaTime) {
         if (fireTimer.isDone()) {
-            fireTimer.reset();
+            fireTimer.start();
             getGameObject().getComponent(Weapon.class).fire();
         }
     }
