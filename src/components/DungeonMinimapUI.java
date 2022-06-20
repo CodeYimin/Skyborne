@@ -45,7 +45,7 @@ public class DungeonMinimapUI extends UI {
                     if (room.getGameObjectsInRoom(Player.class).size() > 0) {
                         color = Color.RED;
                     } else {
-                        color = Color.GRAY;
+                        color = Color.BLACK;
                     }
                     drawRectangle(g, transform.getLocalPosition().add(Const.DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color);
                 }

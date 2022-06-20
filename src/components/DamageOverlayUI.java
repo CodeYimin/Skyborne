@@ -23,7 +23,7 @@ public class DamageOverlayUI extends UI {
             @Override
             public void onHealthChanged(Health health, int oldHealth, int newHealth) {
                 if (oldHealth > newHealth && !displayTimer.isStarted()) {
-                    displayTimer.start();
+                    displayTimer.resetAndStart();
                     DamageOverlayUI.this.setVisible(true);
                 }
             }
@@ -44,7 +44,7 @@ public class DamageOverlayUI extends UI {
         int width = graphicsPanel.getWidth();
         int height = graphicsPanel.getHeight();
 
-        g.setColor(new Color(255, 0, 0, 100));
+        g.setColor(new Color(255, 0, 0, (int) (100 * displayTimer.getPercentage())));
         g.fillRect(0, 0, width, height);
     }
 }

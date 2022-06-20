@@ -10,13 +10,25 @@ public class Timer {
     }
 
     public boolean isDone() {
-        if (!started) {
-            return false;
-        }
-        return lastStartTime + duration < System.currentTimeMillis();
+        return getCurrentTime() > duration;
     }
 
-    public void start() {
+    public int getCurrentTime() {
+        if (!started) {
+            return 0;
+        }
+        return (int) (System.currentTimeMillis() - lastStartTime);
+    }
+
+    public double getPercentage() {
+        return (double) getCurrentTime() / duration;
+    }
+
+    public int getMaxTime() {
+        return duration;
+    }
+
+    public void resetAndStart() {
         lastStartTime = System.currentTimeMillis();
         started = true;
     }
