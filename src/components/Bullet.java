@@ -21,7 +21,7 @@ public class Bullet extends Component {
         boolean attacked = false;
         for (GameObject collidingObject : boxCollider.getCollidingObjects()) {
             if (collidingObject.getComponent(targetClass) != null && !attacked) {
-                collidingObject.getComponent(Health.class).damage(damage);
+                collidingObject.getComponent(Health.class).decrease(damage);
                 getGameObject().destroy();
                 attacked = true;
             }

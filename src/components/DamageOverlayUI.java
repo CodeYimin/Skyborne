@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import core.GraphicsPanel;
 import events.EventListener;
-import events.HealthEvent;
+import events.StatChangeEvent;
 import util.Timer;
 
 public class DamageOverlayUI extends UI {
@@ -21,10 +21,10 @@ public class DamageOverlayUI extends UI {
             return;
         }
 
-        health.getEventManager().addListener(new EventListener<HealthEvent>(0) {
+        health.addChangeListener(new EventListener<StatChangeEvent>(0) {
             @Override
-            public void onEvent(HealthEvent event) {
-                if (event.getOldHealth() > event.getNewHealth() && !displayTimer.isStarted()) {
+            public void onEvent(StatChangeEvent event) {
+                if (event.getOldValue() > event.getNewValue() && !displayTimer.isStarted()) {
                     displayTimer.resetAndStart();
                     DamageOverlayUI.this.setVisible(true);
                 }

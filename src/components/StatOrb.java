@@ -2,11 +2,13 @@ package components;
 
 import core.GameObject;
 
-public class ManaOrb extends Component {
-    private int mana;
+public class StatOrb<T extends Stat> extends Component {
+    private Class<T> statClass;
+    private int value;
 
-    public ManaOrb(int mana) {
-        this.mana = mana;
+    public StatOrb(Class<T> statClass, int value) {
+        this.statClass = statClass;
+        this.value = value;
     }
 
     @Override
@@ -17,9 +19,9 @@ public class ManaOrb extends Component {
         }
 
         for (GameObject gameObject : boxCollider.getCollidingObjects()) {
-            Mana manaComponent = gameObject.getComponent(Mana.class);
-            if (!getGameObject().isDestroyed() && manaComponent != null) {
-                manaComponent.add(mana);
+            T stat = gameObject.getComponent(statClass);
+            if (!getGameObject().isDestroyed() && stat != null) {
+                stat.increase(value);
                 getGameObject().destroy();
             }
         }

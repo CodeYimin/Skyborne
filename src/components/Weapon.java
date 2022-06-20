@@ -58,7 +58,7 @@ public class Weapon extends Component {
         getGameObject().getScene().addGameObject(bullet);
 
         if (parentMana != null) {
-            parentMana.use(manaCost);
+            parentMana.decrease(manaCost);
         }
 
         cooldownTimer.resetAndStart();
