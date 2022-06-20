@@ -78,11 +78,15 @@ public class ObjectCreator {
         Vector size;
 
         if (direction == 0) {
-            position = new Vector((position1.getX() + position2.getX()) / 2, position2.getY());
+            double x1 = Math.min(position1.getX() + tilemap1.getWidth() / 2.0, position2.getX() + tilemap2.getWidth() / 2.0);
+            double x2 = Math.max(position1.getX() - tilemap1.getWidth() / 2.0, position2.getX() - tilemap2.getWidth() / 2.0);
+            position = new Vector((x1 + x2) / 2, position2.getY());
             size = new Vector(Math.abs(position1.getX() - position2.getX()) - tilemap1.getWidth() / 2 - tilemap2.getWidth() / 2,
                     Const.HALLWAY_WIDTH + 2);
         } else {
-            position = new Vector(position2.getX(), (position1.getY() + position2.getY()) / 2);
+            double y1 = Math.min(position1.getY() + tilemap1.getHeight() / 2, position2.getY() + tilemap2.getHeight() / 2);
+            double y2 = Math.max(position1.getY() - tilemap1.getHeight() / 2, position2.getY() - tilemap2.getHeight() / 2);
+            position = new Vector(position2.getX(), (y1 + y2) / 2);
             size = new Vector(Const.HALLWAY_WIDTH + 2,
                     Math.abs(position1.getY() - position2.getY()) - tilemap1.getHeight() / 2 - tilemap2.getHeight() / 2);
         }

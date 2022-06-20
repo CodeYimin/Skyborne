@@ -155,16 +155,16 @@ public class Tilemap extends Renderer {
 
     public Vector getWorldPosition(int layer, Vector localPosition) {
         Transform transform = getGameObject().getTransform();
-        return transform.getPosition().add(localPosition).subtract(layers.get(layer).length / 2, layers.get(layer)[0].length / 2);
+        return transform.getPosition().add(localPosition).subtract(layers.get(layer).length / 2.0, layers.get(layer)[0].length / 2.0);
     }
 
     public Vector getLocalPosition(int layer, Vector worldPosition) {
         Transform transform = getGameObject().getTransform();
-        return worldPosition.subtract(transform.getPosition()).add(layers.get(layer).length / 2, layers.get(layer)[0].length / 2);
+        return worldPosition.subtract(transform.getPosition()).add(layers.get(layer).length / 2.0, layers.get(layer)[0].length / 2.0);
     }
 
     public Vector getLocalPosition(Vector worldPosition) {
         Transform transform = getGameObject().getTransform();
-        return worldPosition.subtract(transform.getPosition()).add(getWidth() / 2, getHeight() / 2);
+        return worldPosition.subtract(transform.getPosition()).add(getWidth() / 2.0, getHeight() / 2.0);
     }
 }

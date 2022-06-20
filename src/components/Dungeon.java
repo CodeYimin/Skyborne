@@ -81,7 +81,12 @@ public class Dungeon extends Component {
     }
 
     private GameObject createRoom(int x, int y) {
-        GameObject room = ObjectCreator.createRoom(new IntVector(x, y), "../data/room1.txt");
+        GameObject room;
+        if (Math.random() < 0.5) {
+            room = ObjectCreator.createRoom(new IntVector(x, y), "../data/room1.txt");
+        } else {
+            room = ObjectCreator.createRoom(new IntVector(x, y), "../data/room2.txt");
+        }
         rooms[x][y] = room;
         return room;
     }
