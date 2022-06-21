@@ -10,13 +10,13 @@ import events.KeyPressEnterEvent;
 
 public class Keyboard extends KeyAdapter {
     private HashSet<Integer> keysDown = new HashSet<>();
-    private EventManager<KeyPressEnterEvent> keyPressEnterEventManager = new EventManager<>();
+    private EventManager eventManager = new EventManager();
 
     @Override
     public void keyPressed(KeyEvent event) {
         if (!keysDown.contains(event.getKeyCode())) {
             keysDown.add(event.getKeyCode());
-            keyPressEnterEventManager.emit(new KeyPressEnterEvent(event.getKeyCode()));
+            eventManager.emit(new KeyPressEnterEvent(event.getKeyCode()));
         }
     }
 
@@ -34,6 +34,6 @@ public class Keyboard extends KeyAdapter {
     }
 
     public void addKeyPressEnterListener(EventListener<KeyPressEnterEvent> listener) {
-        keyPressEnterEventManager.addListener(listener);
+        eventManager.addListener(listener);
     }
 }

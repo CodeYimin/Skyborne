@@ -6,7 +6,7 @@ import java.util.Queue;
 
 import core.GameObject;
 import events.EventListener;
-import events.RoomEnterEvent;
+import events.RoomFirstEnterEvent;
 import structures.IntVector;
 import util.Const;
 import util.ObjectCreator;
@@ -129,9 +129,9 @@ public class Dungeon extends Component {
     private GameObject createRoom(int x, int y, String mapPath, int maxEnemies) {
         GameObject room;
         room = ObjectCreator.createRoom(new IntVector(x, y), mapPath, maxEnemies);
-        room.getComponent(Room.class).addRoomEnterListener(new EventListener<RoomEnterEvent>(0) {
+        room.addEventListener(new EventListener<>(RoomFirstEnterEvent.class, 0) {
             @Override
-            public void onEvent(RoomEnterEvent event) {
+            public void onEvent(RoomFirstEnterEvent event) {
                 for (IntVector direction : getOccupiedDirections(x, y)) {
                     GameObject room = getRoom(x + direction.getX(), y + direction.getY());
                     room.getComponent(Room.class).setDiscovered(true);

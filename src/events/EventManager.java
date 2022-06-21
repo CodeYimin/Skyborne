@@ -2,21 +2,27 @@ package events;
 
 import java.util.ArrayList;
 
-public class EventManager<T extends Event> {
-    private ArrayList<EventListener<T>> listeners = new ArrayList<EventListener<T>>();
+public class EventManager {
+    private ArrayList<EventListener<?>> listeners = new ArrayList<>();
 
-    public void addListener(EventListener<T> listener) {
+    public void addListener(EventListener<?> listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(EventListener<T> listener) {
+    public void removeListener(EventListener<?> listener) {
         listeners.remove(listener);
     }
 
-    public void emit(T event) {
+    public <T extends Event> void emit(T event) {
         listeners.sort(new EventListenerPriorityComparator());
-        for (EventListener<T> listener : listeners) {
-            listener.onEvent(event);
+        for (EventListener<?> listener : listeners) {
+            if (listener.getEventClass() == event.getClass()) {
+                // Guaranteed cast because event.getClass() is Class<T> so
+                // listener.getEventClass() is Class<T>, so listener is EventListener<T>
+                @SuppressWarnings("unchecked")
+                EventListener<T> typedListener = (EventListener<T>) listener;
+                typedListener.onEvent(event);
+            }
         }
     }
 }

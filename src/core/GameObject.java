@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import components.Component;
 import components.Transform;
+import events.Event;
+import events.EventListener;
+import events.EventManager;
 import scenes.Scene;
 
 public class GameObject {
@@ -12,6 +15,7 @@ public class GameObject {
     private Scene scene = null;
     private boolean enabled = true;
     private ArrayList<Component> components = new ArrayList<>();
+    private EventManager eventManager = new EventManager();
 
     public GameObject() {
         this.transform = new Transform();
@@ -142,5 +146,17 @@ public class GameObject {
 
     public boolean isDestroyed() {
         return scene == null;
+    }
+
+    public void addEventListener(EventListener<?> listener) {
+        eventManager.addListener(listener);
+    }
+
+    public void removeEventListener(EventListener<?> listener) {
+        eventManager.removeListener(listener);
+    }
+
+    public void emitEvent(Event event) {
+        eventManager.emit(event);
     }
 }

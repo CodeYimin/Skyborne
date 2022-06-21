@@ -3,9 +3,7 @@ package components;
 import java.util.ArrayList;
 
 import core.GameObject;
-import events.EventListener;
-import events.EventManager;
-import events.RoomEnterEvent;
+import events.RoomFirstEnterEvent;
 import structures.Directions;
 import structures.Tile;
 import structures.Vector;
@@ -22,7 +20,6 @@ public class Room extends Tilemap {
     private boolean cleared;
     private int doorLayer;
     private int maxEnemies;
-    private EventManager<RoomEnterEvent> roomEnterEventManager = new EventManager<>();
 
     public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial, int maxEnemies) {
         super(mapPath);
@@ -95,7 +92,7 @@ public class Room extends Tilemap {
                 generateDoors();
                 unfreezeObjects();
 
-                roomEnterEventManager.emit(new RoomEnterEvent(true));
+                getGameObject().emitEvent(new RoomFirstEnterEvent());
             }
 
             // Cleared all enemies
@@ -205,14 +202,6 @@ public class Room extends Tilemap {
 
     public Directions getDoorDirections() {
         return doorDirections;
-    }
-
-    public void addRoomEnterListener(EventListener<RoomEnterEvent> listener) {
-        roomEnterEventManager.addListener(listener);
-    }
-
-    public void removeRoomEnterListener(EventListener<RoomEnterEvent> listener) {
-        roomEnterEventManager.removeListener(listener);
     }
 
     public boolean isCleared() {

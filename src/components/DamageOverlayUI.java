@@ -21,10 +21,10 @@ public class DamageOverlayUI extends UI {
             return;
         }
 
-        health.addChangeListener(new EventListener<StatChangeEvent>(0) {
+        getGameObject().addEventListener(new EventListener<>(StatChangeEvent.class, 0) {
             @Override
             public void onEvent(StatChangeEvent event) {
-                if (event.getOldValue() > event.getNewValue() && !displayTimer.isStarted()) {
+                if (event.getStat() instanceof Health && event.getOldValue() > event.getNewValue() && !displayTimer.isStarted()) {
                     displayTimer.resetAndStart();
                     DamageOverlayUI.this.setVisible(true);
                 }
