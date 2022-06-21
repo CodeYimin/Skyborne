@@ -1,5 +1,6 @@
 package components;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +17,14 @@ public class Camera extends Component implements Drawable {
     private GameObject following;
     private GraphicsPanel graphicsPanel;
 
-    public Camera(GameObject following) {
-        this.position = Vector.ZERO;
-        this.zoom = 100;
-        this.following = following;
-    }
-
     public Camera(GameObject following, double zoom) {
         this.position = Vector.ZERO;
         this.zoom = zoom;
         this.following = following;
+    }
+
+    public Camera(GraphicsPanel graphicsPanel, GameObject following) {
+        this(following, 100);
     }
 
     @Override
@@ -58,6 +57,9 @@ public class Camera extends Component implements Drawable {
     @Override
     public void draw(Graphics g) {
         follow();
+
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, graphicsPanel.getWidth(), graphicsPanel.getHeight());
 
         ArrayList<Renderer> renderers = getGameObject().getScene().getComponents(Renderer.class);
         for (Renderer renderer : List.copyOf(renderers)) {
