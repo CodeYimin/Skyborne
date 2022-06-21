@@ -13,8 +13,16 @@ public abstract class Component {
         // Do nothing
     }
 
-    public void stop() {
-        // Do nothing
+    public void destroy() {
+        if (isDestroyed()) {
+            return;
+        }
+
+        gameObject.removeComponent(this);
+    }
+
+    public boolean isDestroyed() {
+        return gameObject == null || gameObject.isDestroyed();
     }
 
     public GameObject getGameObject() {

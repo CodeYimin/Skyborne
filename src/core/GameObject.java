@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import components.Component;
 import components.Transform;
@@ -23,8 +24,8 @@ public class GameObject {
     }
 
     public void start() {
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).start();
+        for (Component component : List.copyOf(components)) {
+            component.start();
         }
     }
 
@@ -33,14 +34,21 @@ public class GameObject {
             return;
         }
 
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).update(deltaTime);
+        for (Component component : List.copyOf(components)) {
+            if (!component.isDestroyed()) {
+                component.update(deltaTime);
+            }
         }
     }
 
-    public void stop() {
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).stop();
+    public void destroy() {
+        if (isDestroyed()) {
+            return;
+        }
+
+        scene.removeGameObject(this);
+        for (Component component : List.copyOf(components)) {
+            component.destroy();
         }
     }
 
@@ -69,13 +77,20 @@ public class GameObject {
     }
 
     public <T extends Component> boolean removeComponent(Class<T> componentClass) {
-        for (int i = 0; i < components.size(); i++) {
-            Component component = components.get(i);
+        for (Component component : List.copyOf(components)) {
             if (componentClass.isInstance(component)) {
                 component.setGameObject(null);
                 components.remove(component);
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean removeComponent(Component component) {
+        if (components.remove(component)) {
+            component.setGameObject(null);
+            return true;
         }
         return false;
     }
@@ -138,10 +153,6 @@ public class GameObject {
             return true;
         }
         return false;
-    }
-
-    public void destroy() {
-        scene.removeGameObject(this);
     }
 
     public boolean isDestroyed() {

@@ -3,6 +3,8 @@ package components;
 import java.awt.event.KeyEvent;
 
 import core.GameObject;
+import events.EventListener;
+import events.StatChangeEvent;
 import input.Keyboard;
 import input.Mouse;
 import structures.Vector;
@@ -11,6 +13,18 @@ public class Player extends Component {
     private int interactKey = KeyEvent.VK_F;
     private boolean interacting = false;
     private Weapon weapon = null;
+
+    @Override
+    public void start() {
+        getGameObject().addEventListener(new EventListener<>(StatChangeEvent.class, 0) {
+            @Override
+            public void onEvent(StatChangeEvent event) {
+                if (event.getStat() instanceof Health && event.getNewValue() <= 0) {
+                    getGameObject().getScene().reset();
+                }
+            }
+        });
+    }
 
     @Override
     public void update(double deltaTime) {

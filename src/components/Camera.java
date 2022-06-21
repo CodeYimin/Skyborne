@@ -2,6 +2,7 @@ package components;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.List;
 
 import core.Drawable;
 import core.GameObject;
@@ -12,6 +13,7 @@ public class Camera extends Component implements Drawable {
     private Vector position;
     private double zoom;
     private GameObject following;
+    private GraphicsPanel graphicsPanel;
 
     public Camera(GameObject following) {
         this.position = Vector.ZERO;
@@ -27,7 +29,8 @@ public class Camera extends Component implements Drawable {
 
     @Override
     public void start() {
-        getGraphicsPanel().addDrawable(this);
+        graphicsPanel = getGameObject().getScene().getGame().getWindow().getGraphicsPanel();
+        graphicsPanel.addDrawable(this);
     }
 
     @Override
@@ -35,32 +38,41 @@ public class Camera extends Component implements Drawable {
         follow();
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (graphicsPanel != null) {
+            graphicsPanel.removeDrawable(this);
+        }
+    }
+
     private void follow() {
-        if (following == null) {
+        if (following == null || following.isDestroyed()) {
             return;
         }
 
-        Transform followingTransform = following.getTransform();
-        if (followingTransform == null) {
-            return;
-        }
+        position = following.getTransform().getPosition();
+    }
 
-        position = followingTransform.getPosition();
+    @Override
+    public int getZIndex() {
+        return 0;
     }
 
     @Override
     public void draw(Graphics g) {
-        ArrayList<Renderer> renderers = getRenderers();
-
-        for (int i = 0; i < renderers.size(); i++) {
-            renderers.get(i).render(g, this);
+        ArrayList<Renderer> renderers = getGameObject().getScene().getComponents(Renderer.class);
+        for (Renderer renderer : List.copyOf(renderers)) {
+            if (!renderer.isDestroyed()) {
+                renderer.render(g, this);
+            }
         }
     }
 
     public Vector worldToScreenPosition(Vector position) {
         Vector screenSize = new Vector(
-                getGraphicsPanel().getWidth(),
-                getGraphicsPanel().getHeight());
+                graphicsPanel.getWidth(),
+                graphicsPanel.getHeight());
         Vector screenCenter = screenSize.divide(2);
 
         Vector cameraDistToPosition = position.subtract(getPosition());
@@ -74,8 +86,8 @@ public class Camera extends Component implements Drawable {
 
     public Vector screenToWorldPosition(Vector position) {
         Vector screenSize = new Vector(
-                getGraphicsPanel().getWidth(),
-                getGraphicsPanel().getHeight());
+                graphicsPanel.getWidth(),
+                graphicsPanel.getHeight());
         Vector screenCenter = screenSize.divide(2);
 
         Vector cameraDistToPosition = position.subtract(screenCenter);
@@ -93,14 +105,6 @@ public class Camera extends Component implements Drawable {
 
     public Vector screenToWorldSize(Vector size) {
         return size.divide(zoom);
-    }
-
-    public GraphicsPanel getGraphicsPanel() {
-        return getGameObject().getScene().getGame().getWindow().getGraphicsPanel();
-    }
-
-    private ArrayList<Renderer> getRenderers() {
-        return getGameObject().getScene().getComponents(Renderer.class);
     }
 
     public Vector getPosition() {

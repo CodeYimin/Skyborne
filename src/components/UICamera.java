@@ -2,22 +2,42 @@ package components;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.List;
 
 import core.Drawable;
+import core.GraphicsPanel;
 
 public class UICamera extends Component implements Drawable {
+    private GraphicsPanel graphicsPanel;
+
     @Override
     public void start() {
-        getGameObject().getScene().getGame().getWindow().getGraphicsPanel().addDrawable(this);
+        graphicsPanel = getGameObject().getScene().getGame().getWindow().getGraphicsPanel();
+        graphicsPanel.addDrawable(this);
+    }
+
+    @Override
+    public void destroy() {
+        if (graphicsPanel != null) {
+            graphicsPanel.removeDrawable(this);
+        }
+    }
+
+    @Override
+    public int getZIndex() {
+        return 100;
     }
 
     @Override
     public void draw(Graphics g) {
-        ArrayList<UI> uis = getGameObject().getScene().getComponents(UI.class);
+        if (isDestroyed()) {
+            return;
+        }
 
-        for (int i = 0; i < uis.size(); i++) {
-            if (uis.get(i).isVisible()) {
-                uis.get(i).draw(g);
+        ArrayList<UI> uis = getGameObject().getScene().getComponents(UI.class);
+        for (UI ui : List.copyOf(uis)) {
+            if (ui.isVisible() && !ui.isDestroyed()) {
+                ui.draw(g);
             }
         }
     }

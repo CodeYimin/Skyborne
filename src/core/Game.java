@@ -22,17 +22,14 @@ public class Game {
         window.addKeyListener(keyboard);
         window.getGraphicsPanel().addMouseListener(mouse);
 
-        init();
         start();
     }
 
-    private void init() {
+    private void start() {
         currentScene = new LevelScene(this);
         currentScene.init();
-    }
-
-    private void start() {
         currentScene.start();
+
         while (true) {
             update();
             try {

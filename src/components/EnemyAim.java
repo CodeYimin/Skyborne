@@ -12,12 +12,12 @@ public class EnemyAim extends Component {
 
     @Override
     public void update(double deltaTime) {
-        Transform transform = getGameObject().getTransform();
-        Transform targetTransform = target.getTransform();
-
-        if (transform == null || targetTransform == null) {
+        if (target == null || target.isDestroyed()) {
             return;
         }
+
+        Transform transform = getGameObject().getTransform();
+        Transform targetTransform = target.getTransform();
 
         Vector direction = targetTransform.getPosition().subtract(transform.getPosition());
         transform.setRotation(direction.toAngle());

@@ -1,6 +1,7 @@
 package scenes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import components.Component;
 import core.Game;
@@ -22,23 +23,34 @@ public abstract class Scene {
     public void start() {
         running = true;
 
-        int size = gameObjects.size();
-        for (int i = 0; i < size; i++) {
-            gameObjects.get(i).start();
+        for (GameObject gameObject : List.copyOf(gameObjects)) {
+            gameObject.start();
         }
     }
 
     public void update(double deltaTime) {
-        for (int i = 0; i < gameObjects.size(); i++) {
-            gameObjects.get(i).update(deltaTime);
+        if (!running) {
+            return;
+        }
+
+        for (GameObject gameObject : List.copyOf(gameObjects)) {
+            if (!gameObject.isDestroyed()) {
+                gameObject.update(deltaTime);
+            }
         }
     };
 
     public void stop() {
-        for (GameObject gameObject : gameObjects) {
-            gameObject.stop();
+        for (GameObject gameObject : List.copyOf(gameObjects)) {
+            gameObject.destroy();
         }
         running = false;
+    }
+
+    public void reset() {
+        stop();
+        init();
+        start();
     }
 
     public Game getGame() {
@@ -50,58 +62,52 @@ public abstract class Scene {
     }
 
     public ArrayList<GameObject> getGameObjects() {
-        ArrayList<GameObject> gameObjects = new ArrayList<>();
-        for (int i = 0; i < this.gameObjects.size(); i++) {
-            gameObjects.add(this.gameObjects.get(i));
-        }
         return gameObjects;
     }
 
     public ArrayList<GameObject> getGameObjects(Class<? extends Component> componentClass) {
         ArrayList<GameObject> gameObjects = new ArrayList<>();
-
-        for (int i = 0; i < this.gameObjects.size(); i++) {
-            if (this.gameObjects.get(i).getComponent(componentClass) != null) {
-                gameObjects.add(this.gameObjects.get(i));
+        for (GameObject gameObject : List.copyOf(this.gameObjects)) {
+            if (gameObject.getComponent(componentClass) != null) {
+                gameObjects.add(gameObject);
             }
         }
-
         return gameObjects;
     }
 
     public GameObject getGameObject(Class<? extends Component> componentClass) {
-        for (int i = 0; i < this.gameObjects.size(); i++) {
-            if (this.gameObjects.get(i).getComponent(componentClass) != null) {
-                return this.gameObjects.get(i);
+        for (GameObject gameObject : List.copyOf(this.gameObjects)) {
+            if (gameObject.getComponent(componentClass) != null) {
+                return gameObject;
             }
         }
         return null;
     }
 
     public boolean removeGameObject(GameObject gameObject) {
-        gameObject.stop();
-        for (GameObject child : gameObject.getChildren()) {
+        for (GameObject child : List.copyOf(gameObject.getChildren())) {
             removeGameObject(child);
         }
+        gameObject.setScene(null);
         return gameObjects.remove(gameObject);
     }
 
     public <T extends Component> ArrayList<T> getComponents(Class<T> componentClass) {
         ArrayList<T> components = new ArrayList<>();
-        for (int i = 0; i < gameObjects.size(); i++) {
-            ArrayList<T> gameObjectComponents = gameObjects.get(i).getComponents(componentClass);
-            if (gameObjectComponents != null) {
-                components.addAll(gameObjectComponents);
+        for (GameObject gameObject : List.copyOf(gameObjects)) {
+            if (gameObject.getComponent(componentClass) != null) {
+                for (T component : gameObject.getComponents(componentClass)) {
+                    components.add(component);
+                }
             }
         }
         return components;
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
-        for (int i = 0; i < gameObjects.size(); i++) {
-            T component = gameObjects.get(i).getComponent(componentClass);
-            if (component != null) {
-                return component;
+        for (GameObject gameObject : List.copyOf(gameObjects)) {
+            if (gameObject.getComponent(componentClass) != null) {
+                return componentClass.cast(gameObject.getComponent(componentClass));
             }
         }
         return null;

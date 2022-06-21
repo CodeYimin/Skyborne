@@ -27,7 +27,7 @@ public class Bullet extends Component {
             }
         }
 
-        if (boxCollider.isCollidingTiles()) {
+        if (!isDestroyed() && boxCollider.isCollidingTiles()) {
             getGameObject().destroy();
         }
     }
