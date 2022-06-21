@@ -139,6 +139,14 @@ public class Dungeon extends Component {
             }
         });
         rooms[x][y] = room;
+
+        ArrayList<IntVector> occupiedDirections = getOccupiedDirections(x, y);
+        for (IntVector direction : occupiedDirections) {
+            if (x + direction.getX() != 0 && y + direction.getY() != 0) {
+                connectRooms(x, y, x + direction.getX(), y + direction.getY());
+            }
+        }
+
         return room;
     }
 

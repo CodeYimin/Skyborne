@@ -5,7 +5,7 @@ public class Const {
     public static final int FPS = 120;
 
     // Dungeon
-    public static final int DUNGEON_DISTANCE_BETWEEN_ROOMS = 30;
+    public static final int DUNGEON_DISTANCE_BETWEEN_ROOMS = 35;
     public static final int DUNGEON_HALLWAY_WIDTH = 4;
     public static final int DUNGEON_WIDTH = 5;
     public static final int DUNGEON_HEIGHT = 5;

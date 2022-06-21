@@ -40,25 +40,30 @@ public class Room extends Tilemap {
     }
 
     public void spawnEnemies() {
-        for (int x = -getWidth() / 2 + 2; x < getWidth() / 2 - 2; x++) {
-            for (int y = -getHeight() / 2 + 2; y < getHeight() / 2 - 2; y++) {
-                Transform transform = getGameObject().getTransform();
-                if (getEnemiesInRoom() < maxEnemies && Math.random() < 0.2 && !isSolidAt(transform.getPosition().add(x, y))) {
-                    GameObject enemy = ObjectCreator.createEnemy(getGameObject().getScene().getGameObject(Player.class),
-                            transform.getPosition().add(x, y), Vector.ONE,
-                            20, "../assets/masked_orc_idle_anim_f0.png");
-                    enemy.getTransform().setLocalPosition(new Vector(x, y));
-                    enemy.setParent(getGameObject());
-                    enemy.getTransform().setRotation(0);
-                    getGameObject().getScene().addGameObject(enemy);
+        int minX = -getWidth() / 2 + 2;
+        int maxX = getWidth() / 2 - 2;
+        int minY = -getHeight() / 2 + 2;
+        int maxY = getHeight() / 2 - 2;
 
-                    GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
-                            enemy, getGameObject().getScene().getGameObject(Player.class),
-                            Vector.ONE.multiply(0.8),
-                            "../assets/flask_green.png",
-                            1, 1500, 3);
-                    getGameObject().getScene().addGameObject(enemyWeapon);
-                }
+        for (int i = 0; i < maxEnemies; i++) {
+            int x = (int) (Math.random() * (maxX - minX) + minX);
+            int y = (int) (Math.random() * (maxY - minY) + minY);
+            Transform transform = getGameObject().getTransform();
+            if (Math.random() < 0.5 && !isSolidAt(transform.getPosition().add(x, y))) {
+                GameObject player = getGameObject().getScene().getGameObject(Player.class);
+                GameObject enemy = ObjectCreator.createEnemy(player, Vector.ZERO, Vector.ONE,
+                        20, "../assets/masked_orc_idle_anim_f0.png");
+                enemy.getTransform().setLocalPosition(new Vector(x, y));
+                enemy.setParent(getGameObject());
+                enemy.getTransform().setRotation(0);
+                getGameObject().getScene().addGameObject(enemy);
+
+                GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
+                        enemy, player,
+                        Vector.ONE.multiply(0.8),
+                        "../assets/flask_green.png",
+                        1, 1500, 3);
+                getGameObject().getScene().addGameObject(enemyWeapon);
             }
         }
     }

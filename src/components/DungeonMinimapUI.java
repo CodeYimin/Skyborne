@@ -43,9 +43,9 @@ public class DungeonMinimapUI extends UI {
                 if (room.isDiscovered()) {
                     Color color;
                     if (room.getGameObjectsInRoom(Player.class).size() > 0) {
-                        color = Color.RED;
+                        color = Color.CYAN;
                     } else if (room.isEntered()) {
-                        color = Color.BLACK;
+                        color = new Color(75, 75, 75);
                     } else {
                         color = Color.GRAY;
                     }

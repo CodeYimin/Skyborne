@@ -52,7 +52,7 @@ public class Weapon extends Component {
         bullet.addComponent(new Bullet(targetClass, bulletDamage));
         bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(bulletSpeed)));
         bullet.addComponent(new SpriteRenderer("../assets/coin_anim_f0.png"));
-        bullet.addComponent(new AutoDestroy(3));
+        bullet.addComponent(new AutoDestroy(30));
         bullet.getTransform().setPosition(getGameObject().getTransform().getPosition());
         bullet.getTransform().setScale(Vector.ONE.multiply(0.3));
         getGameObject().getScene().addGameObject(bullet);
