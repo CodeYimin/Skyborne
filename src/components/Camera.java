@@ -7,6 +7,7 @@ import java.util.List;
 import core.Drawable;
 import core.GameObject;
 import core.GraphicsPanel;
+import structures.Bounds;
 import structures.Vector;
 
 public class Camera extends Component implements Drawable {
@@ -34,11 +35,6 @@ public class Camera extends Component implements Drawable {
     }
 
     @Override
-    public void update(double deltaTime) {
-        follow();
-    }
-
-    @Override
     public void destroy() {
         super.destroy();
         if (graphicsPanel != null) {
@@ -61,9 +57,11 @@ public class Camera extends Component implements Drawable {
 
     @Override
     public void draw(Graphics g) {
+        follow();
+
         ArrayList<Renderer> renderers = getGameObject().getScene().getComponents(Renderer.class);
         for (Renderer renderer : List.copyOf(renderers)) {
-            if (!renderer.isDestroyed()) {
+            if (!renderer.isDestroyed() && renderer.getRenderBounds().collides(getViewportBounds())) {
                 renderer.render(g, this);
             }
         }
@@ -97,6 +95,17 @@ public class Camera extends Component implements Drawable {
                 .add(getPosition());
 
         return worldPosition;
+    }
+
+    public Vector getViewportSize() {
+        return new Vector(
+                graphicsPanel.getWidth() / zoom,
+                graphicsPanel.getHeight() / zoom);
+    }
+
+    public Bounds getViewportBounds() {
+        Vector viewportSize = getViewportSize();
+        return new Bounds(getPosition(), viewportSize);
     }
 
     public Vector worldToScreenSize(Vector size) {

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 
+import structures.Bounds;
 import structures.Tile;
 import structures.Vector;
 import util.FileUtils;
@@ -28,9 +29,13 @@ public class Tilemap extends Renderer {
     }
 
     @Override
+    public Bounds getRenderBounds() {
+        return new Bounds(getGameObject().getTransform().getPosition(), new Vector(getWidth(), getHeight()));
+    }
+
+    @Override
     public void render(Graphics g, Camera camera) {
         Vector tileScreenSize = Vector.ONE.multiply(camera.getZoom());
-
         for (int layer = 0; layer < layers.size(); layer++) {
             Tile[][] tiles = layers.get(layer);
             for (int x = 0; x < tiles.length; x++) {

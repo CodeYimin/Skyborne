@@ -3,9 +3,20 @@ package components;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import structures.Bounds;
 import structures.Vector;
 
 public class UndiscoveredRoomOverlay extends Renderer {
+    @Override
+    public Bounds getRenderBounds() {
+        Room room = getGameObject().getComponent(Room.class);
+        if (room == null) {
+            return null;
+        }
+
+        return room.getRenderBounds();
+    }
+
     @Override
     public void render(Graphics g, Camera camera) {
         Room room = getGameObject().getComponent(Room.class);

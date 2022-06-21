@@ -2,6 +2,7 @@ package components;
 
 import java.awt.Graphics;
 
+import structures.Bounds;
 import structures.Sprite;
 
 public class SpriteRenderer extends Renderer {
@@ -31,6 +32,11 @@ public class SpriteRenderer extends Renderer {
 
     public void setFlipY(boolean flipY) {
         this.flipY = flipY;
+    }
+
+    @Override
+    public Bounds getRenderBounds() {
+        return new Bounds(getGameObject().getTransform());
     }
 
     @Override

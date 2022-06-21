@@ -132,6 +132,9 @@ public class Dungeon extends Component {
         room.addEventListener(new EventListener<>(RoomFirstEnterEvent.class, 0) {
             @Override
             public void onEvent(RoomFirstEnterEvent event) {
+                if (x == 0 && y == 0) {
+                    return;
+                }
                 for (IntVector direction : getOccupiedDirections(x, y)) {
                     GameObject room = getRoom(x + direction.getX(), y + direction.getY());
                     room.getComponent(Room.class).setDiscovered(true);
@@ -139,9 +142,7 @@ public class Dungeon extends Component {
             }
         });
         rooms[x][y] = room;
-
-        ArrayList<IntVector> occupiedDirections = getOccupiedDirections(x, y);
-        for (IntVector direction : occupiedDirections) {
+        for (IntVector direction : getOccupiedDirections(x, y)) {
             if (x + direction.getX() != 0 && y + direction.getY() != 0) {
                 connectRooms(x, y, x + direction.getX(), y + direction.getY());
             }
