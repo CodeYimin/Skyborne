@@ -44,10 +44,15 @@ public class DungeonMinimapUI extends UI {
                     Color color;
                     if (room.getGameObjectsInRoom(Player.class).size() > 0) {
                         color = Color.RED;
-                    } else {
+                    } else if (room.isEntered()) {
                         color = Color.BLACK;
+                    } else {
+                        color = Color.GRAY;
                     }
-                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color);
+                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color, true);
+
+                    ((Graphics2D) g).setStroke(new BasicStroke(2));
+                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), Color.BLACK, false);
                 }
             }
         }
@@ -60,7 +65,7 @@ public class DungeonMinimapUI extends UI {
             Vector dungeonPosition = dungeonTransform.getPosition();
 
             Vector playerLocalPosition = playerPosition.subtract(dungeonPosition);
-            drawRectangle(g, playerLocalPosition.add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK);
+            drawRectangle(g, playerLocalPosition.add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK, true);
         }
 
         g.setColor(Color.BLACK);
@@ -68,7 +73,7 @@ public class DungeonMinimapUI extends UI {
         g.drawRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
     }
 
-    private void drawRectangle(Graphics g, Vector position, Vector size, Color color) {
+    private void drawRectangle(Graphics g, Vector position, Vector size, Color color, boolean fill) {
         Dungeon dungeon = getGameObject().getComponent(Dungeon.class);
         if (dungeon == null) {
             return;
@@ -93,6 +98,10 @@ public class DungeonMinimapUI extends UI {
         int rectScreenHeight = (int) rectangleScreenSize.getY();
 
         g.setColor(color);
-        g.fillRect(rectScreenX, rectScreenY, rectScreenWidth, rectScreenHeight);
+        if (fill) {
+            g.fillRect(rectScreenX, rectScreenY, rectScreenWidth, rectScreenHeight);
+        } else {
+            g.drawRect(rectScreenX, rectScreenY, rectScreenWidth, rectScreenHeight);
+        }
     }
 }

@@ -9,7 +9,7 @@ public class UndiscoveredRoomOverlay extends Renderer {
     @Override
     public void render(Graphics g, Camera camera) {
         Room room = getGameObject().getComponent(Room.class);
-        if (room == null || room.isDiscovered()) {
+        if (room == null || room.isEntered()) {
             return;
         }
 

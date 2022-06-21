@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import core.GameObject;
+import events.EventListener;
+import events.RoomEnterEvent;
 import structures.IntVector;
 import util.Const;
 import util.ObjectCreator;
@@ -107,9 +109,35 @@ public class Dungeon extends Component {
         return availableDirections;
     }
 
+    private ArrayList<IntVector> getOccupiedDirections(int x, int y) {
+        ArrayList<IntVector> occupiedDirections = new ArrayList<>();
+        if (x > 0 && getRoom(x - 1, y) != null) {
+            occupiedDirections.add(new IntVector(-1, 0));
+        }
+        if (x < WIDTH - 1 && getRoom(x + 1, y) != null) {
+            occupiedDirections.add(new IntVector(1, 0));
+        }
+        if (y > 0 && getRoom(x, y - 1) != null) {
+            occupiedDirections.add(new IntVector(0, -1));
+        }
+        if (y < HEIGHT - 1 && getRoom(x, y + 1) != null) {
+            occupiedDirections.add(new IntVector(0, 1));
+        }
+        return occupiedDirections;
+    }
+
     private GameObject createRoom(int x, int y, String mapPath, int maxEnemies) {
         GameObject room;
         room = ObjectCreator.createRoom(new IntVector(x, y), mapPath, maxEnemies);
+        room.getComponent(Room.class).addRoomEnterListener(new EventListener<RoomEnterEvent>(0) {
+            @Override
+            public void onEvent(RoomEnterEvent event) {
+                for (IntVector direction : getOccupiedDirections(x, y)) {
+                    GameObject room = getRoom(x + direction.getX(), y + direction.getY());
+                    room.getComponent(Room.class).setDiscovered(true);
+                }
+            }
+        });
         rooms[x][y] = room;
         return room;
     }

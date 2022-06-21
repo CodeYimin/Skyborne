@@ -3,6 +3,9 @@ package components;
 import java.util.ArrayList;
 
 import core.GameObject;
+import events.EventListener;
+import events.EventManager;
+import events.RoomEnterEvent;
 import structures.Directions;
 import structures.Tile;
 import structures.Vector;
@@ -15,9 +18,11 @@ public class Room extends Tilemap {
     private int wallMaterial;
     private int doorMaterial;
     private boolean discovered;
+    private boolean entered;
     private boolean cleared;
     private int doorLayer;
     private int maxEnemies;
+    private EventManager<RoomEnterEvent> roomEnterEventManager = new EventManager<>();
 
     public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial, int maxEnemies) {
         super(mapPath);
@@ -75,20 +80,26 @@ public class Room extends Tilemap {
 
     @Override
     public void update(double deltaTime) {
-        if (!discovered) {
+        if (!entered) {
             for (GameObject bullet : getGameObjectsInRoom(Bullet.class)) {
                 bullet.destroy();
             }
         }
 
-        if (!cleared && getGameObjectsInRoom(Player.class).size() > 0) {
-            if (!discovered) {
+        // Player is in the room
+        if (getGameObjectsInRoom(Player.class).size() > 0) {
+            // Player first time entering room
+            if (!entered) {
                 discovered = true;
+                entered = true;
                 generateDoors();
                 unfreezeObjects();
+
+                roomEnterEventManager.emit(new RoomEnterEvent(true));
             }
 
-            if (getEnemiesInRoom() == 0) {
+            // Cleared all enemies
+            if (!cleared && getEnemiesInRoom() == 0) {
                 clearDoors();
                 cleared = true;
             }
@@ -196,12 +207,28 @@ public class Room extends Tilemap {
         return doorDirections;
     }
 
+    public void addRoomEnterListener(EventListener<RoomEnterEvent> listener) {
+        roomEnterEventManager.addListener(listener);
+    }
+
+    public void removeRoomEnterListener(EventListener<RoomEnterEvent> listener) {
+        roomEnterEventManager.removeListener(listener);
+    }
+
     public boolean isCleared() {
         return cleared;
     }
 
+    public boolean isEntered() {
+        return entered;
+    }
+
     public boolean isDiscovered() {
         return discovered;
+    }
+
+    public void setDiscovered(boolean discovered) {
+        this.discovered = discovered;
     }
 
     public int getMaxEnemies() {
