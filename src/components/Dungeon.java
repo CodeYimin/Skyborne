@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import core.GameObject;
-import events.EventListener;
-import events.RoomFirstEnterEvent;
 import structures.IntVector;
+import util.ArrayUtils;
 import util.Const;
 import util.ObjectCreator;
 
@@ -17,96 +16,117 @@ public class Dungeon extends Component {
     public static final int MIN_ROOMS = Const.DUNGEON_MIN_ROOMS;
     public static final int MAX_ROOMS = Const.DUNGEON_MAX_ROOMS;
 
+    private GameObject player;
     private GameObject[][] rooms;
-    private int roomsGenerated = 0;
+    private ArrayList<GameObject> hallways;
+    private int numRooms;
+    private IntVector startingRoomPosition;
 
-    public Dungeon() {
-        rooms = new GameObject[WIDTH][HEIGHT];
+    public Dungeon(GameObject player) {
+        this.player = player;
+        this.rooms = new GameObject[WIDTH][HEIGHT];
+        this.hallways = new ArrayList<>();
+        this.numRooms = 0;
+        this.startingRoomPosition = getRandomPosition();
     }
 
     @Override
     public void start() {
-        generate(0, 0);
-
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                if (rooms[x][y] != null) {
-                    getGameObject().getScene().addGameObject(rooms[x][y], 0);
-                    rooms[x][y].setParent(getGameObject());
-                }
-            }
-        }
+        generate(startingRoomPosition);
+        player.getTransform().setPosition(getRoom(startingRoomPosition).getTransform().getPosition());
     }
 
-    private void generate(int x, int y) {
-        createRoom(0, 0, "../data/room0.txt", 0);
-        roomsGenerated++;
-
+    private void generate(IntVector startingPosition) {
+        // Queue for positions to branch new rooms from
         Queue<IntVector> queue = new LinkedList<>();
-        queue.add(new IntVector(0, 0));
 
-        while (roomsGenerated < MAX_ROOMS && !queue.isEmpty()) {
+        // Create the first room with no enemies
+        createRoom(startingPosition, "../data/room0.txt", 0);
+        queue.add(startingPosition);
+
+        // Generate rooms
+        while (numRooms < MAX_ROOMS && !queue.isEmpty()) {
+            // This position would already have a room generated, the code now creates new
+            // rooms around this room
             IntVector position = queue.remove();
 
-            for (int i = 0; i < 2; i++) {
-                if (roomsGenerated > 1 && Math.random() < 0.25) {
-                    String mapPath;
-                    if (Math.random() < 0.5) {
-                        mapPath = "../data/room1.txt";
-                    } else {
-                        mapPath = "../data/room2.txt";
-                    }
-                    IntVector newRoomPosition = createRoomRandomDirection(position.getX(), position.getY(), mapPath, 10);
-                    if (newRoomPosition != null) {
-                        queue.add(newRoomPosition);
-                        roomsGenerated++;
-                    }
+            String[] mapPaths = new String[] { "../data/room1.txt", "../data/room2.txt" };
+
+            // Guaranteed branch out one room if min room requirement not hit
+            if (numRooms < MIN_ROOMS) {
+                IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(mapPaths), 10);
+                if (newRoomPosition != null) {
+                    queue.add(newRoomPosition);
                 }
             }
 
-            if (roomsGenerated < MIN_ROOMS) {
-                String mapPath;
-                if (Math.random() < 0.5) {
-                    mapPath = "../data/room1.txt";
-                } else {
-                    mapPath = "../data/room2.txt";
-                }
-                IntVector newRoomPosition = createRoomRandomDirection(position.getX(), position.getY(), mapPath, 10);
-                if (newRoomPosition != null) {
-                    queue.add(newRoomPosition);
-                    roomsGenerated++;
+            // Chance to branch out 0-2 new rooms from this position.
+            // First room purposely has only one branch
+            if (!position.equals(startingPosition)) {
+                for (int i = 0; i < 2; i++) {
+                    if (Math.random() < 0.25) {
+                        IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(mapPaths), 10);
+                        if (newRoomPosition != null) {
+                            queue.add(newRoomPosition);
+                        }
+                    }
                 }
             }
         }
     }
 
-    private IntVector createRoomRandomDirection(int x, int y, String mapPath, int maxEnemies) {
-        ArrayList<IntVector> availableDirections = getAvailableDirections(x, y);
-        if (availableDirections.size() == 0) {
+    private IntVector getRandomPosition() {
+        int x = (int) (Math.random() * WIDTH);
+        int y = (int) (Math.random() * HEIGHT);
+        return new IntVector(x, y);
+    }
+
+    private IntVector createRoomRandomDirection(IntVector position, String mapPath, int maxEnemies) {
+        IntVector randomAvailableDirection = getRandomAvailableDirection(position);
+        if (randomAvailableDirection == null) {
             return null;
         }
-        int randomIndex = (int) (Math.random() * availableDirections.size());
-        IntVector direction = availableDirections.get(randomIndex);
-        createRoom(x + direction.getX(), y + direction.getY(), mapPath, maxEnemies);
-        connectRooms(x, y, x + direction.getX(), y + direction.getY());
-        return new IntVector(x, y).add(direction);
+
+        IntVector randomAvailablePosition = position.add(randomAvailableDirection);
+        createRoom(randomAvailablePosition, mapPath, maxEnemies);
+        connectRooms(position, randomAvailablePosition);
+        return randomAvailablePosition;
     }
 
     private ArrayList<IntVector> getAvailableDirections(int x, int y) {
         ArrayList<IntVector> availableDirections = new ArrayList<>();
         if (x > 0 && getRoom(x - 1, y) == null) {
-            availableDirections.add(new IntVector(-1, 0));
+            availableDirections.add(IntVector.LEFT);
         }
         if (x < WIDTH - 1 && getRoom(x + 1, y) == null) {
-            availableDirections.add(new IntVector(1, 0));
+            availableDirections.add(IntVector.RIGHT);
         }
         if (y > 0 && getRoom(x, y - 1) == null) {
-            availableDirections.add(new IntVector(0, -1));
+            availableDirections.add(IntVector.DOWN);
         }
         if (y < HEIGHT - 1 && getRoom(x, y + 1) == null) {
-            availableDirections.add(new IntVector(0, 1));
+            availableDirections.add(IntVector.UP);
         }
         return availableDirections;
+    }
+
+    private ArrayList<IntVector> getAvailableDirections(IntVector position) {
+        return getAvailableDirections(position.getX(), position.getY());
+    }
+
+    private IntVector getRandomAvailableDirection(int x, int y) {
+        ArrayList<IntVector> availableDirections = getAvailableDirections(x, y);
+        if (availableDirections.size() == 0) {
+            return null;
+        }
+
+        int randomIndex = (int) (Math.random() * availableDirections.size());
+        IntVector randomDirection = availableDirections.get(randomIndex);
+        return randomDirection;
+    }
+
+    private IntVector getRandomAvailableDirection(IntVector position) {
+        return getRandomAvailableDirection(position.getX(), position.getY());
     }
 
     private ArrayList<IntVector> getOccupiedDirections(int x, int y) {
@@ -126,55 +146,48 @@ public class Dungeon extends Component {
         return occupiedDirections;
     }
 
-    private GameObject createRoom(int x, int y, String mapPath, int maxEnemies) {
-        GameObject room;
-        room = ObjectCreator.createRoom(new IntVector(x, y), mapPath, maxEnemies);
-        room.addEventListener(new EventListener<>(RoomFirstEnterEvent.class, 0) {
-            @Override
-            public void onEvent(RoomFirstEnterEvent event) {
-                if (x == 0 && y == 0) {
-                    return;
-                }
-                for (IntVector direction : getOccupiedDirections(x, y)) {
-                    GameObject room = getRoom(x + direction.getX(), y + direction.getY());
-                    room.getComponent(Room.class).setDiscovered(true);
-                }
-            }
-        });
-        rooms[x][y] = room;
-        for (IntVector direction : getOccupiedDirections(x, y)) {
-            if (x + direction.getX() != 0 && y + direction.getY() != 0) {
-                connectRooms(x, y, x + direction.getX(), y + direction.getY());
-            }
-        }
-
-        return room;
+    private ArrayList<IntVector> getOccupiedDirections(IntVector position) {
+        return getOccupiedDirections(position.getX(), position.getY());
     }
 
-    private void connectRooms(int x1, int y1, int x2, int y2) {
-        Room room1 = getRoom(x1, y1).getComponent(Room.class);
-        Room room2 = getRoom(x2, y2).getComponent(Room.class);
+    private void createRoom(IntVector position, String mapPath, int maxEnemies) {
+        GameObject room = ObjectCreator.createRoom(position, mapPath, maxEnemies);
+        setRoom(position, room);
+        numRooms++;
 
-        if (x1 > x2) {
-            room1.getDoorDirections().setLeft(true);
-            room2.getDoorDirections().setRight(true);
-        } else if (x1 < x2) {
-            room1.getDoorDirections().setRight(true);
-            room2.getDoorDirections().setLeft(true);
-        } else if (y1 > y2) {
-            room1.getDoorDirections().setDown(true);
-            room2.getDoorDirections().setUp(true);
-        } else if (y1 < y2) {
-            room1.getDoorDirections().setUp(true);
-            room2.getDoorDirections().setDown(true);
+        // Automatically connect hallway to all surrounding rooms unless the surrounding
+        // room is the starting room and starting room already has one hallway
+        for (IntVector direction : getOccupiedDirections(position)) {
+            IntVector otherPosition = position.add(direction);
+            Room otherRoomComponent = getRoom(otherPosition).getComponent(Room.class);
+            if (!(otherPosition.equals(startingRoomPosition) && otherRoomComponent.getHallways().size() > 0)) {
+                connectRooms(position, otherPosition);
+            }
         }
 
-        GameObject hallway = ObjectCreator.createHallway(room1.getGameObject(), room2.getGameObject());
+        // Instantiate the room object to the scene
+        getGameObject().getScene().addGameObject(room, 0);
+        room.setParent(getGameObject());
+    }
+
+    private void connectRooms(IntVector position1, IntVector position2) {
+        Room room1 = getRoom(position1).getComponent(Room.class);
+        Room room2 = getRoom(position2).getComponent(Room.class);
+
+        // Create and instantiate hallway
+        GameObject hallway = ObjectCreator.createHallway(room1, room2);
         getGameObject().getScene().addGameObject(hallway, 0);
+
+        // Add hallway to the list of all hallways
+        hallways.add(hallway);
     }
 
     public void addRoom(int x, int y, GameObject room) {
         rooms[x][y] = room;
+    }
+
+    public void addRoom(IntVector position, GameObject room) {
+        rooms[position.getX()][position.getY()] = room;
     }
 
     public GameObject getRoom(int x, int y) {
@@ -185,8 +198,25 @@ public class Dungeon extends Component {
         return rooms[x][y];
     }
 
+    public GameObject getRoom(IntVector position) {
+        return getRoom(position.getX(), position.getY());
+    }
+
+    public void setRoom(int x, int y, GameObject room) {
+        rooms[x][y] = room;
+    }
+
+    public void setRoom(IntVector position, GameObject room) {
+        rooms[position.getX()][position.getY()] = room;
+    }
+
     public GameObject[][] getRooms() {
         return rooms;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<GameObject> getHallways() {
+        return (ArrayList<GameObject>) hallways.clone();
     }
 
     public int getWidth() {

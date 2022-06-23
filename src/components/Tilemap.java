@@ -4,13 +4,19 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 
+import core.GameObject;
 import structures.Bounds;
+import structures.IntVector;
 import structures.Tile;
 import structures.Vector;
 import util.FileUtils;
 
 public class Tilemap extends Renderer {
     private ArrayList<Tile[][]> layers = new ArrayList<>();
+
+    public Tilemap() {
+        // Do nothing
+    }
 
     public Tilemap(Tile[][] tiles) {
         addLayer(0, tiles);
@@ -30,7 +36,11 @@ public class Tilemap extends Renderer {
 
     @Override
     public Bounds getRenderBounds() {
-        return new Bounds(getGameObject().getTransform().getPosition(), new Vector(getWidth(), getHeight()));
+        if (layers.size() < 0) {
+            return null;
+        } else {
+            return new Bounds(getGameObject().getTransform().getPosition(), new Vector(getWidth(), getHeight()));
+        }
     }
 
     @Override
@@ -41,11 +51,11 @@ public class Tilemap extends Renderer {
             for (int x = 0; x < tiles.length; x++) {
                 for (int y = 0; y < tiles[0].length; y++) {
                     // Bottom left -> Center
-                    Vector tilePosition = getWorldPosition(layer, new Vector(x, y)).add(0.5);
+                    Vector tilePosition = getWorldPosition(new Vector(x, y), layer).add(0.5);
                     Vector tileScreenPosition = camera.worldToScreenPosition(tilePosition);
 
                     Tile tile = tiles[x][y];
-                    if (tile.getSprite() != null) {
+                    if (tile != null && tile.getSprite() != null) {
                         tile.getSprite().draw(g, tileScreenPosition, tileScreenSize, 0, false, false);
                     }
                 }
@@ -59,7 +69,7 @@ public class Tilemap extends Renderer {
         for (int layer = 0; layer < layers.size(); layer++) {
             for (int x = (int) Math.ceil(boxCollider.getLeft()) - 1; x <= boxCollider.getRight(); x++) {
                 for (int y = (int) Math.ceil(boxCollider.getBottom()) - 1; y <= boxCollider.getTop(); y++) {
-                    Tile tile = getTileAtWorld(layer, x, y);
+                    Tile tile = getTileAtWorld(x, y, layer);
                     if (tile != null && tile.isSolid()) {
                         collidingTiles.add(tile);
                     }
@@ -76,7 +86,7 @@ public class Tilemap extends Renderer {
         for (int layer = 0; layer < layers.size(); layer++) {
             for (int x = (int) Math.floor(boxCollider.getLeft()); x < boxCollider.getRight(); x++) {
                 for (int y = (int) Math.floor(boxCollider.getBottom()); y < boxCollider.getTop(); y++) {
-                    Tile tile = getTileAtWorld(layer, x, y);
+                    Tile tile = getTileAtWorld(x, y, layer);
                     if (tile != null && tile.isSolid()) {
                         intersectingTiles.add(tile);
                     }
@@ -85,6 +95,56 @@ public class Tilemap extends Renderer {
         }
 
         return intersectingTiles;
+    }
+
+    public ArrayList<GameObject> getGameObjectsInside(Class<? extends Component> componentClass) {
+        ArrayList<GameObject> objects = new ArrayList<>();
+        for (GameObject object : getGameObject().getScene().getGameObjects(componentClass)) {
+            if (isInside(object)) {
+                objects.add(object);
+            }
+        }
+        return objects;
+    }
+
+    public ArrayList<GameObject> getGameObjectsInside(Class<? extends Component> componentClass, int layer) {
+        ArrayList<GameObject> objects = new ArrayList<>();
+        for (GameObject object : getGameObject().getScene().getGameObjects(componentClass)) {
+            if (isInside(object, layer)) {
+                objects.add(object);
+            }
+        }
+        return objects;
+    }
+
+    public ArrayList<GameObject> getGameObjectsInside(Class<? extends Component> componentClass, Tile[][] layer) {
+        return getGameObjectsInside(componentClass, layers.indexOf(layer));
+    }
+
+    public boolean isInside(GameObject gameObject) {
+        Transform transform = gameObject.getTransform();
+        Vector position = transform.getPosition();
+        Vector scale = transform.getScale();
+        Vector localPosition = getLocalPosition(position);
+        return localPosition.getX() - scale.getX() / 2 >= 0
+                && localPosition.getX() + scale.getX() / 2 < getWidth()
+                && localPosition.getY() - scale.getY() / 2 >= 0
+                && localPosition.getY() + scale.getY() / 2 < getHeight();
+    }
+
+    public boolean isInside(GameObject gameObject, int layer) {
+        Transform transform = gameObject.getTransform();
+        Vector position = transform.getPosition();
+        Vector scale = transform.getScale();
+        Vector localPosition = getLocalPosition(position, layer);
+        return localPosition.getX() - scale.getX() / 2 >= 0
+                && localPosition.getX() + scale.getX() / 2 < getWidth(layer)
+                && localPosition.getY() - scale.getY() / 2 >= 0
+                && localPosition.getY() + scale.getY() / 2 < getHeight(layer);
+    }
+
+    public boolean isInside(GameObject gameObject, Tile[][] layer) {
+        return isInside(gameObject, layers.indexOf(layer));
     }
 
     public int getWidth() {
@@ -107,8 +167,32 @@ public class Tilemap extends Renderer {
         return maxHeight;
     }
 
+    public int getWidth(int layer) {
+        return layers.get(layer).length;
+    }
+
+    public int getHeight(int layer) {
+        return layers.get(layer)[0].length;
+    }
+
+    public int getWidth(Tile[][] layer) {
+        return getWidth(layers.indexOf(layer));
+    }
+
+    public int getHeight(Tile[][] layer) {
+        return getHeight(layers.indexOf(layer));
+    }
+
+    public IntVector getSize() {
+        return new IntVector(getWidth(), getHeight());
+    }
+
     public ArrayList<Tile[][]> getLayers() {
         return layers;
+    }
+
+    public Tile[][] getLayer(int layer) {
+        return layers.get(layer);
     }
 
     public void addLayer(Tile[][] tiles) {
@@ -137,13 +221,13 @@ public class Tilemap extends Renderer {
         return this.layers.remove(layerIndex);
     }
 
-    public Tile getTileAtWorld(int layer, Vector worldPosition) {
-        Vector localPosition = getLocalPosition(layer, worldPosition);
-        return getTileAtLocal(layer, localPosition);
+    public Tile getTileAtWorld(Vector worldPosition, int layer) {
+        Vector localPosition = getLocalPosition(worldPosition, layer);
+        return getTileAtLocal(localPosition, layer);
     }
 
-    public Tile getTileAtWorld(int layer, double x, double y) {
-        return getTileAtWorld(layer, new Vector(x, y));
+    public Tile getTileAtWorld(double x, double y, int layer) {
+        return getTileAtWorld(new Vector(x, y), layer);
     }
 
     public Tile getTileAtLocal(int layer, int x, int y) {
@@ -154,18 +238,18 @@ public class Tilemap extends Renderer {
         return tiles[x][y];
     }
 
-    public Tile getTileAtLocal(int layer, Vector position) {
+    public Tile getTileAtLocal(Vector position, int layer) {
         return getTileAtLocal(layer, (int) Math.floor(position.getX()), (int) Math.floor(position.getY()));
     }
 
-    public Vector getWorldPosition(int layer, Vector localPosition) {
+    public Vector getWorldPosition(Vector localPosition, int layer) {
         Transform transform = getGameObject().getTransform();
-        return transform.getPosition().add(localPosition).subtract(layers.get(layer).length / 2.0, layers.get(layer)[0].length / 2.0);
+        return transform.getPosition().add(localPosition).subtract(getWidth(layer) / 2.0, getHeight(layer) / 2.0);
     }
 
-    public Vector getLocalPosition(int layer, Vector worldPosition) {
+    public Vector getLocalPosition(Vector worldPosition, int layer) {
         Transform transform = getGameObject().getTransform();
-        return worldPosition.subtract(transform.getPosition()).add(layers.get(layer).length / 2.0, layers.get(layer)[0].length / 2.0);
+        return worldPosition.subtract(transform.getPosition()).add(getWidth(layer) / 2.0, getHeight(layer) / 2.0);
     }
 
     public Vector getLocalPosition(Vector worldPosition) {
@@ -175,7 +259,7 @@ public class Tilemap extends Renderer {
 
     public boolean isSolidAt(Vector worldPosition) {
         for (int layer = 0; layer < layers.size(); layer++) {
-            Tile tile = getTileAtWorld(layer, worldPosition);
+            Tile tile = getTileAtWorld(worldPosition, layer);
             if (tile != null && tile.isSolid()) {
                 return true;
             }

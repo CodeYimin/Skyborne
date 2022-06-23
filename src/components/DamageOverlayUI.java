@@ -13,7 +13,6 @@ public class DamageOverlayUI extends UI {
 
     @Override
     public void start() {
-        setVisible(false);
         displayTimer.resetAndStop();
 
         Health health = getGameObject().getComponent(Health.class);
@@ -35,7 +34,6 @@ public class DamageOverlayUI extends UI {
     @Override
     public void update(double deltaTime) {
         if (displayTimer.isDone()) {
-            setVisible(false);
             displayTimer.resetAndStop();
         }
     }

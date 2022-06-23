@@ -8,15 +8,6 @@ public final class Vector {
     public static final Vector LEFT = new Vector(-1, 0);
     public static final Vector RIGHT = new Vector(1, 0);
 
-    public static final Vector UP_DIRECTION = UP;
-    public static final Vector DOWN_DIRECTION = DOWN;
-    public static final Vector LEFT_DIRECTION = LEFT;
-    public static final Vector RIGHT_DIRECTION = RIGHT;
-    public static final Vector UP_RIGHT_DIRECTION = new Vector(1, 1).normalized();
-    public static final Vector UP_LEFT_DIRECTION = new Vector(-1, 1).normalized();
-    public static final Vector DOWN_RIGHT_DIRECTION = new Vector(1, -1).normalized();
-    public static final Vector DOWN_LEFT_DIRECTION = new Vector(-1, -1).normalized();
-
     private final double x, y;
 
     public Vector(double x, double y) {

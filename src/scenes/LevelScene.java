@@ -52,20 +52,8 @@ public class LevelScene extends Scene {
         player.getComponent(Player.class).equipWeapon(playerWeapon);
 
         GameObject dungeon = new GameObject();
-        dungeon.addComponent(new Dungeon());
+        dungeon.addComponent(new Dungeon(player));
         dungeon.addComponent(new DungeonMinimapUI());
         addGameObject(dungeon, 0);
     }
-
-    @Override
-    public void update(double deltaTime) {
-        super.update(deltaTime);
-
-        if (i < 3) {
-            i++;
-            reset();
-        }
-    }
-
-    int i = 0;
 }

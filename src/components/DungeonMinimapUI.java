@@ -42,7 +42,7 @@ public class DungeonMinimapUI extends UI {
                 Room room = rooms[x][y].getComponent(Room.class);
                 if (room.isDiscovered()) {
                     Color color;
-                    if (room.getGameObjectsInRoom(Player.class).size() > 0) {
+                    if (room.getGameObjectsInside(Player.class).size() > 0) {
                         if (room.isCleared()) {
                             color = Color.GREEN;
                         } else {
@@ -53,11 +53,29 @@ public class DungeonMinimapUI extends UI {
                     } else {
                         color = Color.GRAY;
                     }
-                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), color, true);
+                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), room.getSize().toVector(), color, true);
 
-                    ((Graphics2D) g).setStroke(new BasicStroke(2));
-                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), new Vector(room.getWidth(), room.getHeight()), Color.BLACK, false);
+                    ((Graphics2D) g).setStroke(new BasicStroke(1));
+                    drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), room.getSize().toVector(), Color.BLACK, false);
                 }
+            }
+        }
+
+        for (GameObject hallwayObject : dungeon.getHallways()) {
+            Transform transform = hallwayObject.getTransform();
+            Hallway hallway = hallwayObject.getComponent(Hallway.class);
+
+            if (hallway.isDiscovered()) {
+                Color color;
+                if (hallway.isEntered()) {
+                    color = new Color(75, 75, 75);
+                } else {
+                    color = Color.GRAY;
+                }
+                drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), hallway.getSize().toVector(), color, true);
+
+                ((Graphics2D) g).setStroke(new BasicStroke(1));
+                drawRectangle(g, transform.getLocalPosition().add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), hallway.getSize().toVector(), Color.BLACK, false);
             }
         }
 

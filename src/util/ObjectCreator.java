@@ -7,19 +7,17 @@ import components.Enemy;
 import components.EnemyAim;
 import components.EnemyMotionController;
 import components.HPBar;
+import components.Hallway;
 import components.Health;
 import components.MotionSpriteFlipper;
 import components.Player;
 import components.Room;
 import components.SpriteRenderer;
-import components.Tilemap;
 import components.TilemapMotion;
-import components.Transform;
 import components.UndiscoveredRoomOverlay;
 import components.Weapon;
 import core.GameObject;
 import structures.IntVector;
-import structures.Tile;
 import structures.Vector;
 
 public class ObjectCreator {
@@ -62,59 +60,9 @@ public class ObjectCreator {
         return gameObject;
     }
 
-    public static GameObject createHallway(GameObject room1, GameObject room2) {
-        Transform transform1 = room1.getTransform();
-        Transform transform2 = room2.getTransform();
-        Vector position1 = transform1.getPosition();
-        Vector position2 = transform2.getPosition();
-        Tilemap tilemap1 = room1.getComponent(Tilemap.class);
-        Tilemap tilemap2 = room2.getComponent(Tilemap.class);
-
-        // 0 = x, 1 = y
-        int direction = 0;
-        if (position1.getX() == position2.getX()) {
-            direction = 1;
-        }
-
-        Vector position;
-        Vector size;
-
-        if (direction == 0) {
-            double x1 = Math.min(position1.getX() + tilemap1.getWidth() / 2.0, position2.getX() + tilemap2.getWidth() / 2.0);
-            double x2 = Math.max(position1.getX() - tilemap1.getWidth() / 2.0, position2.getX() - tilemap2.getWidth() / 2.0);
-            position = new Vector((x1 + x2) / 2, position2.getY());
-            size = new Vector(Math.abs(position1.getX() - position2.getX()) - tilemap1.getWidth() / 2 - tilemap2.getWidth() / 2,
-                    Const.DUNGEON_HALLWAY_WIDTH + 2);
-        } else {
-            double y1 = Math.min(position1.getY() + tilemap1.getHeight() / 2, position2.getY() + tilemap2.getHeight() / 2);
-            double y2 = Math.max(position1.getY() - tilemap1.getHeight() / 2, position2.getY() - tilemap2.getHeight() / 2);
-            position = new Vector(position2.getX(), (y1 + y2) / 2);
-            size = new Vector(Const.DUNGEON_HALLWAY_WIDTH + 2,
-                    Math.abs(position1.getY() - position2.getY()) - tilemap1.getHeight() / 2 - tilemap2.getHeight() / 2);
-        }
-
-        Tile[][] tiles = new Tile[(int) size.getX()][(int) size.getY()];
-        for (int x = 0; x < size.getX(); x++) {
-            for (int y = 0; y < size.getY(); y++) {
-                if (direction == 0) {
-                    if (y == 0 || y == size.getY() - 1) {
-                        tiles[x][y] = new Tile(2);
-                    } else {
-                        tiles[x][y] = new Tile(1);
-                    }
-                } else if (direction == 1) {
-                    if (x == 0 || x == size.getX() - 1) {
-                        tiles[x][y] = new Tile(2);
-                    } else {
-                        tiles[x][y] = new Tile(1);
-                    }
-                }
-            }
-        }
-
-        GameObject gameObject = new GameObject();
-        gameObject.getTransform().setPosition(position);
-        gameObject.addComponent(new Tilemap(tiles));
-        return gameObject;
+    public static GameObject createHallway(Room room1, Room room2) {
+        GameObject hallway = new GameObject();
+        hallway.addComponent(new Hallway(room1, room2, 1, 2, Const.DUNGEON_HALLWAY_WIDTH));
+        return hallway;
     }
 }

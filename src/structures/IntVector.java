@@ -1,7 +1,19 @@
 package structures;
 
 public final class IntVector {
+    public static final IntVector ZERO = new IntVector(0, 0);
+    public static final IntVector ONE = new IntVector(1, 1);
+    public static final IntVector UP = new IntVector(0, 1);
+    public static final IntVector DOWN = new IntVector(0, -1);
+    public static final IntVector LEFT = new IntVector(-1, 0);
+    public static final IntVector RIGHT = new IntVector(1, 0);
+
     private final int x, y;
+
+    public IntVector(double x, double y) {
+        this.x = (int) x;
+        this.y = (int) y;
+    }
 
     public IntVector(int x, int y) {
         this.x = x;
@@ -42,5 +54,18 @@ public final class IntVector {
 
     public Vector toVector() {
         return new Vector(x, y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        IntVector intVector = (IntVector) o;
+        return x == intVector.x && y == intVector.y;
     }
 }

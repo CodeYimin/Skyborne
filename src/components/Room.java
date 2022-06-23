@@ -3,26 +3,33 @@ package components;
 import java.util.ArrayList;
 
 import core.GameObject;
-import events.RoomFirstEnterEvent;
 import structures.Directions;
+import structures.IntVector;
 import structures.Tile;
 import structures.Vector;
 import util.Const;
 import util.ObjectCreator;
 
 public class Room extends Tilemap {
-    private Directions doorDirections = new Directions();
+    private ArrayList<Hallway> hallways = new ArrayList<>();
+
     private int floorMaterial;
     private int wallMaterial;
     private int doorMaterial;
+
     private boolean discovered;
     private boolean entered;
     private boolean cleared;
-    private int doorLayer;
+
+    private Tile[][] floorLayer;
+    private Tile[][] contentLayer;
+    private Tile[][] doorLayer;
+    private Tile[][] wallLayer;
     private int maxEnemies;
 
     public Room(String mapPath, int floorMaterial, int wallMaterial, int doorMaterial, int maxEnemies) {
         super(mapPath);
+        this.contentLayer = getLayer(0);
 
         this.floorMaterial = floorMaterial;
         this.wallMaterial = wallMaterial;
@@ -46,18 +53,22 @@ public class Room extends Tilemap {
         int maxY = getHeight() / 2 - 2;
 
         for (int i = 0; i < maxEnemies; i++) {
-            int x = (int) (Math.random() * (maxX - minX) + minX);
-            int y = (int) (Math.random() * (maxY - minY) + minY);
-            Transform transform = getGameObject().getTransform();
-            if (Math.random() < 0.5 && !isSolidAt(transform.getPosition().add(x, y))) {
+            int randomLocalX = (int) (Math.random() * (maxX - minX) + minX);
+            int randomLocalY = (int) (Math.random() * (maxY - minY) + minY);
+            IntVector newEnemyLocalPosition = new IntVector(randomLocalX, randomLocalY);
+            Vector newEnemyWorldPosition = getGameObject().getTransform().getPosition().add(newEnemyLocalPosition.toVector());
+
+            if (Math.random() < 0.5 && !isSolidAt(newEnemyWorldPosition)) {
                 GameObject player = getGameObject().getScene().getGameObject(Player.class);
-                GameObject enemy = ObjectCreator.createEnemy(player, Vector.ZERO, Vector.ONE,
-                        20, "../assets/masked_orc_idle_anim_f0.png");
-                enemy.getTransform().setLocalPosition(new Vector(x, y));
+
+                // Create enemy
+                GameObject enemy = ObjectCreator.createEnemy(player, Vector.ZERO, Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
+                enemy.getTransform().setLocalPosition(newEnemyLocalPosition.toVector());
                 enemy.setParent(getGameObject());
                 enemy.getTransform().setRotation(0);
                 getGameObject().getScene().addGameObject(enemy);
 
+                // Create enemy weapon
                 GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
                         enemy, player,
                         Vector.ONE.multiply(0.8),
@@ -82,22 +93,31 @@ public class Room extends Tilemap {
 
     @Override
     public void update(double deltaTime) {
+        super.update(deltaTime);
+
         if (!entered) {
-            for (GameObject bullet : getGameObjectsInRoom(Bullet.class)) {
+            for (GameObject bullet : getGameObjectsInside(Bullet.class)) {
                 bullet.destroy();
             }
         }
 
         // Player is in the room
-        if (getGameObjectsInRoom(Player.class).size() > 0) {
+        if (getGameObjectsInside(Player.class, contentLayer).size() > 0) {
             // Player first time entering room
             if (!entered) {
-                discovered = true;
-                entered = true;
                 generateDoors();
                 unfreezeObjects();
 
-                getGameObject().emitEvent(new RoomFirstEnterEvent());
+                // This room is discovered and entered
+                entered = true;
+                discovered = true;
+
+                // Connecting hallways/rooms are discovered
+                for (Hallway hallway : getHallways()) {
+                    hallway.setDiscovered(true);
+                    Room otherRoom = hallway.getOtherRoom(this);
+                    otherRoom.setDiscovered(true);
+                }
             }
 
             // Cleared all enemies
@@ -118,27 +138,6 @@ public class Room extends Tilemap {
         return enemiesInRoom;
     }
 
-    public ArrayList<GameObject> getGameObjectsInRoom(Class<? extends Component> componentClass) {
-        ArrayList<GameObject> objects = new ArrayList<>();
-        for (GameObject object : getGameObject().getScene().getGameObjects(componentClass)) {
-            if (isInRoom(object)) {
-                objects.add(object);
-            }
-        }
-        return objects;
-    }
-
-    public boolean isInRoom(GameObject gameObject) {
-        Transform transform = gameObject.getTransform();
-        Vector position = transform.getPosition();
-        Vector scale = transform.getScale();
-        Vector localPosition = getLocalPosition(position);
-        return localPosition.getX() - scale.getX() / 2 >= 1
-                && localPosition.getX() + scale.getX() / 2 <= getWidth() - 1
-                && localPosition.getY() - scale.getY() / 2 >= 1
-                && localPosition.getY() + scale.getY() / 2 <= getHeight() - 1;
-    }
-
     private void generateFloors() {
         Tile[][] tiles = new Tile[getWidth() + 2][getHeight() + 2];
         for (int x = 0; x < getWidth() + 2; x++) {
@@ -150,6 +149,12 @@ public class Room extends Tilemap {
     }
 
     private void generateWalls() {
+        if (wallLayer != null) {
+            return;
+        }
+
+        Directions hallwayDirections = getHallwayDirections();
+
         Tile[][] tiles = new Tile[getWidth()][getHeight()];
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
@@ -160,10 +165,10 @@ public class Room extends Tilemap {
                 boolean isBorder = isTopBorder || isBottomBorder || isLeftBorder || isRightBorder;
                 boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.DUNGEON_HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.DUNGEON_HALLWAY_WIDTH;
                 boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.DUNGEON_HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.DUNGEON_HALLWAY_WIDTH;
-                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
-                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
-                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();
-                boolean isRightDoor = isRightBorder && isVerticalDoorRow && doorDirections.hasRight();
+                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && hallwayDirections.hasUp();
+                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && hallwayDirections.hasDown();
+                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && hallwayDirections.hasLeft();
+                boolean isRightDoor = isRightBorder && isVerticalDoorRow && hallwayDirections.hasRight();
                 boolean isDoor = isTopDoor || isBottomDoor || isLeftDoor || isRightDoor;
                 if (isBorder && !isDoor) {
                     tiles[x][y] = new Tile(wallMaterial);
@@ -173,9 +178,23 @@ public class Room extends Tilemap {
             }
         }
         addLayer(tiles);
+        wallLayer = tiles;
+    }
+
+    public void clearWalls() {
+        if (wallLayer != null) {
+            removeLayer(wallLayer);
+            wallLayer = null;
+        }
     }
 
     private void generateDoors() {
+        if (doorLayer != null) {
+            return;
+        }
+
+        Directions hallwayDirections = getHallwayDirections();
+
         Tile[][] tiles = new Tile[getWidth()][getHeight()];
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
@@ -185,10 +204,10 @@ public class Room extends Tilemap {
                 boolean isRightBorder = x == getWidth() - 1;
                 boolean isHorizontalDoorColumn = x * 2 + 2 > getWidth() - Const.DUNGEON_HALLWAY_WIDTH && x * 2 + 2 <= getWidth() + Const.DUNGEON_HALLWAY_WIDTH;
                 boolean isVerticalDoorRow = y * 2 + 2 > getHeight() - Const.DUNGEON_HALLWAY_WIDTH && y * 2 + 2 <= getHeight() + Const.DUNGEON_HALLWAY_WIDTH;
-                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && doorDirections.hasUp();
-                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && doorDirections.hasDown();
-                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && doorDirections.hasLeft();
-                boolean isRightDoor = isRightBorder && isVerticalDoorRow && doorDirections.hasRight();
+                boolean isTopDoor = isTopBorder && isHorizontalDoorColumn && hallwayDirections.hasUp();
+                boolean isBottomDoor = isBottomBorder && isHorizontalDoorColumn && hallwayDirections.hasDown();
+                boolean isLeftDoor = isLeftBorder && isVerticalDoorRow && hallwayDirections.hasLeft();
+                boolean isRightDoor = isRightBorder && isVerticalDoorRow && hallwayDirections.hasRight();
                 boolean isDoor = isTopDoor || isBottomDoor || isLeftDoor || isRightDoor;
                 if (isDoor) {
                     tiles[x][y] = new Tile(doorMaterial);
@@ -198,15 +217,54 @@ public class Room extends Tilemap {
             }
         }
         addLayer(tiles);
-        doorLayer = getLayers().size() - 1;
+        doorLayer = tiles;
     }
 
     public void clearDoors() {
-        removeLayer(doorLayer);
+        if (doorLayer != null) {
+            removeLayer(doorLayer);
+            doorLayer = null;
+        }
     }
 
-    public Directions getDoorDirections() {
-        return doorDirections;
+    public void addHallway(Hallway hallway) {
+        hallways.add(hallway);
+
+        if (wallLayer != null) {
+            clearWalls();
+            generateWalls();
+        }
+
+        if (doorLayer != null) {
+            clearDoors();
+            generateDoors();
+        }
+    }
+
+    public ArrayList<Hallway> getHallways() {
+        return hallways;
+    }
+
+    public Directions getHallwayDirections() {
+        Directions hallwayDirections = new Directions();
+        for (Hallway hallway : hallways) {
+            Vector myPosition = getGameObject().getTransform().getPosition();
+            Vector otherRoomPosition = hallway.getOtherRoomPosition(this);
+            if (hallway.getDirection() == Hallway.HORIZONTAL) {
+                if (myPosition.getX() < otherRoomPosition.getX()) {
+                    hallwayDirections.setRight(true);
+                } else {
+                    hallwayDirections.setLeft(true);
+                }
+            } else {
+                if (myPosition.getY() < otherRoomPosition.getY()) {
+                    hallwayDirections.setUp(true);
+                } else {
+                    hallwayDirections.setDown(true);
+                }
+            }
+        }
+        return hallwayDirections;
     }
 
     public boolean isCleared() {
