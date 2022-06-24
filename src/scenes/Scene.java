@@ -1,11 +1,11 @@
 package scenes;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import components.Component;
 import core.Game;
 import core.GameObject;
+import util.ArrayUtils;
 
 public abstract class Scene {
     private Game game;
@@ -23,7 +23,7 @@ public abstract class Scene {
     public void start() {
         running = true;
 
-        for (GameObject gameObject : List.copyOf(gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(gameObjects)) {
             gameObject.start();
         }
     }
@@ -33,7 +33,7 @@ public abstract class Scene {
             return;
         }
 
-        for (GameObject gameObject : List.copyOf(gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(gameObjects)) {
             if (!gameObject.isDestroyed()) {
                 gameObject.update(deltaTime);
             }
@@ -41,7 +41,7 @@ public abstract class Scene {
     };
 
     public void stop() {
-        for (GameObject gameObject : List.copyOf(gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(gameObjects)) {
             gameObject.destroy();
         }
         running = false;
@@ -67,7 +67,7 @@ public abstract class Scene {
 
     public ArrayList<GameObject> getGameObjects(Class<? extends Component> componentClass) {
         ArrayList<GameObject> gameObjects = new ArrayList<>();
-        for (GameObject gameObject : List.copyOf(this.gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(this.gameObjects)) {
             if (gameObject.getComponent(componentClass) != null) {
                 gameObjects.add(gameObject);
             }
@@ -76,7 +76,7 @@ public abstract class Scene {
     }
 
     public GameObject getGameObject(Class<? extends Component> componentClass) {
-        for (GameObject gameObject : List.copyOf(this.gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(this.gameObjects)) {
             if (gameObject.getComponent(componentClass) != null) {
                 return gameObject;
             }
@@ -85,7 +85,7 @@ public abstract class Scene {
     }
 
     public boolean removeGameObject(GameObject gameObject) {
-        for (GameObject child : List.copyOf(gameObject.getChildren())) {
+        for (GameObject child : ArrayUtils.copyOf(gameObject.getChildren())) {
             removeGameObject(child);
         }
         gameObject.setScene(null);
@@ -94,7 +94,7 @@ public abstract class Scene {
 
     public <T extends Component> ArrayList<T> getComponents(Class<T> componentClass) {
         ArrayList<T> components = new ArrayList<>();
-        for (GameObject gameObject : List.copyOf(gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(gameObjects)) {
             if (gameObject.getComponent(componentClass) != null) {
                 for (T component : gameObject.getComponents(componentClass)) {
                     components.add(component);
@@ -105,7 +105,7 @@ public abstract class Scene {
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
-        for (GameObject gameObject : List.copyOf(gameObjects)) {
+        for (GameObject gameObject : ArrayUtils.copyOf(gameObjects)) {
             if (gameObject.getComponent(componentClass) != null) {
                 return componentClass.cast(gameObject.getComponent(componentClass));
             }

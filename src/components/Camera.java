@@ -3,13 +3,13 @@ package components;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.List;
 
 import core.Drawable;
 import core.GameObject;
 import core.GraphicsPanel;
 import structures.Bounds;
 import structures.Vector;
+import util.ArrayUtils;
 
 public class Camera extends Component implements Drawable {
     private Vector position;
@@ -62,7 +62,7 @@ public class Camera extends Component implements Drawable {
         g.fillRect(0, 0, graphicsPanel.getWidth(), graphicsPanel.getHeight());
 
         ArrayList<Renderer> renderers = getGameObject().getScene().getComponents(Renderer.class);
-        for (Renderer renderer : List.copyOf(renderers)) {
+        for (Renderer renderer : ArrayUtils.copyOf(renderers)) {
             if (!renderer.isDestroyed() && renderer.getRenderBounds().collides(getViewportBounds())) {
                 renderer.render(g, this);
             }

@@ -2,10 +2,10 @@ package components;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.List;
 
 import core.Drawable;
 import core.GraphicsPanel;
+import util.ArrayUtils;
 
 public class UICamera extends Component implements Drawable {
     private GraphicsPanel graphicsPanel;
@@ -35,7 +35,7 @@ public class UICamera extends Component implements Drawable {
         }
 
         ArrayList<UI> uis = getGameObject().getScene().getComponents(UI.class);
-        for (UI ui : List.copyOf(uis)) {
+        for (UI ui : ArrayUtils.copyOf(uis)) {
             if (ui.isVisible() && !ui.isDestroyed()) {
                 ui.draw(g);
             }

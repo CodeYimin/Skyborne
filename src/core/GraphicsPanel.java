@@ -3,9 +3,10 @@ package core;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JPanel;
+
+import util.ArrayUtils;
 
 public class GraphicsPanel extends JPanel {
     private final ArrayList<Drawable> drawables = new ArrayList<>();
@@ -30,7 +31,7 @@ public class GraphicsPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawables.sort(new DrawableZIndexComparator());
-        for (Drawable drawable : List.copyOf(drawables)) {
+        for (Drawable drawable : ArrayUtils.copyOf(drawables)) {
             drawable.draw((Graphics2D) g);
         }
     }

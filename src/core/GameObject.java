@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import components.Component;
 import components.Transform;
@@ -9,6 +8,7 @@ import events.Event;
 import events.EventListener;
 import events.EventManager;
 import scenes.Scene;
+import util.ArrayUtils;
 
 public class GameObject {
     private GameObject parent;
@@ -30,7 +30,7 @@ public class GameObject {
     }
 
     public void start() {
-        for (Component component : List.copyOf(components)) {
+        for (Component component : ArrayUtils.copyOf(components)) {
             component.start();
         }
     }
@@ -40,7 +40,7 @@ public class GameObject {
             return;
         }
 
-        for (Component component : List.copyOf(components)) {
+        for (Component component : ArrayUtils.copyOf(components)) {
             if (!component.isDestroyed()) {
                 component.update(deltaTime);
             }
@@ -53,7 +53,7 @@ public class GameObject {
         }
 
         scene.removeGameObject(this);
-        for (Component component : List.copyOf(components)) {
+        for (Component component : ArrayUtils.copyOf(components)) {
             component.destroy();
         }
     }
@@ -83,7 +83,7 @@ public class GameObject {
     }
 
     public <T extends Component> boolean removeComponent(Class<T> componentClass) {
-        for (Component component : List.copyOf(components)) {
+        for (Component component : ArrayUtils.copyOf(components)) {
             if (componentClass.isInstance(component)) {
                 component.setGameObject(null);
                 components.remove(component);
