@@ -100,7 +100,6 @@ public class Dungeon extends Component {
         for (GameObject child : getGameObject().getChildren()) {
             child.destroy();
         }
-        level = 1;
         generate();
     }
 
