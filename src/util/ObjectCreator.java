@@ -18,6 +18,7 @@ import components.UndiscoveredRoomOverlay;
 import components.Weapon;
 import core.GameObject;
 import structures.IntVector;
+import structures.Tile;
 
 public class ObjectCreator {
     public static GameObject createTilemapCreature(int health, String spritePath) {
@@ -31,7 +32,7 @@ public class ObjectCreator {
     }
 
     public static GameObject createEnemy(GameObject target, int health) {
-        GameObject enemy = ObjectCreator.createTilemapCreature(health, "../assets/masked_orc_idle_anim_f0.png");
+        GameObject enemy = ObjectCreator.createTilemapCreature(health, Const.ENEMY_SPRITE_PATH);
         enemy.addComponent(new Enemy());
         enemy.addComponent(new EnemyMotionController(1));
         enemy.addComponent(new DestroyOnDeath());
@@ -42,7 +43,7 @@ public class ObjectCreator {
     public static GameObject createEnemyWeapon(GameObject target, int damage, int fireInterval, double bulletSpeed) {
         GameObject enemyWeapon = new GameObject();
         enemyWeapon.addComponent(new Weapon(Player.class, 1, bulletSpeed, 0, fireInterval));
-        enemyWeapon.addComponent(new SpriteRenderer("../assets/flask_green.png"));
+        enemyWeapon.addComponent(new SpriteRenderer(Const.WEAPON_SPRITE_PATH));
         enemyWeapon.addComponent(new AutoRotate(target));
         enemyWeapon.addComponent(new AutoFire(fireInterval));
 
@@ -52,14 +53,14 @@ public class ObjectCreator {
     public static GameObject createRoom(IntVector position, String mapPath, int maxEnemies) {
         GameObject gameObject = new GameObject();
         gameObject.getTransform().setPosition(position.toVector().multiply(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS));
-        gameObject.addComponent(new Room(mapPath, 1, 2, 3, maxEnemies));
+        gameObject.addComponent(new Room(mapPath, Tile.FLOOR, Tile.WALL, Tile.DOOR, maxEnemies));
         gameObject.addComponent(new UndiscoveredRoomOverlay());
         return gameObject;
     }
 
     public static GameObject createHallway(Room room1, Room room2) {
         GameObject hallway = new GameObject();
-        hallway.addComponent(new Hallway(room1, room2, 1, 2, Const.DUNGEON_HALLWAY_WIDTH));
+        hallway.addComponent(new Hallway(room1, room2, Tile.FLOOR, Tile.WALL, Const.DUNGEON_HALLWAY_WIDTH));
         return hallway;
     }
 }

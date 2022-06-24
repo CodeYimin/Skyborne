@@ -60,7 +60,7 @@ public class Dungeon extends Component {
         Queue<IntVector> queue = new LinkedList<>();
 
         // Create the first room with no enemies
-        createRoom(startingPosition, "../data/room0.txt", 0);
+        createRoom(startingPosition, Const.DUNGEON_STARTING_ROOM_PATH, 0);
         queue.add(startingPosition);
 
         // Generate rooms
@@ -69,11 +69,9 @@ public class Dungeon extends Component {
             // rooms around this room
             IntVector position = queue.remove();
 
-            String[] mapPaths = new String[] { "../data/room1.txt", "../data/room2.txt" };
-
             // Guaranteed branch out one room if min room requirement not hit
             if (numRooms < MIN_ROOMS) {
-                IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(mapPaths), 10);
+                IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(Const.DUNGEON_ROOM_PATHS), 10);
                 if (newRoomPosition != null) {
                     queue.add(newRoomPosition);
                 }
@@ -84,7 +82,7 @@ public class Dungeon extends Component {
             if (!position.equals(startingPosition)) {
                 for (int i = 0; i < 2; i++) {
                     if (Math.random() < 0.25) {
-                        IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(mapPaths), 10);
+                        IntVector newRoomPosition = createRoomRandomDirection(position, ArrayUtils.getRandom(Const.DUNGEON_ROOM_PATHS), 10);
                         if (newRoomPosition != null) {
                             queue.add(newRoomPosition);
                         }

@@ -1,5 +1,7 @@
 package structures;
 
+import util.Const;
+
 public class Tile {
     public static final int AIR = 0;
     public static final int FLOOR = 1;
@@ -8,9 +10,9 @@ public class Tile {
 
     private static final Sprite[] sprites = new Sprite[] {
             null,
-            new Sprite("../assets/floor_1.png"),
-            new Sprite("../assets/wall_mid.png"),
-            new Sprite("../assets/wall_hole_1.png")
+            new Sprite(Const.DUNGEON_FLOOR_PATH),
+            new Sprite(Const.DUNGEON_WALL_PATH),
+            new Sprite(Const.DUNGEON_DOOR_PATH)
     };
 
     private static final boolean[] solid = new boolean[] {

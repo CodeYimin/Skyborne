@@ -2,6 +2,7 @@ package components;
 
 import core.GameObject;
 import structures.Vector;
+import util.Const;
 import util.Timer;
 
 public class Weapon extends Component {
@@ -52,7 +53,7 @@ public class Weapon extends Component {
         bullet.addComponent(new BoxCollider());
         bullet.addComponent(new Bullet(targetClass, bulletDamage));
         bullet.addComponent(new BasicMotion(new Vector(transform.getRotation()).multiply(bulletSpeed)));
-        bullet.addComponent(new SpriteRenderer("../assets/Bullet.png"));
+        bullet.addComponent(new SpriteRenderer(Const.BULLET_SPRITE_PATH));
         bullet.addComponent(new AutoDestroy(30));
         bullet.getTransform().setPosition(getGameObject().getTransform().getPosition());
         bullet.getTransform().setScale(Vector.ONE.multiply(0.3));
