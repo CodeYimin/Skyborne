@@ -17,26 +17,45 @@ public class Dungeon extends Component {
     public static final int MAX_ROOMS = Const.DUNGEON_MAX_ROOMS;
 
     private GameObject player;
-    private GameObject[][] rooms;
-    private ArrayList<GameObject> hallways;
+
+    private IntVector startingPosition;
     private int numRooms;
-    private IntVector startingRoomPosition;
+    private GameObject[][] rooms;
+    private int level = 1;
 
     public Dungeon(GameObject player) {
         this.player = player;
-        this.rooms = new GameObject[WIDTH][HEIGHT];
-        this.hallways = new ArrayList<>();
-        this.numRooms = 0;
-        this.startingRoomPosition = getRandomPosition();
     }
 
     @Override
     public void start() {
-        generate(startingRoomPosition);
-        player.getTransform().setPosition(getRoom(startingRoomPosition).getTransform().getPosition());
+        generate();
     }
 
-    private void generate(IntVector startingPosition) {
+    @Override
+    public void update(double deltaTime) {
+        int cleared = 0;
+
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                GameObject room = rooms[x][y];
+                if (room != null && room.getComponent(Room.class).isCleared()) {
+                    cleared++;
+                }
+            }
+        }
+
+        if (cleared == numRooms) {
+            regenerate();
+            level++;
+        }
+    }
+
+    private void generate() {
+        this.rooms = new GameObject[WIDTH][HEIGHT];
+        this.numRooms = 0;
+        this.startingPosition = getRandomPosition();
+
         // Queue for positions to branch new rooms from
         Queue<IntVector> queue = new LinkedList<>();
 
@@ -73,6 +92,16 @@ public class Dungeon extends Component {
                 }
             }
         }
+
+        player.getTransform().setPosition(getRoom(startingPosition).getTransform().getPosition());
+    }
+
+    private void regenerate() {
+        for (GameObject child : getGameObject().getChildren()) {
+            child.destroy();
+        }
+        level = 1;
+        generate();
     }
 
     private IntVector getRandomPosition() {
@@ -160,7 +189,7 @@ public class Dungeon extends Component {
         for (IntVector direction : getOccupiedDirections(position)) {
             IntVector otherPosition = position.add(direction);
             Room otherRoomComponent = getRoom(otherPosition).getComponent(Room.class);
-            if (!(otherPosition.equals(startingRoomPosition) && otherRoomComponent.getHallways().size() > 0)) {
+            if (!(otherPosition.equals(startingPosition) && otherRoomComponent.getHallways().size() > 0)) {
                 connectRooms(position, otherPosition);
             }
         }
@@ -176,10 +205,8 @@ public class Dungeon extends Component {
 
         // Create and instantiate hallway
         GameObject hallway = ObjectCreator.createHallway(room1, room2);
+        hallway.setParent(getGameObject());
         getGameObject().getScene().addGameObject(hallway, 0);
-
-        // Add hallway to the list of all hallways
-        hallways.add(hallway);
     }
 
     public void addRoom(int x, int y, GameObject room) {
@@ -214,9 +241,15 @@ public class Dungeon extends Component {
         return rooms;
     }
 
-    @SuppressWarnings("unchecked")
     public ArrayList<GameObject> getHallways() {
-        return (ArrayList<GameObject>) hallways.clone();
+        ArrayList<GameObject> hallways = new ArrayList<>();
+        for (GameObject child : getGameObject().getChildren()) {
+            Hallway hallway = child.getComponent(Hallway.class);
+            if (hallway != null) {
+                hallways.add(child);
+            }
+        }
+        return hallways;
     }
 
     public int getWidth() {
@@ -225,5 +258,9 @@ public class Dungeon extends Component {
 
     public int getHeight() {
         return HEIGHT;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

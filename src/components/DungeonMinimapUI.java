@@ -9,6 +9,7 @@ import core.GameObject;
 import core.GraphicsPanel;
 import structures.Vector;
 import util.Const;
+import util.GraphicsUtils;
 
 public class DungeonMinimapUI extends UI {
     public static final int WIDTH = Const.DUNGEON_MINIMAP_WIDTH;
@@ -29,9 +30,28 @@ public class DungeonMinimapUI extends UI {
         int mapHeight = dungeon.getHeight();
         GameObject[][] rooms = dungeon.getRooms();
 
+        // Map Container
         g.setColor(new Color(255, 255, 255, 100));
         g.fillRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
 
+        // Map Container Outline
+        g.setColor(Color.BLACK);
+        ((Graphics2D) g).setStroke(new BasicStroke(5));
+        g.drawRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
+
+        // Level Container
+        g.setColor(new Color(255, 255, 255, 100));
+        g.fillRect(screenWidth - WIDTH - MARGIN, MARGIN * 2 + HEIGHT, WIDTH, 24);
+
+        // Level Container Outline
+        g.setColor(Color.BLACK);
+        ((Graphics2D) g).setStroke(new BasicStroke(5));
+        g.drawRect(screenWidth - WIDTH - MARGIN, MARGIN * 2 + HEIGHT, WIDTH, 24);
+
+        // Level
+        GraphicsUtils.drawCenteredString(g, "Level " + dungeon.getLevel(), screenWidth - MARGIN - WIDTH / 2, MARGIN * 2 + HEIGHT + 12, Color.BLACK, 18);
+
+        // Rooms
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
                 if (rooms[x][y] == null) {
@@ -61,6 +81,7 @@ public class DungeonMinimapUI extends UI {
             }
         }
 
+        // Hallways
         for (GameObject hallwayObject : dungeon.getHallways()) {
             Transform transform = hallwayObject.getTransform();
             Hallway hallway = hallwayObject.getComponent(Hallway.class);
@@ -79,6 +100,7 @@ public class DungeonMinimapUI extends UI {
             }
         }
 
+        // Player
         Player player = getGameObject().getScene().getComponent(Player.class);
         if (player != null) {
             Transform playerTransform = player.getGameObject().getTransform();
@@ -89,12 +111,17 @@ public class DungeonMinimapUI extends UI {
             Vector playerLocalPosition = playerPosition.subtract(dungeonPosition);
             drawRectangle(g, playerLocalPosition.add(Const.DUNGEON_DISTANCE_BETWEEN_ROOMS / 2), Vector.ONE.multiply(5), Color.BLACK, true);
         }
-
-        g.setColor(Color.BLACK);
-        ((Graphics2D) g).setStroke(new BasicStroke(5));
-        g.drawRect(screenWidth - WIDTH - MARGIN, MARGIN, WIDTH, HEIGHT);
     }
 
+    /**
+     * Draws a rectangle on the map given position and size local to the dungeon
+     * 
+     * @param g
+     * @param position
+     * @param size
+     * @param color
+     * @param fill
+     */
     private void drawRectangle(Graphics g, Vector position, Vector size, Color color, boolean fill) {
         Dungeon dungeon = getGameObject().getComponent(Dungeon.class);
         if (dungeon == null) {

@@ -4,9 +4,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 
 import util.Const;
+import util.GraphicsUtils;
 
 public class PlayerStatsUI extends UI {
     public static final int WIDTH = Const.PLAYER_STATS_UI_WIDTH;
@@ -17,7 +17,7 @@ public class PlayerStatsUI extends UI {
 
     public static final int INNER_WIDTH = WIDTH - 2 * PADDING;
     public static final int INNER_HEIGHT = HEIGHT - 2 * PADDING;
-    public static final int NUM_STATS = 3;
+    public static final int NUM_STATS = 2;
 
     @Override
     public void draw(Graphics g) {
@@ -53,15 +53,6 @@ public class PlayerStatsUI extends UI {
         ((Graphics2D) g).setStroke(new BasicStroke(2));
         g.drawRect(statPositionX, statPositionY, statWidth, statHeight);
 
-        g.setFont(g.getFont().deriveFont((float) statHeight));
-        String statText = value + "/" + maxValue;
-        Rectangle2D statTextBounds = g.getFontMetrics().getStringBounds(statText, g);
-        int statTextWidth = (int) statTextBounds.getWidth();
-        int statTextHeight = (int) statTextBounds.getHeight();
-        int statTextPositionX = statPositionX + (statWidth - statTextWidth) / 2;
-        int statTextPositionY = statPositionY + statHeight - (statHeight - statTextHeight) / 2 - 4;
-
-        g.setColor(Color.WHITE);
-        g.drawString(statText, statTextPositionX, statTextPositionY);
+        GraphicsUtils.drawCenteredString(g, value + "/" + maxValue, statPositionX + statWidth / 2, statPositionY + statHeight / 2, Color.WHITE, statHeight);
     }
 }

@@ -28,7 +28,7 @@ public class LevelScene extends Scene {
 
     @Override
     public void init() {
-        GameObject player = ObjectCreator.createTilemapCreature(new Vector(0, 0), Vector.ONE, 10, "../assets/big_demon_idle_anim_f0.png");
+        GameObject player = ObjectCreator.createTilemapCreature(10, "../assets/big_demon_idle_anim_f0.png");
         player.addComponent(new Player());
         player.addComponent(new Mana(200));
         player.addComponent(new KeyboardMotionController(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, 5));
@@ -48,6 +48,7 @@ public class LevelScene extends Scene {
         GameObject playerWeapon = new GameObject();
         playerWeapon.addComponent(new Weapon(Enemy.class, 3, 10, 1, 500));
         playerWeapon.addComponent(new SpriteRenderer(new Sprite("../assets/flask_green.png")));
+        playerWeapon.getTransform().setLocalScale(Vector.ONE.multiply(0.5));
         addGameObject(playerWeapon);
         player.getComponent(Player.class).equipWeapon(playerWeapon);
 

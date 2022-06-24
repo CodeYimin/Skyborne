@@ -1,5 +1,11 @@
 package components;
 
+/**
+ * Destroys the game object this component is attached to after a set amount of
+ * time
+ * 
+ * @author Yimin Sun
+ */
 public class AutoDestroy extends Component {
     private double timeToLive;
 
@@ -9,10 +15,6 @@ public class AutoDestroy extends Component {
 
     public double getTimeToLive() {
         return timeToLive;
-    }
-
-    public void setTimeToLive(double timeToLive) {
-        this.timeToLive = timeToLive;
     }
 
     @Override

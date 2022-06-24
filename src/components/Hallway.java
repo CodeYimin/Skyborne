@@ -48,12 +48,14 @@ public class Hallway extends Tilemap {
         Vector size1 = room1.getSize().toVector();
         Vector size2 = room2.getSize().toVector();
 
+        // Determine hallway direction
         if (position1.getY() == position2.getY()) {
             direction = HORIZONTAL;
         } else {
             direction = VERTICAL;
         }
 
+        // Determine hallway position and hallway tilemap size
         Vector hallwayPosition;
         IntVector hallwaySize;
         if (direction == HORIZONTAL) {

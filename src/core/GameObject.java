@@ -11,16 +11,22 @@ import events.EventManager;
 import scenes.Scene;
 
 public class GameObject {
-    private GameObject parent = null;
-    private Transform transform = null;
-    private Scene scene = null;
-    private boolean enabled = true;
-    private ArrayList<Component> components = new ArrayList<>();
-    private EventManager eventManager = new EventManager();
+    private GameObject parent;
+    private Transform transform;
+    private Scene scene;
+    private boolean enabled;
+    private ArrayList<Component> components;
+    private EventManager eventManager;
 
     public GameObject() {
+        this.parent = null;
         this.transform = new Transform();
-        addComponent(this.transform);
+        this.scene = null;
+        this.enabled = true;
+        this.components = new ArrayList<>();
+        this.eventManager = new EventManager();
+
+        addComponent(transform);
     }
 
     public void start() {

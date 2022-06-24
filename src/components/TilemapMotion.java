@@ -2,6 +2,10 @@ package components;
 
 import structures.Vector;
 
+/**
+ * Motion that prevents the game object from moving into a tile of any tilemap
+ * in the scene
+ */
 public class TilemapMotion extends Motion {
     @Override
     public void move(double deltaTime) {

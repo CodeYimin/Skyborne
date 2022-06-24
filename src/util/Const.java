@@ -9,8 +9,8 @@ public class Const {
     public static final int DUNGEON_HALLWAY_WIDTH = 4;
     public static final int DUNGEON_WIDTH = 5;
     public static final int DUNGEON_HEIGHT = 5;
-    public static final int DUNGEON_MIN_ROOMS = 5;
-    public static final int DUNGEON_MAX_ROOMS = 10;
+    public static final int DUNGEON_MIN_ROOMS = 2;
+    public static final int DUNGEON_MAX_ROOMS = 2;
 
     // Dungeon Minimap
     public static final int DUNGEON_MINIMAP_WIDTH = 200;
@@ -19,7 +19,7 @@ public class Const {
 
     // Player Stats UI
     public static final int PLAYER_STATS_UI_WIDTH = 200;
-    public static final int PLAYER_STATS_UI_HEIGHT = 100;
+    public static final int PLAYER_STATS_UI_HEIGHT = 70;
     public static final int PLAYER_STATS_UI_MARGIN = 20;
     public static final int PLAYER_STATS_UI_PADDING = 10;
     public static final int PLAYER_STATS_UI_MARGIN_BETWEEN_STATS = 10;

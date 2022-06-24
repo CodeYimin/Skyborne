@@ -3,6 +3,8 @@ package components;
 import core.GameObject;
 
 public class Bullet extends Component {
+    // The bullet will only destroy itself and damage game objects that contain this
+    // component
     private Class<? extends Component> targetClass;
     private int damage;
 
@@ -18,6 +20,7 @@ public class Bullet extends Component {
             return;
         }
 
+        // Destroy bullet and damage first colliding object
         boolean attacked = false;
         for (GameObject collidingObject : boxCollider.getCollidingObjects()) {
             if (collidingObject.getComponent(targetClass) != null && !attacked) {
@@ -27,6 +30,9 @@ public class Bullet extends Component {
             }
         }
 
+        // Destroy bullet on tile collision.
+        // Check if bullet is destroyed first because it might've already collided with
+        // a gameobject and destroyed itself
         if (!isDestroyed() && boxCollider.isCollidingTiles()) {
             getGameObject().destroy();
         }

@@ -1,5 +1,8 @@
 package components;
 
+/**
+ * Flips the sprite depending on the direction of the motion.
+ */
 public class MotionSpriteFlipper extends Component {
     @Override
     public void update(double deltaTime) {

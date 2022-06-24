@@ -62,18 +62,16 @@ public class Room extends Tilemap {
                 GameObject player = getGameObject().getScene().getGameObject(Player.class);
 
                 // Create enemy
-                GameObject enemy = ObjectCreator.createEnemy(player, Vector.ZERO, Vector.ONE, 20, "../assets/masked_orc_idle_anim_f0.png");
+                GameObject enemy = ObjectCreator.createEnemy(player, 20);
                 enemy.getTransform().setLocalPosition(newEnemyLocalPosition.toVector());
                 enemy.setParent(getGameObject());
                 enemy.getTransform().setRotation(0);
                 getGameObject().getScene().addGameObject(enemy);
 
                 // Create enemy weapon
-                GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(
-                        enemy, player,
-                        Vector.ONE.multiply(0.8),
-                        "../assets/flask_green.png",
-                        1, 1500, 3);
+                GameObject enemyWeapon = ObjectCreator.createEnemyWeapon(player, 1, 1500, 3);
+                enemyWeapon.setParent(enemy);
+                enemyWeapon.getTransform().setLocalScale(Vector.ONE.multiply(0.5));
                 getGameObject().getScene().addGameObject(enemyWeapon);
             }
         }

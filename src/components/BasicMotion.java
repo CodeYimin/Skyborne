@@ -2,6 +2,11 @@ package components;
 
 import structures.Vector;
 
+/**
+ * Moves the game object by the velocity factoring in the delta time
+ * 
+ * @author Yimin Sun
+ */
 public class BasicMotion extends Motion {
     public BasicMotion() {
         super();

@@ -1,10 +1,10 @@
 package util;
 
 import components.AutoFire;
+import components.AutoRotate;
 import components.BoxCollider;
 import components.DestroyOnDeath;
 import components.Enemy;
-import components.EnemyAim;
 import components.EnemyMotionController;
 import components.HPBar;
 import components.Hallway;
@@ -18,10 +18,9 @@ import components.UndiscoveredRoomOverlay;
 import components.Weapon;
 import core.GameObject;
 import structures.IntVector;
-import structures.Vector;
 
 public class ObjectCreator {
-    public static GameObject createTilemapCreature(Vector position, Vector size, int health, String spritePath) {
+    public static GameObject createTilemapCreature(int health, String spritePath) {
         GameObject gameObject = new GameObject();
         gameObject.addComponent(new SpriteRenderer(spritePath));
         gameObject.addComponent(new BoxCollider());
@@ -31,8 +30,8 @@ public class ObjectCreator {
         return gameObject;
     }
 
-    public static GameObject createEnemy(GameObject target, Vector position, Vector size, int health, String spritePath) {
-        GameObject enemy = ObjectCreator.createTilemapCreature(position, size, health, spritePath);
+    public static GameObject createEnemy(GameObject target, int health) {
+        GameObject enemy = ObjectCreator.createTilemapCreature(health, "../assets/masked_orc_idle_anim_f0.png");
         enemy.addComponent(new Enemy());
         enemy.addComponent(new EnemyMotionController(1));
         enemy.addComponent(new DestroyOnDeath());
@@ -40,14 +39,12 @@ public class ObjectCreator {
         return enemy;
     }
 
-    public static GameObject createEnemyWeapon(GameObject parent, GameObject target, Vector size, String spritePath, int damage, int fireInterval,
-            double bulletSpeed) {
+    public static GameObject createEnemyWeapon(GameObject target, int damage, int fireInterval, double bulletSpeed) {
         GameObject enemyWeapon = new GameObject();
         enemyWeapon.addComponent(new Weapon(Player.class, 1, bulletSpeed, 0, fireInterval));
-        enemyWeapon.addComponent(new SpriteRenderer(spritePath));
-        enemyWeapon.addComponent(new EnemyAim(target));
+        enemyWeapon.addComponent(new SpriteRenderer("../assets/flask_green.png"));
+        enemyWeapon.addComponent(new AutoRotate(target));
         enemyWeapon.addComponent(new AutoFire(fireInterval));
-        enemyWeapon.setParent(parent);
 
         return enemyWeapon;
     }
